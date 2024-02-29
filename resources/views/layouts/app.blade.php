@@ -145,8 +145,8 @@
                     <a onclick="signIn()" class="a"><span>Log In</span><img src="{{ asset('assets/icons/user.png') }}" alt="User Icon"></a>
                     @endauth
                     <div id="language-mobile" data-bs-toggle="modal" data-bs-target="#languageChangeModal">
-                        <img class="img-1" src="https://flagicons.lipis.dev/flags/4x3/us.svg" alt="flag-us">
-                        English
+                        <img class="img-1" src="{{ asset('assets/flags/' . (App::currentLocale())) }}.svg" alt="flag-{{ App::currentLocale() }}">
+                        {{ config('languages')[App::currentLocale()]['name'] }}
                         <img class="img-2" src="https://www.svgrepo.com/show/453365/language.svg">
                     </div>
                     <label for="check" class="close-bottom p-3">
@@ -162,46 +162,29 @@
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
                         <div class="ln">
-                            <!-- The first link has to go nowhere -->
-                            <!-- The rest of the links have inline style display none obviously because of jQuery -->
-                            <a class="dropdown-button square" href="#" title="English">
-                            <img src="https://flagicons.lipis.dev/flags/4x3/us.svg" alt="flag-us">
-                            <p> <span class="language-code">US</span>
-                                <span class="language-name">English</span>
-                            </p>
-                            </a>
-                            <a class="square" href="#" title="中国人" style="display: none;">
-                            <img src="https://flagicons.lipis.dev/flags/4x3/cn.svg" alt="flag-us">
-                            <p>
-                                <span class="language-code">CN</span>
-                                <span class="language-name">中国人
-                                </span>
-                            </p>
-                            </a>
-                            <a class="square" href="#" title="Русский" style="display: none;">
-                            <img src="https://flagicons.lipis.dev/flags/4x3/ru.svg" alt="flag-us">
-                            <p>
-                                <span class="language-code">RU</span>
-                                <span class="language-name">Русский
-                                </span>
-                            </p>
-                            </a>
-                            <a class="square" href="#" title="Latviešu" style="display: none;">
-                            <img src="https://flagicons.lipis.dev/flags/4x3/lv.svg" alt="flag-us">
-                            <p>
-                                <span class="language-code">LV</span>
-                                <span class="language-name">Latviešu</span>
-                            </p>
-                            </a>
-                            <a class="square" href="#" title="Português" style="display: none;">
-                            <img src="https://flagicons.lipis.dev/flags/4x3/pt.svg" alt="flag-us">
-                            <p>
-                                <span class="language-code">PT</span>
-                                <span class="language-name">Português</span>
-                            </p>
+                            <!-- Current Language - Displayed First -->
+                            <a class="square dropdown-button" href="#" title="{{ config('languages')[App::currentLocale()]['name'] }}">
+                                <img src="{{ asset('assets/flags/' . (App::currentLocale())) }}.svg" alt="flag-{{ App::currentLocale() }}">
+                                <p>
+                                    <span class="language-code">{{ config('languages')[App::currentLocale()]['code'] }}</span>
+                                    <span class="language-name">{{ config('languages')[App::currentLocale()]['name'] }}</span>
+                                </p>
                             </a>
                         
+                            <!-- Other Languages -->
+                            @foreach(config('languages') as $key => $language)
+                                @if(App::currentLocale() != $key)
+                                    <a class="square" href="{{ $key }}" title="{{ $language['name'] }}" style="display: none;">
+                                        <img src="{{ asset('assets/flags/'.$key) }}.svg" alt="flag-{{ $key }}">
+                                        <p>
+                                            <span class="language-code">{{ $language['code'] }}</span>
+                                            <span class="language-name">{{ $language['name'] }}</span>
+                                        </p>
+                                    </a>
+                                @endif
+                            @endforeach
                         </div>
+                        
                         @auth
                         <a href="#" id="nav-pets" class="d-flex align-items-center mx-2">
                             <img class="nav-icon" src="{{ asset('assets/icons/veterinary_7209231.png') }}" height="46" alt="Add Pets Icon">
@@ -275,73 +258,33 @@
     <!-- Modal Language change -->
     <div class="modal fade" id="languageChangeModal" tabindex="-1" role="dialog" aria-labelledby="languageChangeModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
-        <form method="POST" class="modal-content">
-            @csrf
+            <form method="GET" action="{{ route('change.language') }}" class="modal-content">
             <div class="modal-header">
             <h5 class="modal-title" id="languageChangeModalLabel">Change Language</h5>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
             </div>
+            
+            <!-- Mobile Version -->
             <div class="modal-body d-flex flex-wrap">
-                <div class="language-item">
-                    <input checked type="radio" name="language" value="us" id="us" class="d-none">
-                    <label for="us" class="language-mobile" href="#" title="English">
-                        <div class="flag-container">
-                            <img src="https://flagicons.lipis.dev/flags/4x3/us.svg" alt="flag-us">
-                            <span class="language-code-mobile">US</span>
-                        </div>
-                        <span class="language-name-mobile">English</span><span> (current)</span>
-                    </label>
-                </div>
-
-                <div class="language-item">
-                    <input type="radio" name="language" value="cn" id="cn" class="d-none">
-                    <label for="cn" class="language-mobile" href="#" title="中国人">
-                        <div class="flag-container">
-                            <img src="https://flagicons.lipis.dev/flags/4x3/cn.svg" alt="flag-cn">
-                            <span class="language-code-mobile">CN</span>
-                        </div>
-                        <span class="language-name-mobile">中国人
-                    </label>
-                </div>
-
-                <div class="language-item">
-                    <input type="radio" name="language" value="ru" id="ru" class="d-none">
-                    <label for="ru" class="language-mobile" href="#" title="Русский">
-                        <div class="flag-container">
-                            <img src="https://flagicons.lipis.dev/flags/4x3/ru.svg" alt="flag-ru">
-                            <span class="language-code-mobile">RU</span>
-                        </div>
-                        <span class="language-name-mobile">Русский</span>
-                    </label>
-                </div>
-
-                <div class="language-item">
-                    <input type="radio" name="language" value="lv" id="lv" class="d-none">
-                    <label for="lv" class="language-mobile" href="#" title="Latviešu">
-                        <div class="flag-container">
-                            <img src="https://flagicons.lipis.dev/flags/4x3/lv.svg" alt="flag-lv">
-                            <span class="language-code-mobile">LV</span>
-                        </div>
-                        <span class="language-name-mobile">Latviešu</span>
-                    </label>
-                </div>
-                
-                <div class="language-item">
-                    <input type="radio" name="language" value="pt" id="pt" class="d-none">
-                    <label for="pt" class="language-mobile" href="#" title="Português">
-                        <div class="flag-container">
-                            <img src="https://flagicons.lipis.dev/flags/4x3/pt.svg" alt="flag-pt">
-                            <span class="language-code-mobile">PT</span>
-                        </div>
-                        <span class="language-name-mobile">Português</span>
-                    </label>
-                </div>
+                @foreach(config('languages') as $key => $language)
+                    <div class="language-item">
+                        <input @if($key == App::currentLocale()) checked @endif type="radio" name="language" value="{{ $key }}" id="{{ $key }}" class="d-none">
+                        <label for="{{ $key }}" class="language-mobile" href="#" title="{{ $language['name'] }}">
+                            <div class="flag-container">
+                                <img src="{{ asset('assets/flags/'.$key) }}.svg" alt="flag-{{ $key }}">
+                                <span class="language-code-mobile">{{ strtoupper($language['code']) }}</span>
+                            </div>
+                            <span class="language-name-mobile">{{ $language['name'] }} @if($key == App::currentLocale()) (current) @endif</span>
+                        </label>
+                    </div>
+                @endforeach
             </div>
+
             <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Save changes</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
             </div>
         </form>
         </div>
