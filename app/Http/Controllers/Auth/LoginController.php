@@ -7,6 +7,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class LoginController extends Controller
 {
@@ -26,6 +27,8 @@ class LoginController extends Controller
 
     protected function validateLogin(Request $request)
     {
+        Session::forget('errors');
+
         $validator = $this->validator($request->all(), 'login');
 
         if ($validator->fails()) {
@@ -55,6 +58,8 @@ class LoginController extends Controller
 
     protected function sendFailedLoginResponse(Request $request)
     {
+        Session::forget('errors');
+
         $errors = [
             $this->username() => __('auth.failed'),
         ];

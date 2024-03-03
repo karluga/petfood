@@ -13,6 +13,14 @@ return [
             'password' => [
                 'placeholder' => 'Ievadiet savu paroli',
                 'name' => 'Parole',
+            ],
+            'password_repeat' => [
+                'placeholder' => 'Ievadiet paroli atkārtoti',
+                'name' => 'Atkārtota parole',
+            ],
+            'name' => [
+                'placeholder' => 'Ievadiet savu vārdu',
+                'name' => 'Vārds',
             ]
         ],
         'checkboxes' => [
@@ -21,6 +29,7 @@ return [
     ],
     'buttons' => [
         'login' => 'Ienākt',
+        'signup' => 'Reģistrēties'
     ],
     'links' => [
         'forgot_password' => 'Aizmirsi savu paroli?',

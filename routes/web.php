@@ -30,6 +30,7 @@ Route::prefix('{locale}')
     ->where(['locale' => '[a-zA-Z]{2}'])
     ->middleware('setlocale')
     ->group(function () {
+        // dd(app()->getLocale());
     Route::get('/', function () {
         return view('welcome');
     })->name('welcome');
@@ -40,6 +41,17 @@ Route::prefix('{locale}')
  
 });
 
+// Facebook Login URL
+Route::prefix('facebook')->name('facebook.')->group( function(){
+    Route::get('auth', [App\Http\Controllers\Auth\FaceBookController::class, 'loginUsingFacebook'])->name('login');
+    Route::get('callback', [App\Http\Controllers\Auth\FaceBookController::class, 'callbackFromFacebook'])->name('callback');
+});
+
+// Google URL
+Route::prefix('google')->name('google.')->group( function(){
+    Route::get('login', [App\Http\Controllers\Auth\GoogleController::class, 'loginWithGoogle'])->name('login');
+    Route::any('callback', [App\Http\Controllers\Auth\GoogleController::class, 'callbackFromGoogle'])->name('callback');
+});
 
 // Route::prefix('user')->middleware(['auth'])->group(function () {
 //     Route::get('/profile', function () {

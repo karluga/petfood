@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class RegisterController extends Controller
 {
@@ -68,13 +69,20 @@ class RegisterController extends Controller
 
     public function register(Request $request)
     {
+        Session::forget('errors');
+    
         $validator = $this->validator($request->all());
-
+    
         if ($validator->fails()) {
             return redirect()->route('welcome', app()->getLocale())
                             ->withErrors($validator, 'register')
                             ->withInput($request->all());
         }
-        $this->create($request->all());
+    
+        $user = $this->create($request->all());
+    
+        $this->guard()->login($user);
+    
+        return redirect(app()->getLocale() . '/home');
     }
 }

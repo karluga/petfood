@@ -19,14 +19,14 @@
         <div class="profile-image">
             <div class="user-img">
                 <span class="label hide">OLD IMAGE</span>
-                <img id="oldImg" src="{{ asset('assets/icons/default_userpng.png') }}" alt="Profile Image" width="100" height="100">
-                <span class="text-box-small">placeholder</span>
+                <img id="oldImg" class="profile-img" src="{{ Auth::user()->filename ? asset('assets/profile_pictures/' . Auth::user()->filename) : asset('assets/icons/default_userpng.png') }}" alt="Profile Image" width="100" height="100">
+                <span class="text-box-small">{{ Auth::user()->filename ?: 'placeholder' }}</span>
                 <input accept="image/*" type="file" id="imgInp" required>
                 <label class="for-input" for="imgInp"><img src="{{ asset('assets/icons/photo-svgrepo-com.png') }}" alt="*" height="25"> Choose Image</label>
             </div>
             <div class="user-img hide">
                 <span class="label">NEW IMAGE</span>
-                <img id="blah" src="" alt="New Image" width="100" height="100">
+                <img id="previewImage" class="profile-img" src="" alt="New Image" width="100" height="100">
                 <span id="filename" class="text-box-small red"></span>
                 <button type="submit" class="for-input"><img src="{{ asset('assets/icons/cloud-upload.png') }}" alt="*" height="25"> Upload</button>            
             </div>
@@ -37,9 +37,9 @@
         <div class="account-info">
             <div class="input-box">
             <div class="field-group-2">
-                <input type="text" value="{{ Auth::user()->username }}" required>
+                <input type="text" value="{{ Auth::user()->username }}" name="nickname" required>
                 <span class="underline"></span>
-                <label>Nickname (display name)</label>
+                <label>Nickname</label>
               </div>
             </div>
             <div class="input-box">
@@ -47,19 +47,20 @@
             </div>
             <div class="input-box">
                 <div class="field-group-2">
-                    <input type="text" value="{{ Auth::user()->name }}" required>
+                    <input type="text" value="{{ Auth::user()->name }}" name="full_name" required>
                     <span class="underline"></span>
                     <label>Full Name</label>
-                  </div>
+                </div>
+                <input type="checkbox" id="displayName" class="custom-checkbox" name="display_name"><label for="displayName">Set as display name</label>
                 <span class="text-box-small">Not verified</span>
                 <span class="text-box-small green">How/Why?</span>
             </div>
             <div class="input-box">
                 <div class="field-group-2">
-                    <input type="text" value="{{ Auth::user()->email }}" required>
+                    <input type="text" value="{{ Auth::user()->email }}" name="email" required>
                     <span class="underline"></span>
                     <label>E-mail</label>
-                  </div>
+                </div>
                 <span class="text-box-small">Not verified</span>
                 <span class="text-box-small green">How/Why?</span>
             </div>
@@ -209,7 +210,7 @@
     imgInp.onchange = evt => {
         const [file] = imgInp.files;
         if (file) {
-            blah.src = URL.createObjectURL(file);
+            previewImage.src = URL.createObjectURL(file);
             const profileImageContainer = document.querySelector('.profile-image');
             const filenameElement = document.getElementById('filename');
             filenameElement.textContent = file.name;

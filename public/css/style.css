@@ -71,15 +71,45 @@ body {
   .field-group-2 .underline:after {
     right: 50%;
   }
-  
+  input.custom-checkbox {
+    display: none;
+}
+input.custom-checkbox + label {
+    display: flex;
+    align-items: center;
+}
+
+input.custom-checkbox:checked + label:before {
+    content: '\2713';
+    font-size: 16px;
+    color: #fff;
+}
+
+input.custom-checkbox + label:before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 1px solid #ddd;
+    background-color: #EDEDED;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  cursor: pointer;
+  margin-right: 5px;
+
+}
+
+input.custom-checkbox:checked + label:before {
+    background-color: var(--input-accent);
+    border-color: var(--input-accent);
+}
 header {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
 }
-.dropdown {
-    margin-top: 2rem;
-}
+
 p {
     margin: 0;
 }
@@ -164,7 +194,7 @@ form.authenticate {
     transform: translate(-50%,-50%);
     top: 50%;
     left: 50%;
-    border-radius: 10px;
+    border-radius: 8px;
     backdrop-filter: blur(10px);
     border: 2px solid rgba(255,255,255,0.1);
     box-shadow: 0 0 40px rgb(8 7 16 / 60%);
@@ -174,6 +204,7 @@ form.authenticate {
     align-items: center;
     text-align: center;
     transition: all 0.5s ease 0s;
+    box-sizing: border-box;
 }
 
 form.authenticate .auth-title {
@@ -210,6 +241,18 @@ form.authenticate i {
     justify-content: center;
     align-items: center;
 }
+/* Styling for the custom scrollbar */
+form.authenticate::-webkit-scrollbar {
+width: 12px;
+box-sizing: border-box;
+}
+
+form.authenticate::-webkit-scrollbar-thumb {
+background-color: #ffffff; /* Color of the scrollbar thumb */
+border-radius: 10px; /* Rounded corners */
+border: 2px solid rgba(255, 255, 255, 0.1); /* Border color */
+}
+  
 .form-control.is-invalid {
     border-color: #ffff00;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23ffff00'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23ffff00' stroke='none'/%3e%3c/svg%3e");
@@ -227,6 +270,17 @@ form.authenticate i {
 form.authenticate i#togglePassword {
     margin-top: -21.5%;
 } */
+.social-login {
+    display: flex;
+    align-items: center;
+    border: 2px solid !important;
+    border-radius: 5px;
+    padding: 2px 5px;
+    text-decoration: none;
+}
+.social-login img {
+    margin-right: 5px;
+}
 
 #signIn input, #signUp input {
     display: block;
@@ -700,8 +754,10 @@ span.label {
     align-items: center;
     margin: 10px;
 }
-.user-img img {
+.user-img img.profile-img {
     margin: 5px;
+    border-radius: 50%;
+    border: 2px solid #9C3B1D;
 }
 #imgInp {
     display: none;
@@ -856,4 +912,7 @@ h1.title.verified {
     .account-info {
         grid-template-columns: repeat(1, 1fr);
     }
+}
+.alert {
+    opacity: 1;
 }

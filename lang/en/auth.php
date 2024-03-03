@@ -13,6 +13,14 @@ return [
             'password' => [
                 'placeholder' => 'Enter your password',
                 'name' => 'Password',
+            ],
+            'password_repeat' => [
+                'placeholder' => 'Repeat Password...',
+                'name' => 'Repeat Password...',
+            ],
+            'name' => [
+                'placeholder' => 'Enter your name',
+                'name' => 'Name',
             ]
         ],
         'checkboxes' => [
@@ -20,7 +28,8 @@ return [
         ],
     ],
     'buttons' => [
-        'login' => 'Log in',
+        'login' => 'Log In',
+        'signup' => 'Sign Up'
     ],
     'links' => [
         'forgot_password' => 'Forgot your password?',
