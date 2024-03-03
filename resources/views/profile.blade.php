@@ -75,14 +75,22 @@
     <div class="connections section">
         <div class="social-container">
             @svg('assets/icons/facebook-logo.svg', 'facebook-logo')
-            <span class="not-connected">
-                Not connected
-            </span>
+            @if(Auth::user()->facebook_id)
+                <img class="checkmark-img" src="{{ asset('assets/icons/checkmark-green.png') }}" alt="Checkmark">
+                <span class="name">{{ Auth::user()->name }}</span>
+            @else
+                <span class="not-connected">Not connected</span>
+            @endif
         </div>
+        
         <div class="social-container">
             @svg('assets/icons/google-logo.svg', 'google-logo')
-            <img class="checkmark-img" src="{{ asset('assets/icons/checkmark-green.png') }}" alt="Checkmark">
-            <span class="name">Kārlis Braķis</span>
+            @if(Auth::user()->google_id)
+                <img class="checkmark-img" src="{{ asset('assets/icons/checkmark-green.png') }}" alt="Checkmark">
+                <span class="name">{{ Auth::user()->name }}</span>
+            @else
+                <span class="not-connected">Not connected</span>
+            @endif
         </div>
     </div>
     <h1 class="title">Roles</h1>

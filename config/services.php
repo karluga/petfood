@@ -31,11 +31,11 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
-    // 'facebook' => [
-    //     'client_id' => '',
-    //     'client_secret' => '',
-    //     'redirect' => 'https://examplelaravel8.test/facebook/callback/'
-    // ],
+    'facebook' => [
+        'client_id' => '737570168440813',
+        'client_secret' => '41e2e65660a3427b278ab62c868cd18d',
+        'redirect' => 'https://2607-2a03-ec00-b19b-19d4-14d2-8d38-f5fa-4400.ngrok-free.app/facebook/callback/'
+    ],
 
     'google' => [
         'client_id' => '155991691238-3n721gc012t2q7co6dlj3ds86eh48fod.apps.googleusercontent.com',
