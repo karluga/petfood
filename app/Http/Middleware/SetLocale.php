@@ -19,6 +19,7 @@ class SetLocale
     {
         $requestedLocale = $request->segment(1);
 
+
         // Get all supported languages from translations.php
         $supportedLanguages = array_keys(Config::get('languages'));
 
@@ -32,7 +33,10 @@ class SetLocale
         // Check if the current locale is already set to avoid unnecessary redirection
         if ($requestedLocale !== App::getLocale()) {
             app()->setLocale($requestedLocale);
+            
             \URL::defaults(['locale' => $requestedLocale]);
+            // dd('Setting locale to: ' . $requestedLocale . " New locale:  " . App::getLocale());
+
         }
 
         return $next($request);

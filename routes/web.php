@@ -32,7 +32,7 @@ Route::prefix('{locale}')
     ->group(function () {
     Route::get('/', function () {
         return view('welcome');
-    });
+    })->name('welcome');
  
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->middleware(['auth'])->name('home');
     Route::get('/profile', [App\Http\Controllers\HomeController::class, 'profile'])->middleware(['auth'])->name('profile');

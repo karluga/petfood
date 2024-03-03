@@ -1,3 +1,13 @@
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -36,78 +46,70 @@
     <link rel="stylesheet" href="{{ asset('css/search-box.css') }}">
 </head>
 <body>
-    <div id="app">
-        <!--SIGN-IN-->
+        <div id="app" class="
+            @if($errors->hasBag('login') && !$errors->hasBag('register'))
+                login-visible
+            @elseif($errors->hasBag('register') && !$errors->hasBag('login'))
+                register-visible
+            @endif
+        ">        <!--SIGN-IN-->
         <form id="signIn" class="authenticate" action="/login" method="POST">
             @csrf
             <text class="auth-title" class="mt-auto">Log In</text>
-            <input required class="input form-control @error('email') is-invalid @enderror" type="text" name="email" placeholder="Email Address...">
-            @error('email')
-            <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
+            <input class="input form-control @error('email', 'login') is-invalid @enderror" type="text" name="email" placeholder="Email Address...">
+            @error('email', 'login')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
             @enderror
+            
             <div class="input position-relative">
-                <input required class="input form-control @error('password') is-invalid @enderror" id="log-psw" type="password" name="password" placeholder="Password...">
                 <i class="bi bi-eye-slash" id="togglePasswordd"></i>
+                <input class="input form-control @error('password', 'login') is-invalid @enderror" id="log-psw" type="password" name="password" placeholder="Password...">
+                @error('password', 'login')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+                @enderror
             </div>
-            @error('password')
-            <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-            @enderror
             <a class="btn btn-link" href="password/reset">
                 Forgot Your Password?
             </a>
             <button type="submit" name="submit" value="Login">Log In</button>
             <a onclick="signUp()" class="white-txt mb-auto" id="link">Sign Up</a>
-            <span class="close-x-btn" onclick="closeEr()">X</span>
+            <span class="close-x-btn" onclick="closePopup()">X</span>
         </form>
+
         <!--SIGN-UP-->
         <form id="signUp" class="authenticate" action="/register" method="POST">
             @csrf
             <text class="auth-title" class="mt-auto">Sign Up</text>
-            <input required class="input form-control @error('name') is-invalid @enderror" type="text" name="name" placeholder="First and last names...">       
-            @error('name')
+            <input required class="input form-control @error('name', 'register') is-invalid @enderror" type="text" name="name" placeholder="First and last names...">       
+            @error('name', 'register')
             <span class="invalid-feedback" role="alert">
                 <strong>{{ $message }}</strong>
             </span>
             @enderror
-            <input required class="input form-control @error('email') is-invalid @enderror" type="email" name="email" placeholder="Email Address...">
-            @error('email')
+            <input required class="input form-control @error('email', 'register') is-invalid @enderror" type="email" name="email" placeholder="Email Address...">
+            @error('email', 'register')
             <span class="invalid-feedback" role="alert">
                 <strong>{{ $message }}</strong>
             </span>
             @enderror
-            {{-- <input required class="input" type="text" name="" placeholder="Username..." autocomplete="off"> --}}
             <div class="input position-relative">
-                <input required class="input form-control @error('password') is-invalid @enderror" id="reg-psw" type="password" name="password" placeholder="Password..." title="Must contain at least one number and one uppercase and lowercase letter, and at least 10 or more characters." autocomplete="off">
                 <i class="bi bi-eye-slash" id="togglePassword"></i>
+                <input required class="input form-control @error('password', 'register') is-invalid @enderror" id="reg-psw" type="password" name="password" placeholder="Password..." title="Must contain at least one number and one uppercase and lowercase letter, and at least 10 or more characters." autocomplete="off">
+                @error('password', 'register')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+                @enderror
             </div>
-            @error('password')
-            <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-            </span>
-            @enderror
             <input required class="input form-control" type="password" id="psw-repeat" name="password_confirmation" placeholder="Repeat Password...">
-            <button onclick="return Validate()" type="submit" name="save">Sign Up</button>
+            <button type="submit" name="save">Sign Up</button>
             <a onclick="signIn()" class="white-txt mb-auto" id="link">Log In</a>
-            <span class="close-x-btn" onclick="closeEr()">X</span>
+            <span class="close-x-btn" onclick="closePopup()">X</span>
         </form>
-        <script>
-            // $(function() {
-            // $(".authenticate").draggable({
-            //     start: function(event, ui) {
-            //     // Add the class to disable transitions when dragging starts
-            //     $(this).addClass("disable-transition");
-            //     },
-            //     stop: function(event, ui) {
-            //     // Remove the class when dragging stops
-            //     $(this).removeClass("disable-transition");
-            //     }
-            // });
-            // });
-        </script>
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
@@ -133,9 +135,9 @@
                     <a class="a active" href=""><span>Home</span><img src="{{ asset('assets/icons/white-home-icon-png-21.jpg') }}" alt="Home Icon"></a>
                     <a class="a" href=""><span>Blog</span><img src="{{ asset('assets/icons/chat-svgrepo-com.svg') }}" alt="Blog Icon"></a>
                     @auth
-                    <a class="a" href="/pets"><span>My Pets</span><img src="{{ asset('assets/icons/pet-leash.png') }}" alt="My Pets Icon"></a>
+                    <a class="a" href="{{ '/' . app()->getLocale() . '/pets' }}"><span>My Pets</span><img src="{{ asset('assets/icons/pet-leash.png') }}" alt="My Pets Icon"></a>
                     <a class="a" href=""><span>Add Pets</span><img src="{{ asset('assets/icons/veterinary_7209231.png') }}" alt="Add Pets Icon"></a>
-                    <a class="a" href="/profile"><span>Kārlis Ivars Braķis <img src="assets/icons/verified.png" alt="Verified Icon"></span><img src="{{ asset('assets/icons/user.png') }}" alt="User Icon"></a>
+                    <a class="a" href="{{ '/' . app()->getLocale() . '/profile' }}"><span>Kārlis Ivars Braķis <img src="assets/icons/verified.png" alt="Verified Icon"></span><img src="{{ asset('assets/icons/user.png') }}" alt="User Icon"></a>
                     <a class="a" href="{{ route('logout') }}"
                     onclick="event.preventDefault();
                                   document.getElementById('logout-form').submit();">
@@ -290,69 +292,34 @@
         </div>
     </div>
     <script>
-        var open = false;
+        var appContainer = document.getElementById('app');
         var signUpContainer = document.getElementById('signUp');
         var signInContainer = document.getElementById('signIn');
 
         function signIn() {
-            signUpContainer.style.visibility = "hidden";
-            signUpContainer.style.opacity = "0";
-            signUpContainer.style.pointerEvents = "none";
-            
-            signInContainer.style.visibility = "visible";
-            signInContainer.style.opacity = "1";
-            signInContainer.style.pointerEvents = "auto";
-        
-            const div = signInContainer;
-            const nodes = div.getElementsByTagName("input");
-            for (let i = 0; i < nodes.length; i++) {
-                nodes[i].style.marginTop = "8px";
-                nodes[i].style.transitionDuration="2s";
-            }
-            event.stopPropagation(); // Prevent the click event from propagating
-
-            open = true;
+            appContainer.classList.remove('register-visible');
+            appContainer.classList.add('login-visible');
+            event.stopPropagation();
         }
-        
+
         function signUp() {
-            signUpContainer.style.visibility = "visible";
-            signUpContainer.style.opacity = "1";
-            signUpContainer.style.pointerEvents = "auto";
-            
-            signInContainer.style.visibility = "hidden";
-            signInContainer.style.opacity = "0";
-            signInContainer.style.pointerEvents = "none";
-        
-            const div = signUpContainer;
-            const nodes = div.getElementsByTagName("input");
-            for (let i = 0; i < nodes.length; i++) {
-                nodes[i].style.marginTop = "8px";
-                nodes[i].style.transitionDuration="2s";
-            }
-            event.stopPropagation(); // Prevent the click event from propagating
-
-            open = true;
+            appContainer.classList.remove('login-visible');
+            appContainer.classList.add('register-visible');
+            event.stopPropagation();
         }
-        
-        function closeEr() {
-            signInContainer.style.visibility = "hidden";
-            signInContainer.style.opacity = "0";
-            signInContainer.style.pointerEvents = "none";
-            signUpContainer.style.visibility = "hidden";
-            signUpContainer.style.opacity = "0";
-            signUpContainer.style.pointerEvents = "none";
+
+        function closePopup() {
+            appContainer.classList.remove('login-visible', 'register-visible');
         }
 // Add event listener to the document body for clicks
 document.body.addEventListener('click', function (event) {
-    // Check if the click is outside of the containers
-    if (!signInContainer.contains(event.target) && !signUpContainer.contains(event.target)) {
-        // Close the forms if they are open
-        if (open) {
-            closeEr();
-            open = false;
-        }
+    // Check if at least one of the classes is present
+    if ((appContainer.classList.contains('login-visible') || appContainer.classList.contains('register-visible')) &&
+        !signInContainer.contains(event.target) && !signUpContainer.contains(event.target)) {
+        closePopup();
     }
 });
+
         function Validate() {
             var password = document.getElementById("reg-psw").value;
             var confirmPassword = document.getElementById("psw-repeat").value;
@@ -393,3 +360,6 @@ document.body.addEventListener('click', function (event) {
     </script>
 </body>
 </html>
+@php
+    dd($errors);
+@endphp
