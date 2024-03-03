@@ -12,16 +12,19 @@
     <!-- Scripts -->
 </head>
 <body>
+    @if (session('success'))
+    <div class="alert alert-success w-100">{{ session('success') }}</div>
+    @endif
     <h1>My Profile</h1>
     <div class="user-profile">
-    <form action="">
+        <form action="{{ route('profile.upload-image', ['locale' => request()->segment(1)]) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="profile-image">
             <div class="user-img">
                 <span class="label hide">OLD IMAGE</span>
-                <img id="oldImg" class="profile-img" src="{{ Auth::user()->filename ? asset('assets/profile_pictures/' . Auth::user()->filename) : asset('assets/icons/default_userpng.png') }}" alt="Profile Image" width="100" height="100">
+                <img id="oldImg" class="profile-img" src="{{ Auth::user()->filename ? asset('storage/profile_pictures/' . Auth::user()->filename) : asset('assets/icons/default_userpng.png') }}" alt="Profile Image" width="100" height="100">
                 <span class="text-box-small">{{ Auth::user()->filename ?: 'placeholder' }}</span>
-                <input accept="image/*" type="file" id="imgInp" required>
+                <input accept="image/*" type="file" id="imgInp" name="new_image" required>
                 <label class="for-input" for="imgInp"><img src="{{ asset('assets/icons/photo-svgrepo-com.png') }}" alt="*" height="25"> Choose Image</label>
             </div>
             <div class="user-img hide">
@@ -32,14 +35,14 @@
             </div>
         </div>
     </form>
-    <form action="">
+    <form action="{{ route('profile.update', ['locale' => request()->segment(1)]) }}" method="POST">
         @csrf
         <div class="account-info">
             <div class="input-box">
             <div class="field-group-2">
-                <input type="text" value="{{ Auth::user()->username }}" name="nickname" required>
+                <input type="text" value="{{ Auth::user()->username }}" name="username" required>
                 <span class="underline"></span>
-                <label>Nickname</label>
+                <label>Username</label>
               </div>
             </div>
             <div class="input-box">

@@ -224,7 +224,7 @@
                             <a onclick="signIn()" class="cool-button">{{ __('auth.buttons.login') }}</a>
                             @else
                             <li class="nav-item dropdown d-flex align-items-center">
-                                <img id="profilePicture" src="{{ Auth::user()->filename ? asset('assets/profile_pictures/' . Auth::user()->filename) : asset('assets/icons/default_userpng.png') }}" height="35" alt="Profile Picture">
+                                <img id="profilePicture" src="{{ Auth::user()->filename ? asset('storage/profile_pictures/' . Auth::user()->filename) : asset('assets/icons/default_userpng.png') }}" height="35" alt="Profile Picture">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                 {{ Auth::user()->name }}
                                 </a>

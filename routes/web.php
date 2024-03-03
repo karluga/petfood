@@ -36,7 +36,16 @@ Route::prefix('{locale}')
     })->name('welcome');
  
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->middleware(['auth'])->name('home');
-    Route::get('/profile', [App\Http\Controllers\HomeController::class, 'profile'])->middleware(['auth'])->name('profile');
+    
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('auth');
+    Route::get('/pets', [App\Http\Controllers\HomeController::class, 'pets'])->name('pets')->middleware('auth');
+
+    Route::prefix('/profile')->middleware('auth')->group(function () {
+        Route::get('/', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
+        Route::post('/update', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+        Route::post('/upload-image', [App\Http\Controllers\ProfileController::class, 'uploadImage'])->name('profile.upload-image');
+        Route::get('/change-password', [App\Http\Controllers\ProfileController::class, 'changePassword'])->name('profile.change-password');
+    });
     Route::get('/pets', [App\Http\Controllers\HomeController::class, 'pets'])->middleware(['auth'])->name('pets');
  
 });
