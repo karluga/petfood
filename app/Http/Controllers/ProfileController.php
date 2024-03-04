@@ -17,7 +17,7 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $user = Auth::user();
-        $locale = $request->segment(1); // Get the first segment of the URL as $locale
+        $locale = $request->segment(1);
 
         $user->username = $request->input('username');
         $user->name = $request->input('full_name');
@@ -37,43 +37,28 @@ class ProfileController extends Controller
         ]);
     
         $user = Auth::user();
-        $locale = $request->segment(1); // Get the first segment of the URL as $locale
+        $locale = $request->segment(1);
     
         if ($request->hasFile('new_image')) {
-            // Store the new image in the storage disk
+            // Store the new image in the storage directory
             $filename = 'profile_picture_' . time() . '.' . $request->file('new_image')->getClientOriginalExtension();
             $path = $request->file('new_image')->storeAs('profile_pictures', $filename, 'public');
     
             // Check if the new image was stored successfully
-            if ($path) {
-                // Log success message
-                Log::info("New image uploaded successfully: $filename");
-    
-                // Delete the old image only if it exists
+            if ($path) {    
                 if ($user->filename) {
-                    // Check if the old image exists before deletion
-                    if (Storage::exists('public/profile_pictures/' . $user->filename)) {
-                        // Log message before deletion
-                        Log::info("Deleting old image: " . $user->filename);
-    
-                        // Delete the old image
+                    if (Storage::exists('public/profile_pictures/' . $user->filename)) {    
                         Storage::delete('public/profile_pictures/' . $user->filename);
-    
-                        // Log message after deletion
-                        Log::info("Old image deleted: " . $user->filename);
                     } else {
-                        // Log message if the old image doesn't exist
                         Log::warning("Old image not found: " . $user->filename);
                     }
                 }
-    
-                // Update the user's filename with the new one
+
                 $user->filename = $filename;
                 $user->save();
     
                 return redirect()->route('profile', $locale)->with('success', 'Profile picture updated successfully.');
             } else {
-                // Log error message if new image upload fails
                 Log::error("Failed to upload new image.");
             }
         }
@@ -83,6 +68,6 @@ class ProfileController extends Controller
 
     public function changePassword()
     {
-        // Implementation for changing password
+        //
     }
 }
