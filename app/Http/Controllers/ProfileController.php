@@ -30,9 +30,6 @@ class ProfileController extends Controller
         return redirect()->route('profile', $locale)->with('success', 'Profile updated successfully.');
     }
 
-
-    use Illuminate\Support\Facades\Log;
-
     public function uploadImage(Request $request)
     {
         $this->validate($request, [
