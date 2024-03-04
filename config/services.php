@@ -32,15 +32,15 @@ return [
     ],
 
     'facebook' => [
-        'client_id' => '737570168440813',
-        'client_secret' => '41e2e65660a3427b278ab62c868cd18d',
-        'redirect' => 'https://2607-2a03-ec00-b19b-19d4-14d2-8d38-f5fa-4400.ngrok-free.app/facebook/callback/'
+        'client_id' => env('FACEBOOK_CLIENT_ID'),
+        'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
+        'redirect' => env('FACEBOOK_REDIRECT_URI'),
     ],
-
+    
     'google' => [
-        'client_id' => '155991691238-3n721gc012t2q7co6dlj3ds86eh48fod.apps.googleusercontent.com',
-        'client_secret' => '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', 
-        'redirect' => 'https://2607-2a03-ec00-b19b-19d4-14d2-8d38-f5fa-4400.ngrok-free.app/google/callback/'
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
 ];

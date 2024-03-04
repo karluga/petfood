@@ -18,6 +18,12 @@ Credentials from Gmail SMTP free mail service (from their server)
 ```
 php artisan migrate
 ```
+6. Make a storage link and add write/read/delete permissions for `storage/` folder.
+```
+php artisan storage:link
+# In linux
+sudo chmod -R 777 storage
+```
 
 ## Notes
 ### NOTE 1
@@ -29,13 +35,17 @@ Run this in the ngrok command line tool and it will give you a URL for testing. 
 ngrok http http://localhost:8000
 
 ```
-Then you have to add these lines to the `config/services.php` file.
+Then you have to add these lines to the `.env` file used in `config/services.php`.
 ```
-'google' => [
-    'client_id' => 'XXX',
-    'client_secret' => 'XXX',
-    'redirect' => 'https://3a9b-2a03-ec00-b19b-19d4-14d2-8d38-f5fa-4400.ngrok-free.app/google/callback/'
-],
+# Facebook OAuth Configuration
+FACEBOOK_CLIENT_ID=XXX
+FACEBOOK_CLIENT_SECRET=XXX
+FACEBOOK_REDIRECT_URI=https://2607-2a03-ec00-b19b-19d4-14d2-8d38-f5fa-4400.ngrok-free.app/facebook/callback/
+
+# Google OAuth Configuration
+GOOGLE_CLIENT_ID=XXX
+GOOGLE_CLIENT_SECRET=XXX
+GOOGLE_REDIRECT_URI=https://2607-2a03-ec00-b19b-19d4-14d2-8d38-f5fa-4400.ngrok-free.app/google/callback/
 ```
 3. [Link to Google Cloud console](https://console.cloud.google.com/apis/credentials)
 Here you have to add the Ngrok generated URL to the "Authorized redirect URIs" section.
