@@ -2,18 +2,14 @@
 
 @section('content')
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Pet Food</title>
-
-    <!-- Fonts -->
-
-    <!-- Scripts -->
+    <title>Pet Food | Profile</title>
 </head>
 <body>
     @if (session('success'))
     <div class="alert alert-success w-100">{{ session('success') }}</div>
+    @endif
+    @if (session('error'))
+    <div class="alert alert-danger w-100">{{ session('error') }}</div>
     @endif
     <h1>My Profile</h1>
     <div class="user-profile">
@@ -22,14 +18,14 @@
         <div class="profile-image">
             <div class="user-img">
                 <span class="label hide">OLD IMAGE</span>
-                <img id="oldImg" class="profile-img" src="{{ Auth::user()->filename ? asset('storage/profile_pictures/' . Auth::user()->filename) : asset('assets/icons/default_userpng.png') }}" alt="Profile Image" width="100" height="100">
+                <img id="oldImg" class="profile-img object-fit-cover" src="{{ Auth::user()->filename ? asset('storage/profile_pictures/' . Auth::user()->filename) : asset('assets/icons/default_userpng.png') }}" alt="Profile Image" width="100" height="100">
                 <span class="text-box-small">{{ Auth::user()->filename ?: 'placeholder' }}</span>
                 <input accept="image/*" type="file" id="imgInp" name="new_image" required>
                 <label class="for-input" for="imgInp"><img src="{{ asset('assets/icons/photo-svgrepo-com.png') }}" alt="*" height="25"> Choose Image</label>
             </div>
             <div class="user-img hide">
                 <span class="label">NEW IMAGE</span>
-                <img id="previewImage" class="profile-img" src="" alt="New Image" width="100" height="100">
+                <img id="previewImage" class="profile-img object-fit-cover" src="" alt="New Image" width="100" height="100">
                 <span id="filename" class="text-box-small red"></span>
                 <button type="submit" class="for-input"><img src="{{ asset('assets/icons/cloud-upload.png') }}" alt="*" height="25"> Upload</button>            
             </div>
@@ -40,7 +36,7 @@
         <div class="account-info">
             <div class="input-box">
             <div class="field-group-2">
-                <input type="text" value="{{ Auth::user()->username }}" name="username" required>
+                <input type="text" value="{{ Auth::user()->username }}" name="username">
                 <span class="underline"></span>
                 <label>Username</label>
               </div>
@@ -50,22 +46,29 @@
             </div>
             <div class="input-box">
                 <div class="field-group-2">
-                    <input type="text" value="{{ Auth::user()->name }}" name="full_name" required>
+                    <input type="text" value="{{ Auth::user()->name }}" name="full_name">
                     <span class="underline"></span>
                     <label>Full Name</label>
                 </div>
-                <input type="checkbox" id="displayName" class="custom-checkbox" name="display_name"><label for="displayName">Set as display name</label>
+                <input type="checkbox" id="displayName" class="custom-checkbox" name="display_name" {{ Auth::user()->display_name ? 'checked' : '' }}><label for="displayName">Set as display name</label>
                 <span class="text-box-small">Not verified</span>
                 <span class="text-box-small green">How/Why?</span>
             </div>
             <div class="input-box">
                 <div class="field-group-2">
-                    <input type="text" value="{{ Auth::user()->email }}" name="email" required>
+                    <input type="text" value="{{ Auth::user()->email }}" name="email">
                     <span class="underline"></span>
                     <label>E-mail</label>
                 </div>
-                <span class="text-box-small">Not verified</span>
-                <span class="text-box-small green">How/Why?</span>
+                
+                @if(Auth::user()->email_verified_at)
+                    <span class="text-box-small verified">Verified</span>
+                @else
+                    <span class="text-box-small">
+                        <a href="{{ route('profile.verify-email', ['locale' => app()->getLocale(), 'id' => Auth::id(), 'hash' => sha1(Auth::user()->getEmailForVerification())]) }}">Not verified</a>
+                    </span>
+                    <span class="text-box-small green">How/Why?</span>
+                @endif
             </div>
         </div>
         <button type="submit" class="for-input submit">
@@ -191,7 +194,8 @@
     <!-- Modal Password change -->
     <div class="modal fade" id="passwordChangeModal" tabindex="-1" role="dialog" aria-labelledby="passwordChangeModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
-        <div class="modal-content">
+        <form class="modal-content" method="post" action="{{ route('profile.change-password', app()->getLocale()) }}">
+            @csrf
             <div class="modal-header">
             <h5 class="modal-title" id="passwordChangeModalLabel">Change Password</h5>
             <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
@@ -199,22 +203,27 @@
             </button>
             </div>
             <div class="modal-body d-flex flex-wrap">
-                <div class="field-group-2 mb-2">
-                    <input type="text" required>
+                <div class="field-group-2">
+                    <input type="{{  Auth::user()->google_id ? 'text' : 'password' }}" name="current_password" value="{{  Auth::user()->google_id ? Auth::user()->name . '@' . Auth::user()->google_id : '' }}" required>
                     <span class="underline"></span>
                     <label>Current Password</label>
                 </div>
-                <div class="field-group-2">
-                    <input type="text" required>
+                <div class="field-group-2 mt-2">
+                    <input type="password" name="new_password" required>
                     <span class="underline"></span>
                     <label>New Password</label>
+                </div>
+                <div class="field-group-2 mt-2">
+                    <input type="password" name="confirm_password" required>
+                    <span class="underline"></span>
+                    <label>Confirm Password</label>
                 </div>
             </div>
             <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
+            <button type="submit" class="btn btn-primary">Change Password</button>
             </div>
-        </div>
+        </form>
         </div>
     </div>
     <script>

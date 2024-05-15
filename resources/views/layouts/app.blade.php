@@ -28,6 +28,7 @@
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     {{-- from /public --}}
     <link rel="stylesheet" href="{{ asset('css/search-box.css') }}">
+    <script src="{{ asset('js/autocomplete.js') }}" defer></script>
     </head>
     <body>
         <div id="app" class="@if($errors->hasBag('login')) login-visible @elseif($errors->hasBag('register')) register-visible @endif">
@@ -171,18 +172,20 @@
                                     <img src="{{ asset('assets/flags/' . (App::currentLocale())) }}.svg" alt="flag-{{ App::currentLocale() }}">
                                     <p>
                                         <span class="language-code">{{ config('languages')[App::currentLocale()]['code'] }}</span>
-                                        <span class="language-name">{{ config('languages')[App::currentLocale()]['name'] }}</span>
                                     </p>
                                 </a>
                                 <!-- Other Languages -->
                                 @foreach(config('languages') as $key => $language)
                                 @if(App::currentLocale() != $key)
-                                <a class="square" href="{{ $key }}" title="{{ $language['name'] }}" style="display: none;">
-                                    <img src="{{ asset('assets/flags/'.$key) }}.svg" alt="flag-{{ $key }}">
-                                    <p>
-                                        <span class="language-code">{{ $language['code'] }}</span>
-                                        <span class="language-name">{{ $language['name'] }}</span>
-                                    </p>
+                                @php
+                                    $currentPath = Request::path();
+                                    $currentPathSegments = explode('/', $currentPath);
+                                    array_shift($currentPathSegments);
+                                    $currentPathWithoutLocale = implode('/', $currentPathSegments);
+                                @endphp
+                                <a class="square" href="/{{ $key }}/{{ $currentPathWithoutLocale }}" title="{{ $language['name'] }}" style="display: none">
+                                <img src="{{ asset('assets/flags/'.$key) }}.svg" alt="flag-{{ $key }}">
+                                    <p><span class="language-code">{{ $language['code'] }}</span></p>
                                 </a>
                                 @endif
                                 @endforeach
@@ -224,9 +227,9 @@
                             <a onclick="signIn()" class="cool-button">{{ __('auth.buttons.login') }}</a>
                             @else
                             <li class="nav-item dropdown d-flex align-items-center">
-                                <img id="profilePicture" src="{{ Auth::user()->filename ? asset('storage/profile_pictures/' . Auth::user()->filename) : asset('assets/icons/default_userpng.png') }}" height="35" alt="Profile Picture">
+                                <img id="profilePicture" class="object-fit-cover border rounded-circle" src="{{ Auth::user()->filename ? asset('storage/profile_pictures/' . Auth::user()->filename) : asset('assets/icons/default_userpng.png') }}" height="35" width="35" alt="Profile Picture">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                {{ Auth::user()->name }}
+                                {{ Auth::user()->display_name && !empty(Auth::user()->name) ? Auth::user()->name : Auth::user()->username }}
                                 </a>
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item d-flex justify-content-between align-items-center" href="{{ route('logout') }}"
@@ -253,39 +256,36 @@
                 @yield('content')
             </main>
             <footer>
-                <p>{{ __('app.footer') }}</p>
+                <p>Pet Food | {{__('app.footer') }}</p>
             </footer>
         </div>
         <!-- Modal Language change -->
         <div class="modal fade" id="languageChangeModal" tabindex="-1" role="dialog" aria-labelledby="languageChangeModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
-                <form method="GET" action="{{ route('change.language') }}" class="modal-content">
+                <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="languageChangeModalLabel">{{ __('app.navigation.change_language') }}</h5>
                         <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
+                            <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <!-- Mobile Version -->
                     <div class="modal-body d-flex flex-wrap">
                         @foreach(config('languages') as $key => $language)
                         <div class="language-item">
-                            <input @if($key == App::currentLocale()) checked @endif type="radio" name="language" value="{{ $key }}" id="{{ $key }}" class="d-none">
-                            <label for="{{ $key }}" class="language-mobile" href="#" title="{{ $language['name'] }}">
-                                <div class="flag-container">
-                                    <img src="{{ asset('assets/flags/'.$key) }}.svg" alt="flag-{{ $key }}">
-                                    <span class="language-code-mobile">{{ strtoupper($language['code']) }}</span>
-                                </div>
-                                <span class="language-name-mobile">{{ $language['name'] }} @if($key == App::currentLocale()) {{ __('app.navigation.current') }} @endif</span>
-                            </label>
+                            <a class="square @if($key == App::currentLocale()) active @endif" href="/{{ $key }}/{{ $currentPathWithoutLocale }}" title="{{ $language['name'] }}">
+                                <img src="{{ asset('assets/flags/'.$key) }}.svg" alt="flag-{{ $key }}">
+                                <p><span class="language-code">{{ $language['code'] }}</span></p>
+                            </a>
+                            <span class="language-name">{{ $language['name'] }} @if($key == App::currentLocale()) {{ __('app.navigation.current') }} @endif</span>
                         </div>
                         @endforeach
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('app.navigation.close') }}</button>
-                        <button type="submit" class="btn btn-primary">{{ __('app.navigation.save_changes') }}</button>
+                        <button onclick="document.getElementById('languageChangeForm').submit();" class="btn btn-primary">{{ __('app.navigation.save_changes') }}</button>
                     </div>
-                </form>
+                </div>                                                           
             </div>
         </div>
         <script>

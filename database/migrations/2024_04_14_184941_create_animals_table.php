@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('food_safety', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::create('animals', function (Blueprint $table) {
+            $table->string('gbif_id')->unique();
+            $table->enum('category', ['wild', 'tame/domestic', 'exotic']); // Define ENUM type
         });
+        
     }
 
     /**
@@ -22,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('food_safety');
+        Schema::dropIfExists('animals');
     }
 };

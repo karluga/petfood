@@ -15,8 +15,8 @@ return [
                 'name' => 'Password',
             ],
             'password_repeat' => [
-                'placeholder' => 'Repeat Password...',
-                'name' => 'Repeat Password...',
+                'placeholder' => 'Repeat Password',
+                'name' => 'Repeat Password',
             ],
             'name' => [
                 'placeholder' => 'Enter your name',

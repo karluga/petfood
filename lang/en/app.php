@@ -13,5 +13,5 @@ return [
         'search' => 'Search',
         'current' => '(current)',
     ],
-    'footer' => 'Pet Food | Source of information on what you can or cannot feed to your pets, provided by the community.',
+    'footer' => 'Source of information on what you can or cannot feed to your pets, provided by the community.',
 ];

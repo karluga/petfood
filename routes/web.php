@@ -13,29 +13,28 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Auth::routes();
+Auth::routes(['verify' => true]);
 
 Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
     // Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
 });
+
 Route::get('/', function () {
     return redirect(app()->getLocale());
 });
-Route::get('/change-language', function () {
-    $selectedLanguage = request('language');
-    return redirect("/$selectedLanguage");
-})->name('change.language');
 
 Route::prefix('{locale}')
-    ->where(['locale' => '[a-zA-Z]{2}'])
-    ->middleware('setlocale')
-    ->group(function () {
-        // dd(app()->getLocale());
-    Route::get('/', function () {
-        return view('welcome');
+->where(['locale' => '[a-zA-Z]{2}'])
+->middleware('setlocale')
+->group(function () {
+    // dd(app()->getLocale());
+    Route::get('/', function ($locale) {
+        return app()->call('App\Http\Controllers\HomeController@welcome', ['locale' => $locale]);
     })->name('welcome');
- 
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->middleware(['auth'])->name('home');
+
+    Route::prefix('/popular')->group(function () {
+        Route::get('/{slug}', [App\Http\Controllers\HomeController::class, 'popular'])->name('popular');
+    });
     
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('auth');
     Route::get('/pets', [App\Http\Controllers\HomeController::class, 'pets'])->name('pets')->middleware('auth');
@@ -44,10 +43,13 @@ Route::prefix('{locale}')
         Route::get('/', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
         Route::post('/update', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
         Route::post('/upload-image', [App\Http\Controllers\ProfileController::class, 'uploadImage'])->name('profile.upload-image');
-        Route::get('/change-password', [App\Http\Controllers\ProfileController::class, 'changePassword'])->name('profile.change-password');
+        Route::post('/change-password', [App\Http\Controllers\ProfileController::class, 'changePassword'])->name('profile.change-password');
+        // Customize the email verification route
+        Route::get('/verify-email/{id}/{hash}', [App\Http\Controllers\Auth\VerificationController::class, 'verify'])
+        ->middleware(['auth', 'signed', 'throttle:6,1'])
+        ->name('profile.verify-email');
     });
     Route::get('/pets', [App\Http\Controllers\HomeController::class, 'pets'])->middleware(['auth'])->name('pets');
- 
 });
 
 // Facebook Login URL

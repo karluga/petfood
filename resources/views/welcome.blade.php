@@ -2,17 +2,7 @@
 
 @section('content')
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Pet Food</title>
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
-
-    <!-- Scripts -->
-    <link rel="stylesheet" href="{{ asset('js/autocomplete.js') }}">
+    <title>Pet Food | Welcome</title>
 </head>
 <body>
     <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1">
@@ -23,10 +13,6 @@
               </filter>
           </defs>
     </svg>
-    <!--USER-INFO-->
-    <div class="user">
-        <text></text>
-    </div>
     <header>
         <h2>What to give/not to give my pet?</h2>
     </header>
@@ -37,38 +23,15 @@
             <div class="arrow arrow-left">◀</div>
             <div class="arrow arrow-right">▶</div>
         </label>
-        <a href="" class="triangle active" data-accent="#9b2dda">
+        @foreach($popularPets as $popularPet)
+        <a href="/{{ Request::segment(1) . '/popular/' . $popularPet['slug'] }}" class="triangle" style="--accent-color: {{ $popularPet['hex_color'] }}">
             <div>
-                <div class="text">Rodents
-                    {{-- Mice, Rats, Guinea Pigs, Hamsters, Gerbils --}}
-                </div><div class="emoji">🐀
-                </div>
+                <div class="text">{{ $popularPet['name'] }}</div>
+                <div class="emoji">{{ $popularPet['emoji'] }}</div>
             </div>
         </a>
-        <a href="" class="triangle active" data-accent="darkred">
-            <div>
-                <div class="text">Reptiles
-                    {{-- Snakes, Turtles, Lizards, Geckos, Bearded Dragons --}}
-                </div><div class="emoji">🐢
-                </div>
-            </div>
-        </a>
-        <a href="" class="triangle active" data-accent="darkgreen">
-            <div>
-                <div class="text">Aves
-                    {{-- Parrots, Canaries, Finches, Budgerigars, Cockatiels --}}
-                </div><div class="emoji">🦜
-                </div>
-            </div>
-        </a>
-        <a href="" class="triangle" data-accent="darkred">
-            <div>
-                <div class="text">Amphibians
-                    {{-- Frogs, Toads, Salamanders --}}
-                </div><div class="emoji">🐸
-                </div>
-            </div>
-        </a>
+        @endforeach
+        {{-- HARDCODED --}}
         <a href="" class="triangle" data-accent="darkred">
             <div>
                 <div class="text">Livestock
@@ -77,51 +40,8 @@
                 </div>
             </div>
         </a>
-        <a href="" class="triangle" data-accent="darkred">
-            <div>
-                <div class="text">Cats
-                </div><div class="emoji">😺
-                </div>
-            </div>
-        </a>
-        <a href="" class="triangle" data-accent="darkred">
-            <div>
-                <div class="text">Dogs
-                </div><div class="emoji">🐶
-                </div>
-            </div>
-        </a>
-        <a href="" class="triangle" data-accent="darkred">
-            <div>
-                <div class="text">Hedgehog
-                </div><div class="emoji">🦔
-                </div>
-            </div>
-        </a>
-        <a href="" class="triangle" data-accent="darkred">
-            <div>
-                <div class="text">Chinchillas
-                </div><div class="emoji">🐹
-                </div>
-            </div>
-        </a>
-        <a href="" class="triangle" data-accent="darkred">
-            <div>
-                <div class="text">Fish
-                    {{-- Goldfish, Betta Fish, Guppies, Tetras, Cichlids --}}
-                </div><div class="emoji">🐟
-                </div>
-            </div>
-        </a>
-        <a href="" class="triangle" data-accent="darkred">
-            <div>
-                <div class="text">Rabbits
-                </div><div class="emoji">🐰
-                </div>
-            </div>
-        </a>
     </div>
-
+        
     <!-- SEARCH BAR -->
     <div class="search-dropdown">
         <input type="text" name="search_box" placeholder="Write your pets species here..." id="search_box" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onkeyup="javascript:load_data(this.value)" onfocus="javascript:load_search_history()" />
@@ -152,5 +72,4 @@
     </div>
     @endguest
 </body>
-<script src="autocomplete.js"></script>
 @endsection

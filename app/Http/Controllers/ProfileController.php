@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class ProfileController extends Controller
 {
@@ -14,27 +16,69 @@ class ProfileController extends Controller
         return view('profile');
     }
 
-    public function update(Request $request)
-    {
-        $user = Auth::user();
-        $locale = $request->segment(1);
+public function update(Request $request)
+{
+    $user = Auth::user();
+    $locale = $request->segment(1);
 
-        $user->username = $request->input('username');
-        $user->name = $request->input('full_name');
-        $user->email = $request->input('email');
+    // Custom error messages
+    $messages = [
+        'username.required_without_all' => 'Either email or username must be filled.',
+        'email.required_without_all' => 'Either email or username must be filled.',
+        'email.email' => 'The email must be a valid email address.',
+        'full_name.required_if' => 'Full name is required when display name is set.',
+    ];
 
-        $user->display_name = $request->has('display_name');
+    // Validation rules
+    $request->validate([
+        'username' => 'required_without_all:email',
+        'email' => 'required_without_all:username|email',
+        'full_name' => 'required_if:display_name,true',
+    ], $messages);
 
-        $user->save();
+    $user->username = $request->input('username');
+    $user->name = $request->input('full_name');
+    $user->email = $request->input('email');
 
-        return redirect()->route('profile', $locale)->with('success', 'Profile updated successfully.');
+    // Check if the email is being updated
+    if ($user->email !== $request->input('email')) {
+        $user->email_verified_at = null; // Reset email verification status
     }
+
+    $user->display_name = $request->has('display_name');
+
+    // Additional check for display_name and full_name
+    if ($user->display_name && empty($user->name)) {
+        return redirect()->back()->with('error', 'Full name is required when display name is set.');
+    }
+
+    // Additional check for either email or username filled
+    if (empty($user->email) && empty($user->username)) {
+        return redirect()->back()->with('error', 'Either email or username must be filled.');
+    }
+
+    $user->save();
+
+    return redirect()->route('profile', $locale)->with('success', 'Profile updated successfully.');
+}
+
 
     public function uploadImage(Request $request)
     {
-        $this->validate($request, [
-            'new_image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
-        ]);
+        try {
+            $this->validate($request, [
+                'new_image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Maximum size in kilobytes (2MB)
+            ], [
+                'new_image.image' => __('The uploaded file must be an image.'),
+                'new_image.mimes' => __('Only JPEG, PNG, JPG, SVG, and GIF formats are allowed.'),
+                'new_image.max' => __('The uploaded file may not be greater than 2MB.'),
+            ]);
+        } catch (ValidationException $e) {
+            $errors = $e->validator->getMessageBag()->getMessages();
+            if (isset($errors['new_image'])) {
+                return redirect()->route('profile', $request->segment(1))->with('error', $errors['new_image'][0]);
+            }
+        }
     
         $user = Auth::user();
         $locale = $request->segment(1);
@@ -45,15 +89,15 @@ class ProfileController extends Controller
             $path = $request->file('new_image')->storeAs('profile_pictures', $filename, 'public');
     
             // Check if the new image was stored successfully
-            if ($path) {    
+            if ($path) {
                 if ($user->filename) {
-                    if (Storage::exists('public/profile_pictures/' . $user->filename)) {    
+                    if (Storage::exists('public/profile_pictures/' . $user->filename)) {
                         Storage::delete('public/profile_pictures/' . $user->filename);
                     } else {
                         Log::warning("Old image not found: " . $user->filename);
                     }
                 }
-
+    
                 $user->filename = $filename;
                 $user->save();
     
@@ -65,9 +109,28 @@ class ProfileController extends Controller
     
         return redirect()->route('profile', $locale)->with('error', 'Image upload failed.');
     }
+    
 
-    public function changePassword()
+    public function changePassword(Request $request)
     {
-        //
+        $user = Auth::user();
+
+        // Validate the form input
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|min:8',
+            'confirm_password' => 'required|same:new_password',
+        ]);
+
+        // Verify current password
+        if (!Hash::check($request->input('current_password'), $user->password)) {
+            return redirect()->back()->with('error', 'Current password is incorrect.');
+        }
+
+        // Update the user's password
+        $user->password = Hash::make($request->input('new_password'));
+        $user->save();
+
+        return redirect()->back()->with('success', 'Password updated successfully.');
     }
 }

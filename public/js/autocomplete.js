@@ -1,7 +1,7 @@
 function load_search_history() {
     var search_query = document.getElementsByName('search_box')[0].value;
     if (search_query == '') {
-        fetch("api/autocomplete.php", {
+        fetch("api/autocomplete", {
             method: "POST",
             body: JSON.stringify({
                 action: 'fetch'
@@ -32,7 +32,7 @@ function load_search_history() {
 function get_text(event) {
     var string = event.textContent;
     //fetch api
-    fetch("api/autocomplete.php", {
+    fetch("api/autocomplete", {
         method: "POST",
         body: JSON.stringify({
             search_query: string
@@ -53,7 +53,7 @@ function load_data(query) {
         var form_data = new FormData();
         form_data.append('query', query);
         var ajax_request = new XMLHttpRequest();
-        ajax_request.open('POST', 'api/autocomplete.php');
+        ajax_request.open('POST', 'api/autocomplete');
         ajax_request.send(form_data);
         ajax_request.onreadystatechange = function() {
             if (ajax_request.readyState == 4 && ajax_request.status == 200) {
@@ -61,7 +61,7 @@ function load_data(query) {
                 var html = '<div class="list-group">';
                 if (response.length > 0) {
                     for (var count = 0; count < response.length; count++) {
-                        html += '<a href="#" class="list-group-item list-group-item-action" onclick="get_text(this)">' + response[count].nosaukums + '</a>';
+                        html += '<a href="#" class="list-group-item list-group-item-action" onclick="get_text(this)">' + response[count].canonicalName + '</a>';
                     }
                 } else {
                     html += '<a href="#" class="list-group-item list-group-item-action disabled">No Data Found</a>';
