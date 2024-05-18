@@ -2,9 +2,9 @@
 
 @section('content')
 <head>
-    <title>Pet Food | Welcome</title>
+    <title>{{ env('APP_NAME', 'Pet Food') }} | Welcome</title>
 </head>
-<body>
+<body id="welcome">
     <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1">
         <defs>
               <filter id="smooth-edges"><feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />    

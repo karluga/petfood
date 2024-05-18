@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', App::currentLocale()) }}">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- CSRF Token -->
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>{{ config('app.name', 'Pet Food') }}</title>
+        <title>{{ env('APP_NAME', 'Pet Food') }}</title>
         <!-- Fonts -->
         <link rel="dns-prefetch" href="//fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
@@ -133,11 +133,11 @@
                         <a class="a active" href=""><span>{{ __('app.navigation.home') }}</span><img src="{{ asset('assets/icons/white-home-icon-png-21.jpg') }}" alt="Home Icon"></a>
                         <a class="a" href=""><span>Blog</span><img src="{{ asset('assets/icons/chat-svgrepo-com.svg') }}" alt="Blog Icon"></a>
                         @auth
-                        <a class="a" href="{{ '/' . app()->getLocale() . '/pets' }}">
+                        <a class="a" href="{{ '/' . App::currentLocale() . '/pets' }}">
                             <span>{{ __('app.navigation.my_pets') }}</span>
                             <img src="{{ asset('assets/icons/pet-leash.png') }}" alt="My Pets Icon">
                         </a>
-                        <a class="a" href="{{ '/' . app()->getLocale() . '/profile' }}">
+                        <a class="a" href="{{ '/' . App::currentLocale() . '/profile' }}">
                             <span class="d-flex">
                                 {{ Auth::user()->name }}
                                 <img src="{{ asset('assets/icons/verified.png') }}" alt="Verified Icon">
@@ -191,7 +191,7 @@
                                 @endforeach
                             </div>
                             @auth
-                            <a href="{{ '/' . app()->getLocale() . '/pets' }}" id="nav-pets" class="d-flex align-items-center mx-2">
+                            <a href="{{ '/' . App::currentLocale() . '/pets' }}" id="nav-pets" class="d-flex align-items-center mx-2">
                             <img class="nav-icon" src="{{ asset('assets/icons/pet-leash.png') }}" height="46" alt="My Pets Icon">
                             <span>{{ __('app.navigation.my_pets') }}</span>
                             </a>
@@ -238,7 +238,7 @@
                                     {{ __('Logout') }}
                                     <img src="{{ asset('assets/icons/logout-icon.png') }}" height="35" alt="Logout Icon">
                                     </a>
-                                    <a class="dropdown-item d-flex justify-content-between align-items-center" href="{{ '/' . app()->getLocale() . '/profile' }}">
+                                    <a class="dropdown-item d-flex justify-content-between align-items-center" href="{{ '/' . App::currentLocale() . '/profile' }}">
                                     {{ __('Profile') }}
                                     <img src="{{ asset('assets/icons/user.png') }}" height="35" alt="User Icon">
                                     </a>

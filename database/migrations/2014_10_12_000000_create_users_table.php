@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('google_id')->nullable();
             $table->string('facebook_id')->nullable();
             $table->string('filename')->nullable();
+            $table->string('preferred_language', 5)->nullable();
             $table->timestamps();
         });
     }

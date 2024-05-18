@@ -22,9 +22,9 @@ class LoginController extends Controller
 
     protected function redirectTo()
     {
-        return app()->getLocale() . '/home';
+        $preferredLocale =  \Auth::user()->preferred_language ?? app()->getLocale();
+        return '/' . $preferredLocale . '/home';
     }
-
     protected function validateLogin(Request $request)
     {
         Session::forget('errors');

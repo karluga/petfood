@@ -19,4 +19,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/autocomplete', [AutocompleteController::class, 'autocomplete']);
+Route::post('/autocomplete', [AutocompleteController::class, 'autocomplete']);
