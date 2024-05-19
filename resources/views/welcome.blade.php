@@ -18,30 +18,30 @@
     </header>
     <!-- COMMON PETS -->
     <input type="checkbox" id="categories" class="d-none">
-    <div class="common-pets">
+    <div class="common-pets-container">
         <label for="categories" class="open-btn">
             <div class="arrow arrow-left">◀</div>
             <div class="arrow arrow-right">▶</div>
         </label>
-        @foreach($popularPets as $popularPet)
-        <a href="/{{ Request::segment(1) . '/popular/' . $popularPet['slug'] }}" class="triangle" style="--accent-color: {{ $popularPet['hex_color'] }}">
-            <div>
-                <div class="text">{{ $popularPet['name'] }}</div>
-                <div class="emoji">{{ $popularPet['emoji'] }}</div>
-            </div>
-        </a>
-        @endforeach
-        {{-- HARDCODED --}}
-        <a href="" class="triangle" data-accent="darkred">
-            <div>
-                <div class="text">Livestock
-                    {{-- Cows, Pigs, Sheep, Goats, Ducks, Chickens (often kept on farms) --}}
-                </div><div class="emoji">🐷
+        <div class="common-pets">
+            @foreach($popularPets as $popularPet)
+            <a href="/{{ app()->getLocale() . '/popular/' . $popularPet['slug'] }}" class="triangle" style="--accent-color: {{ $popularPet['hex_color'] }}">
+                <div>
+                    <div class="text">{{ $popularPet['name'] }}</div>
+                    <div class="emoji">{{ $popularPet['emoji'] }}</div>
                 </div>
-            </div>
-        </a>
+            </a>
+            @endforeach
+            {{-- HARDCODED --}}
+            <a href="{{ route('livestock', ['locale' => app()->getLocale(), 'livestock' => __('app.navigation.livestock.slug')]) }}" class="triangle" style="--accent-color: darkred">
+                <div>
+                    <div class="text">{{ __('app.navigation.livestock.name') }}</div>
+                    <div class="emoji">🐷</div>
+                </div>
+            </a>
+        </div>
     </div>
-        
+
     <!-- SEARCH BAR -->
     <div class="search-dropdown">
         <input type="text" name="search_box" placeholder="Write your pets species here..." id="search_box" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onkeyup="javascript:load_data(this.value)" onfocus="javascript:load_search_history()" />

@@ -12,10 +12,31 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('animals', function (Blueprint $table) {
+            // there are 2 id's because entries are in different languages
+            $table->id();
             $table->string('gbif_id')->unique();
-            $table->enum('category', ['wild', 'tame/domestic', 'exotic']); // Define ENUM type
+            $table->string('language', 2);
+            $table->string('slug');
+            $table->string('name');
+            $table->enum('category', ['wild', 'tame/domestic', 'exotic']);
+            $table->enum('tier', [
+                'GENUS',
+                'FAMILY',
+                'ORDER',
+                'CLASS',
+                'SUPERCLASS',
+                'INFRAPHYLUM',
+                'SUBPHYLUM',
+                'PHYLUM',
+                'INFRAKINGDOM',
+                'SUBKINGDOM',
+                'KINGDOM'
+            ]);
+            $table->text('appearance');
+            $table->text('food');
+            $table->timestamps();
         });
-        
+
     }
 
     /**

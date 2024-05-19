@@ -14,20 +14,21 @@ return [
         'search' => 'Search',
         'current' => '(current)',
         'livestock' => [
-            'slug' => 'livestock',
-            'name' => 'Livestock',
-            'description' => 'Often kept on farms. Most common species: Cows, Pigs, Sheep, Goats, Ducks, Chickens.',
+            'slug' => 'majlopi',
+            'name' => 'Mājlopi',
+            'description' => 'Bieži tiek turēti saimniecībās. Visbiežāk sastopamās sugas: govis, cūkas, aitas, kazas, pīles, vistas.',
             'food_details' => [
-                'cows' => 'Cows primarily eat grass and hay. Some may also be fed grains and silage.',
-                'pigs' => 'Pigs have omnivorous diets, including grains, vegetables, fruits, and occasionally meat scraps.',
-                'sheep' => 'Sheep graze on grass, hay, and sometimes grains like barley and oats.',
-                'goats' => 'Goats are browsers and eat a variety of plants, including grass, leaves, and shrubs.',
-                'ducks' => 'Ducks eat a diet rich in grains, insects, aquatic plants, and small fish.',
-                'chickens' => 'Chickens are omnivores and eat grains, seeds, insects, and even small rodents.'
+                'govis' => 'Govis galvenokārt ēd zāli un sienu. Dažas var tikt barotas arī ar graudiem un silo.',
+                'cūkas' => 'Cūkas ir omnvori un ēd graudus, dārzeņus, augļus un dažreiz arī gaļu.',
+                'aitas' => 'Aitas ganās ar zāli, sienu un dažreiz arī ar graudiem kā miežiem un auzām.',
+                'kazi' => 'Kazi ēd dažādus augus, tostarp zāli, lapas un krūmus.',
+                'zosis' => 'Zoses ēd diētu bagātu ar graudiem, kukaiņiem, ūdensaugiem un mazām zivīm.',
+                'cāļi' => 'Cāļi ir omnvori un ēd graudus, sēklas, kukaiņus un pat mazus grauzējus.'
             ],
         ],
+        
         'species' => [
-            'slug' => 'species',
+            'slug' => 'suga',
         ],
     ],
     'footer' => 'Source of information on what you can or cannot feed to your pets, provided by the community.',

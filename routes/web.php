@@ -35,7 +35,11 @@ Route::prefix('{locale}')
     Route::prefix('/popular')->group(function () {
         Route::get('/{slug}', [App\Http\Controllers\HomeController::class, 'popular'])->name('popular');
     });
-    
+    Route::prefix('/{livestock}')->group(function () {
+        Route::get('/', [App\Http\Controllers\HomeController::class, 'livestock'])->name('livestock');
+        // Route::get('/{slug}', [App\Http\Controllers\HomeController::class, 'livestockAnimal'])->name('livestock.animal');
+    });
+
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('auth');
     Route::get('/pets', [App\Http\Controllers\HomeController::class, 'pets'])->name('pets')->middleware('auth');
 

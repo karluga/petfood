@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Cache;
 class Animals extends Model
 {
     use HasFactory;
+    private static $LIVESTOCK_IDS = [
+        /* your livestock IDs here */
+    
+    ];
 
     public static function getPopularPets($locale)
     {
@@ -19,7 +23,7 @@ class Animals extends Model
             $animals = [];
 
             foreach ($commonItems as $item) {
-                $animal = DB::table('gbif_classification')
+                $animal = DB::table('animals')
                     ->select('name', 'slug')
                     ->where('gbif_id', $item->gbif_id)
                     ->where('language', $locale)
@@ -27,7 +31,7 @@ class Animals extends Model
 
                 // fallback
                 if (!$animal) {
-                    $animal = DB::table('gbif_classification')
+                    $animal = DB::table('animals')
                         ->select('name', 'slug')
                         ->where('gbif_id', $item->gbif_id)
                         ->where('language', 'en')
@@ -53,7 +57,7 @@ class Animals extends Model
 
     public static function getTypeInfo($locale, $type)
     {
-        $typeInfo = DB::table('gbif_classification')
+        $typeInfo = DB::table('animals')
             ->select('name', 'slug', 'tier', 'appearance', 'food')
             ->where('slug', $type)
             ->where('language', $locale)
@@ -61,7 +65,7 @@ class Animals extends Model
     
         // fallback
         if (!$typeInfo) {
-            $typeInfo = DB::table('gbif_classification')
+            $typeInfo = DB::table('animals')
                 ->select('name', 'slug', 'tier', 'appearance', 'food')
                 ->where('slug', $type)
                 ->where('language', 'en')
@@ -75,4 +79,32 @@ class Animals extends Model
     
         return $typeInfo;
     }
+    public static function getLivestock($locale)
+    {
+        // Fetch animals where gbif_id is in LIVESTOCK_IDS
+        $livestockItems = DB::table('animals')
+            ->whereIn('gbif_id', self::$LIVESTOCK_IDS)
+            ->where('language', $locale)
+            ->get();
+
+        // Fallback to English if no animals found in the specified locale
+        if ($livestockItems->isEmpty()) {
+            $livestockItems = DB::table('animals')
+                ->whereIn('gbif_id', self::$LIVESTOCK_IDS)
+                ->where('language', 'en')
+                ->get();
+        }
+
+        $livestock = [];
+
+        foreach ($livestockItems as $item) {
+            $livestock[] = [
+                'name' => $item->name,
+                'slug' => $item->slug,
+            ];
+        }
+
+        return $livestock;
+    }
+
 }

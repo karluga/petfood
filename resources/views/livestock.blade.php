@@ -2,13 +2,9 @@
 <div class="white-box">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <img src="{{ asset('assets/icons/info.png') }}" height="40" alt="Info">
-        <h3 class="text-muted text-uppercase">{{ $type->name }}</h3>
+        <h3 class="text-muted text-uppercase">{{ trans('app.navigation.livestock.name') ?? 'LIVESTOCK' }}</h3>
     </div>
-    <h4>Appearance</h4>
-    <p class="fs-4">{{ $type->appearance }}</p>
-    <hr>
-    <h4>Food</h4>
-    <p class="fs-4">{{ $type->food }}</p>
+    <p class="fs-4">{{ __('app.navigation.livestock.description') }}</p>
 </div>
 <div class="white-box">
     <div class="d-flex justify-content-between align-items-center mb-3">

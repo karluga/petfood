@@ -7,10 +7,10 @@
 <body>
 <div id="profile">
     @if (session('success'))
-    <div class="alert alert-success w-100">{{ session('success') }}</div>
+    <div class="alert alert-success mx-4">{{ session('success') }}</div>
     @endif
     @if (session('error'))
-    <div class="alert alert-danger w-100">{{ session('error') }}</div>
+    <div class="alert alert-danger mx-4">{{ session('error') }}</div>
     @endif
     <h1 class="text-center">{{ __('app.section.profile.name') }}</h1>
     <div class="user-profile">
