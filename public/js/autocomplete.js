@@ -1,6 +1,9 @@
 function load_search_history() {
     var search_query = document.getElementsByName('search_box')[0].value;
     if (search_query == '') {
+        // Show loader when history is being loaded
+        document.getElementById('search-loader').style.display = 'block';
+
         fetch("api/autocomplete", {
             method: "POST",
             body: JSON.stringify({
@@ -12,6 +15,9 @@ function load_search_history() {
         }).then(function(response) {
             return response.json();
         }).then(function(responseData) {
+            // Hide loader when history loading is complete
+            document.getElementById('search-loader').style.display = 'none';
+
             if (responseData.length > 0) {
                 var html = '<ul class="list-group">';
                 html += '<li class="list-group-item d-flex justify-content-between align-items-center"><b class="text-primary"><i>Your Recent Searches</i></b></li>';
@@ -29,27 +35,11 @@ function load_search_history() {
     }
 }
 
-function get_text(event) {
-    var string = event.textContent;
-    //fetch api
-    fetch("api/autocomplete", {
-        method: "POST",
-        body: JSON.stringify({
-            search_query: string
-        }),
-        headers: {
-            "Content-type": "application/json; charset=UTF-8"
-        }
-    }).then(function(response) {
-        return response.json();
-    }).then(function(responseData) {
-        document.getElementsByName('search_box')[0].value = string;
-        document.getElementById('search_result').innerHTML = '';
-    });
-}
-
 function load_data(query) {
     if (query.length > 2) {
+        // Show loader when data is being loaded
+        document.getElementById('search-loader').style.display = 'block';
+
         var form_data = new FormData();
         form_data.append('query', query);
         var ajax_request = new XMLHttpRequest();
@@ -57,6 +47,9 @@ function load_data(query) {
         ajax_request.send(form_data);
         ajax_request.onreadystatechange = function() {
             if (ajax_request.readyState == 4 && ajax_request.status == 200) {
+                // Hide loader when data loading is complete
+                document.getElementById('search-loader').style.display = 'none';
+
                 var response = JSON.parse(ajax_request.responseText);
                 var html = '<div class="list-group">';
                 if (response.length > 0) {

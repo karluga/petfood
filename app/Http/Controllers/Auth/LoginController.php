@@ -22,53 +22,42 @@ class LoginController extends Controller
 
     protected function redirectTo()
     {
-        $preferredLocale =  \Auth::user()->preferred_language ?? app()->getLocale();
+        $preferredLocale = \Auth::user()->preferred_language ?? app()->getLocale();
         return '/' . $preferredLocale . '/home';
     }
+
     protected function validateLogin(Request $request)
     {
-        Session::forget('errors');
-
-        $validator = $this->validator($request->all(), 'login');
-
-        if ($validator->fails()) {
-            return redirect()->route('welcome', app()->getLocale())
-                             ->withErrors($validator, 'login')
-                             ->withInput($request->all());
-        }
-    }
-
-    protected function validator(array $data, $type)
-    {
-        $rules = [
+        $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255',
             'password' => 'required|string|max:255',
-        ];
-
-        $messages = [
+        ], [
             'email.required' => __('The email field is required.'),
             'email.email' => __('Invalid email format.'),
             'email.max' => __('The email must not exceed 255 characters.'),
             'password.required' => __('The password field is required.'),
             'password.max' => __('The password must not exceed 255 characters.'),
-        ];
+        ]);
 
-        return Validator::make($data, $rules, $messages);
+        if ($validator->fails()) {
+            Session::flash('login_errors', $validator->errors());
+            return redirect()->route('welcome', app()->getLocale())
+                             ->withInput($request->all());
+        }
     }
 
     protected function sendFailedLoginResponse(Request $request)
     {
-        Session::forget('errors');
-
         $errors = [
             $this->username() => __('auth.failed'),
         ];
-    
+
+        Session::flash('login_errors', $errors);
+
         return redirect()->route('welcome', app()->getLocale())
-            ->withErrors($errors, 'login')
-            ->withInput($request->except('password'));
+                         ->withInput($request->except('password'));
     }
-    
+
     public function login(Request $request)
     {
         $this->validateLogin($request);

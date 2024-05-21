@@ -69,20 +69,18 @@ class RegisterController extends Controller
 
     public function register(Request $request)
     {
-        Session::forget('errors');
-    
         $validator = $this->validator($request->all());
-    
+
         if ($validator->fails()) {
+            Session::flash('register_errors', $validator->errors());
             return redirect()->route('welcome', app()->getLocale())
-                            ->withErrors($validator, 'register')
-                            ->withInput($request->all());
+                             ->withInput($request->all());
         }
-    
+
         $user = $this->create($request->all());
-    
+
         $this->guard()->login($user);
-    
+
         return redirect(app()->getLocale() . '/home');
     }
 }

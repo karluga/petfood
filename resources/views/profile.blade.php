@@ -14,7 +14,7 @@
     @endif
     <h1 class="text-center">{{ __('app.section.profile.name') }}</h1>
     <div class="user-profile">
-        <form action="{{ route('profile.upload-image', ['locale' => request()->segment(1)]) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('profile.upload-image', ['locale' => app()->getLocale()]) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="profile-image">
             <div class="user-img">
@@ -32,7 +32,7 @@
             </div>
         </div>
     </form>
-    <form action="{{ route('profile.update', ['locale' => request()->segment(1)]) }}" method="POST">
+    <form action="{{ route('profile.update', ['locale' => app()->getLocale()]) }}" method="POST">
         @csrf
         <div class="account-info">
             <div class="input-box">

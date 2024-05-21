@@ -30,29 +30,29 @@
     <script src="{{ asset('js/autocomplete.js') }}" defer></script>
     </head>
     <body>
-        <div id="app" class="@if($errors->hasBag('login')) login-visible @elseif($errors->hasBag('register')) register-visible @endif">
+        <di id="app" class="@if(session()->has('login_errors')) login-visible @elseif(session()->has('register_errors')) register-visible @endif">
             <!--SIGN-IN-->
             <!-- Log In Form -->
             <form id="signIn" class="authenticate" action="/login" method="POST">
                 @csrf
                 <text class="auth-title" class="mt-auto">{{ __('auth.buttons.login') }}</text>
-                <input class="input form-control @error('email', 'login') is-invalid @enderror" type="text" name="email" placeholder="{{ __('auth.inputs.text_fields.email.placeholder') }}">
-                @error('email', 'login')
+                <input class="input form-control @if(session('login_errors') && isset(session('login_errors')['email'])) is-invalid @endif" type="text" name="email" placeholder="{{ __('auth.inputs.text_fields.email.placeholder') }}">
+                @if(session('login_errors') && isset(session('login_errors')['email']))
                 <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
+                    <strong>{{ session('login_errors')['email'] }}</strong>
                 </span>
-                @enderror
+                @endif
                 <div class="input position-relative">
                     <i class="bi bi-eye-slash" id="togglePasswordd"></i>
-                    <input class="input form-control @error('password', 'login') is-invalid @enderror" id="log-psw" type="password" name="password" placeholder="{{ __('auth.inputs.text_fields.password.placeholder') }}">
-                    @error('password', 'login')
+                    <input class="input form-control @if(session('login_errors') && isset(session('login_errors')['password'])) is-invalid @endif" id="log-psw" type="password" name="password" placeholder="{{ __('auth.inputs.text_fields.password.placeholder') }}">
+                    @if(session('login_errors') && isset(session('login_errors')['password']))
                     <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
+                        <strong>{{ session('login_errors')['password'] }}</strong>
                     </span>
-                    @enderror
+                    @endif
                 </div>
                 <a class="btn btn-link" href="password/reset">
-                {{ __('auth.links.forgot_password') }}
+                    {{ __('auth.links.forgot_password') }}
                 </a>
                 <button type="submit" name="submit" value="Login">{{ __('auth.buttons.login') }}</button>
                 <!-- Google Login Button -->
@@ -71,26 +71,26 @@
             <form id="signUp" class="authenticate" action="/register" method="POST">
                 @csrf
                 <text class="auth-title" class="mt-auto">{{ __('auth.buttons.signup') }}</text>
-                <input required class="input form-control @error('name', 'register') is-invalid @enderror" type="text" name="name" placeholder="{{ __('auth.inputs.text_fields.name.placeholder') }}">       
-                @error('name', 'register')
+                <input required class="input form-control @if(session('register_errors') && isset(session('register_errors')['name'])) is-invalid @endif" type="text" name="name" placeholder="{{ __('auth.inputs.text_fields.name.placeholder') }}">
+                @if(session('register_errors') && isset(session('register_errors')['name']))
                 <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
+                    <strong>{{ session('register_errors')['name'] }}</strong>
                 </span>
-                @enderror
-                <input required class="input form-control @error('email', 'register') is-invalid @enderror" type="email" name="email" placeholder="{{ __('auth.inputs.text_fields.email.placeholder') }}">
-                @error('email', 'register')
+                @endif
+                <input required class="input form-control @if(session('register_errors') && isset(session('register_errors')['email'])) is-invalid @endif" type="email" name="email" placeholder="{{ __('auth.inputs.text_fields.email.placeholder') }}">
+                @if(session('register_errors') && isset(session('register_errors')['email']))
                 <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
+                    <strong>{{ session('register_errors')['email'] }}</strong>
                 </span>
-                @enderror
+                @endif
                 <div class="input position-relative">
                     <i class="bi bi-eye-slash" id="togglePassword"></i>
-                    <input required class="input form-control @error('password', 'register') is-invalid @enderror" id="reg-psw" type="password" name="password" placeholder="{{ __('auth.inputs.text_fields.password.placeholder') }}" title="{{ __('auth.password_title') }}" autocomplete="off">
-                    @error('password', 'register')
+                    <input required class="input form-control @if(session('register_errors') && isset(session('register_errors')['password'])) is-invalid @endif" id="reg-psw" type="password" name="password" placeholder="{{ __('auth.inputs.text_fields.password.placeholder') }}" title="{{ __('auth.password_title') }}" autocomplete="off">
+                    @if(session('register_errors') && isset(session('register_errors')['password']))
                     <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
+                        <strong>{{ session('register_errors')['password'] }}</strong>
                     </span>
-                    @enderror
+                    @endif
                 </div>
                 <input required class="input form-control" type="password" id="psw-repeat" name="password_confirmation" placeholder="{{ __('auth.inputs.text_fields.password_repeat.placeholder') }}">
                 <button type="submit" name="save">{{ __('auth.buttons.signup') }}</button>
@@ -107,6 +107,7 @@
                 <a onclick="signIn()" class="white-txt mb-auto" id="link">{{ __('auth.buttons.login') }}</a>
                 <span class="close-x-btn" onclick="closePopup()">X</span>
             </form>
+                
             <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
                 <div class="container">
                     <a class="navbar-brand" href="{{ url('/') }}">
@@ -130,7 +131,8 @@
                     </label>
                     <div id="sidebar">
                         <a class="a active" href=""><span>{{ __('app.navigation.home') }}</span><img src="{{ asset('assets/icons/white-home-icon-png-21.jpg') }}" alt="Home Icon"></a>
-                        <a class="a" href=""><span>Blog</span><img src="{{ asset('assets/icons/chat-svgrepo-com.svg') }}" alt="Blog Icon"></a>
+                        {{-- TODO --}}
+                        {{-- <a class="a" href=""><span>Blog</span><img src="{{ asset('assets/icons/chat-svgrepo-com.svg') }}" alt="Blog Icon"></a> --}}
                         @auth
                         <a class="a" href="{{ '/' . App::currentLocale() . '/pets' }}">
                             <span>{{ __('app.navigation.my_pets') }}</span>
@@ -356,6 +358,3 @@
         </script>
     </body>
 </html>
-@php
-dd($errors);
-@endphp

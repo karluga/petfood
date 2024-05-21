@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('animal_pictures', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('gbif_id');
+            $table->string('filename');
+            $table->string('source');
             $table->timestamps();
         });
     }

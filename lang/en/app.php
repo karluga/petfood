@@ -26,12 +26,15 @@ return [
                 'chickens' => 'Chickens are omnivores and eat grains, seeds, insects, and even small rodents.'
             ],
         ],
-        'species' => [
-            'slug' => 'species',
-        ],
+        // 'species' => [
+        //     'slug' => 'species',
+        // ],
     ],
     'footer' => 'Source of information on what you can or cannot feed to your pets, provided by the community.',
     'section' => [
+        'species' => [
+            'name' => 'Species', 
+        ],
         'profile' => [
             'name' => 'My Profile',
             'old_image' => 'OLD IMAGE',

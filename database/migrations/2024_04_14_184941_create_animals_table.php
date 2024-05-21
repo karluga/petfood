@@ -18,8 +18,10 @@ return new class extends Migration
             $table->string('language', 2);
             $table->string('slug');
             $table->string('name');
-            $table->enum('category', ['wild', 'tame/domestic', 'exotic']);
-            $table->enum('tier', [
+            $table->enum('category', ['wild', 'domestic', 'exotic']);
+            $table->enum('rank', [
+                'SUBSPECIES',
+                'SPECIES',
                 'GENUS',
                 'FAMILY',
                 'ORDER',
@@ -32,8 +34,8 @@ return new class extends Migration
                 'SUBKINGDOM',
                 'KINGDOM'
             ]);
-            $table->text('appearance');
-            $table->text('food');
+            $table->text('appearance')->nullable();
+            $table->text('food')->nullable();
             $table->timestamps();
         });
 

@@ -32,14 +32,9 @@ Route::prefix('{locale}')
         return app()->call('App\Http\Controllers\HomeController@welcome', ['locale' => $locale]);
     })->name('welcome');
 
-    Route::prefix('/popular')->group(function () {
-        Route::get('/{slug}', [App\Http\Controllers\HomeController::class, 'popular'])->name('popular');
+    Route::prefix('/species')->group(function () {
+        Route::get('/{id}', [App\Http\Controllers\HomeController::class, 'species'])->name('species');
     });
-    Route::prefix('/{livestock}')->group(function () {
-        Route::get('/', [App\Http\Controllers\HomeController::class, 'livestock'])->name('livestock');
-        // Route::get('/{slug}', [App\Http\Controllers\HomeController::class, 'livestockAnimal'])->name('livestock.animal');
-    });
-
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('auth');
     Route::get('/pets', [App\Http\Controllers\HomeController::class, 'pets'])->name('pets')->middleware('auth');
 
@@ -54,6 +49,13 @@ Route::prefix('{locale}')
         ->name('profile.verify-email');
     });
     Route::get('/pets', [App\Http\Controllers\HomeController::class, 'pets'])->middleware(['auth'])->name('pets');
+    Route::prefix('/popular')->group(function () {
+        Route::get('/{slug}', [App\Http\Controllers\HomeController::class, 'popular'])->name('popular');
+    });
+    Route::prefix('/{livestock}')->group(function () {
+        Route::get('/', [App\Http\Controllers\HomeController::class, 'livestock'])->name('livestock');
+        // Route::get('/{slug}', [App\Http\Controllers\HomeController::class, 'livestockAnimal'])->name('livestock.animal');
+    });
 });
 
 // Facebook Login URL

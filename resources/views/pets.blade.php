@@ -2,7 +2,7 @@
 
 @section('content')
 <head>
-    <title>{{ env('APP_NAME', 'Pet Food') }} | My Pets</title>
+    <title>{{ env('APP_NAME', 'Pet Food') }} | {{ __('app.section.my_pets.name') }}</title>
 
     <!-- DataTables CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">

@@ -44,6 +44,7 @@
 
     <!-- SEARCH BAR -->
     <div class="search-dropdown">
+        <div id="search-loader" class="horizontal-loader"></div>
         <input type="text" name="search_box" placeholder="Write your pets species here..." id="search_box" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onkeyup="javascript:load_data(this.value)" onfocus="javascript:load_search_history()" />
         <span id="search_result"></span>
     </div>

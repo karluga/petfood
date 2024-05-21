@@ -580,7 +580,7 @@ footer {
     width: 440px;
 }
 #popular-pets .column-right {
-    width: 560px;
+    max-width: 560px;
 }
 .common-pets-container .common-pets {
     display: flex;
@@ -591,6 +591,9 @@ footer {
     justify-content: center;
 }
 .common-pets-container:not(.popular) #p-m-title {
+    display: none;
+}
+.white-box #title-mobile {
     display: none;
 }
 /* When the checkbox with id "categories" is checked, translate the .common-pets-container back to its original position */
@@ -610,7 +613,7 @@ footer {
     font-family: initial;
     color: white;
 }
-.common-pets-container .triangle {
+.common-pets-container .triangle, .single-triangle {
     display: inline-block;
     position: relative;
     width: 200px;
@@ -620,15 +623,21 @@ footer {
 
     margin-right: -100px;
 }
+.single-triangle {
+    margin-right: 0;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+}
 
-.common-pets-container .triangle:before {
+.common-pets-container .triangle:before, .single-triangle:before {
     content: "";
     display: block;
     height: 100%;
     background: #D9D9D9;
     color: white
 }
-.common-pets-container .triangle.active:before {
+.common-pets-container .triangle.active:before, .single-triangle:before {
     background-color: var(--accent-color);
 }
 .common-pets-container .triangle:hover:before {
@@ -644,28 +653,37 @@ footer {
     right: 100px;
     top: 110%;
 }
-.common-pets-container .triangle:nth-of-type(even):before, .triangle:nth-of-type(even) {
+.common-pets-container .triangle:nth-of-type(even):before, .triangle:nth-of-type(even), .single-triangle::before, .single-triangle {
     clip-path: polygon(50% 0, 100% 100%, 0 100%);
 }
 .common-pets-container .triangle:nth-of-type(odd):before, .triangle:nth-of-type(odd) {
     clip-path: polygon(50% 100%, 0 0, 100% 0);
 }
-.common-pets-container .triangle:nth-of-type(even) .emoji {
+.common-pets-container .triangle:nth-of-type(even) .emoji, .single-triangle .emoji {
     text-shadow: 32px 8px 0px #000, -32px 8px 0px #000, 0px 0px 1px #000;
 }
 .common-pets-container .triangle:nth-of-type(odd) .emoji {
     text-shadow: 32px -8px 0px #000, -32px -8px 0px #000, 0px 0px 1px #000;
 }
-.common-pets-container .triangle .text {
+.common-pets-container .triangle .text, .single-triangle .text {
     font-size: 23px;
 }
-.common-pets-container .triangle .emoji {
+.common-pets-container .triangle .emoji, .single-triangle .emoji{
     font-size: 30px;
 }
 .common-pets-container .triangle > div {
     display: flex;
     flex-direction: column;
     position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    text-align: center;
+}
+.single-triangle > div {
+    display: flex;
+    flex-direction: column-reverse;
+    position: absolute;
+    bottom: 5%;
     left: 50%;
     transform: translate(-50%, 0%);
     text-align: center;
@@ -706,7 +724,8 @@ footer {
 @media screen and (max-width: 1200px) {
     .common-pets-container {
         z-index: 1;
-        position: absolute;
+        /* for better scrolling instead of absolute */
+        position: fixed;
         padding: 10px 110px 10px 10px;
         background: #9C3B1D;
         /* height: 100vh; */
@@ -716,11 +735,24 @@ footer {
         transition: transform 0.5s ease;
         transform: translateX(-100%);
     }
+    .column-right {
+        /* because of mobile triangle */
+        margin-top: 45px;
+    }
+    #popular-pets .column-left .common-pets-container{
+        width: auto;
+    }
     .common-pets-container .common-pets {
         gap: 10px;
     }
     .common-pets-container #p-m-title {
         display: none;
+    }
+    .white-box #title-pc {
+        display: none;
+    }
+    .white-box #title-mobile {
+        display: block;
     }
     .common-pets-container:not(.popular) .triangle:first-of-type {
         position: relative;

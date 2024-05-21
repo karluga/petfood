@@ -6,7 +6,7 @@
 </head>
 <body>
 <div id="popular-pets" class="d-flex">
-<div class="column-left mr-3">
+<div class="column-left">
     <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1">
         <defs>
             <filter id="smooth-edges"><feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />    
@@ -32,7 +32,7 @@
             </a>
             @endforeach        
             {{-- HARDCODED --}}
-            <a href="/{{ app()->getLocale() . '/' . (trans('app.navigation.livestock.slug') ?? 'livestock') }}" class="triangle {{ request()->route()->getName() == 'livestock' ? 'active' : '' }}" style="--accent-color: darkred">
+            <a href="/{{ app()->getLocale() . '/' . (trans('app.navigation.livestock.slug') ?? 'livestock') }}" class="triangle {{ request()->route()->getName() == 'livestock' ? 'active' : '' }}" style="--accent-color: #c32070">
                 <div>
                     <div class="text">{{ trans('app.navigation.livestock.name') ?? 'Livestock' }}</div>
                     <div class="emoji">🐷</div>
@@ -41,7 +41,7 @@
         </div>
     </div>
 </div>
-<div class="column-right">
+<div class="column-right mx-3">
     @if(request()->route()->getName() === 'popular')
         @include('popular')
     @else
