@@ -2,7 +2,7 @@
 
 @section('content')
 <head>
-    <title>{{ env('APP_NAME', 'Pet Food') }} | Welcome</title>
+    <title>{{ env('APP_NAME', 'Pet Food') }} | {{ __('app.welcome.welcome') }}</title>
 </head>
 <body id="welcome">
     <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1">
@@ -14,7 +14,7 @@
           </defs>
     </svg>
     <header>
-        <h2>What to give/not to give my pet?</h2>
+        <h2>{{ __('app.welcome.search_title') }}</h2>
     </header>
     <!-- COMMON PETS -->
     <input type="checkbox" id="categories" class="d-none">
@@ -45,29 +45,29 @@
     <!-- SEARCH BAR -->
     <div class="search-dropdown">
         <div id="search-loader" class="horizontal-loader"></div>
-        <input type="text" name="search_box" placeholder="Write your pets species here..." id="search_box" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onkeyup="javascript:load_data(this.value)" onfocus="javascript:load_search_history()" />
+        <input type="text" name="search_box" placeholder="{{ __('app.welcome.search_placeholder') }}" id="search_box" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" />
         <span id="search_result"></span>
     </div>
     @guest
     <div class="benefits">
         <div class="title">
             <span>
-                Benefits to<!-- sign up -->
+                {{ __('app.welcome.benefits_to') }}<!-- sign up -->
             </span>
-            <a onclick="signUp()" class="white-txt" id="link">Sign Up</a>            
+            <a onclick="signUp()" class="white-txt" id="link">{{ __('auth.buttons.signup') }}</a>            
         </div>
         <ol>
             <li>
-                You get to input your animals on the created profile, therefore quickly find the things you want to feed them.
+                {{ __('app.welcome.benefit_1') }}
             </li>
             <li>
-                If we verify you as a pet owner, we will give you the rights to edit or create the websites content alongside others. You will get one or more glorified title under your profile based on which pets you own.
+                {{ __('app.welcome.benefit_2') }}
             </li>
             <div>
-                image
+                <img src="" alt="">
             </div>
             <li>
-                You get to make suggestions for any content changes or updates.
+                {{ __('app.welcome.benefit_3') }}
             </li>
         </ol>
     </div>

@@ -1,6 +1,22 @@
 <?php
 
 return [
+    'welcome' => [
+        'welcome' => 'Welcome',
+        'search_placeholder' => 'Write your pets species here...',
+        'search_title' => 'What to give/not to give my pet?',
+        'benefits_to' => 'Benefits to',
+        'benefit_1' => 'You get to input your animals on the created profile, therefore quickly find the things you want to feed them.',
+        'benefit_2' => 'If we verify you as a pet owner, we will give you the rights to edit or create the websites content alongside others. You will get one or more glorified title under your profile based on which pets you own.',
+        'benefit_3' => 'You get to make suggestions for any content changes or updates.',
+    ],
+    'autocomplete' => [
+        'your_recent_searches' => 'Your Recent Searches',
+        'something_went_wrong' => 'Sorry, something went wrong. Please try again later.',
+        'no_data_found' => 'No Data Found',
+        'too_many_requests' => 'Too many requests. Stop spamming please!',
+        'min_characters' => 'Minimum of 3 characters',
+    ],
     'navigation' => [
         'home' => 'Home',
         'blog' => 'Blog',
@@ -16,22 +32,18 @@ return [
         'livestock' => [
             'slug' => 'livestock',
             'name' => 'Livestock',
-            'description' => 'Often kept on farms. Most common species: Cows, Pigs, Sheep, Goats, Ducks, Chickens.',
-            'food_details' => [
-                'cows' => 'Cows primarily eat grass and hay. Some may also be fed grains and silage.',
-                'pigs' => 'Pigs have omnivorous diets, including grains, vegetables, fruits, and occasionally meat scraps.',
-                'sheep' => 'Sheep graze on grass, hay, and sometimes grains like barley and oats.',
-                'goats' => 'Goats are browsers and eat a variety of plants, including grass, leaves, and shrubs.',
-                'ducks' => 'Ducks eat a diet rich in grains, insects, aquatic plants, and small fish.',
-                'chickens' => 'Chickens are omnivores and eat grains, seeds, insects, and even small rodents.'
-            ],
         ],
-        // 'species' => [
-        //     'slug' => 'species',
-        // ],
     ],
     'footer' => 'Source of information on what you can or cannot feed to your pets, provided by the community.',
     'section' => [
+        'animals' => [
+            'common_pets' => 'COMMON PETS', 
+            'description' => 'DESCRIPTION',
+            'well_known_orders' => 'WELL-KNOWN ORDERS', 
+            'species' => 'SPECIES',
+            'appearance' => 'Appearance', 
+            'food' => 'Food', 
+        ],
         'species' => [
             'name' => 'Species', 
         ],

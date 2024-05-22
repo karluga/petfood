@@ -34,4 +34,6 @@ return [
     'links' => [
         'forgot_password' => 'Forgot your password?',
     ],
+    'sign_up_with_google' => 'Sign-up with Google',
+    'sign_up_with_facebook' => 'Sign-up with Facebook',
 ];

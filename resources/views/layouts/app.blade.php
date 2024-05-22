@@ -1,3 +1,15 @@
+@php
+    $translations = [
+        'your_recent_searches' => __('app.autocomplete.your_recent_searches'),
+        'something_went_wrong' => __('app.autocomplete.something_went_wrong'),
+        'no_data_found' => __('app.autocomplete.no_data_found'),
+        'too_many_requests' => __('app.autocomplete.too_many_requests'),
+        'min_characters' => __('app.autocomplete.min_characters'),
+    ];
+@endphp
+<script>
+    const t = @json($translations);
+</script>
 <!doctype html>
 <html lang="{{ str_replace('_', '-', App::currentLocale()) }}">
     <head>
@@ -97,12 +109,12 @@
                 <!-- Google Sign-up Button -->
                 <a href="{{ route('google.login') }}" class="social-login btn-google">
                     <img src="{{ asset('assets/icons/google-logo.svg') }}" alt="Google Logo" width="20" height="20">
-                    Sign-up with Google
+                    {{ __('auth.sign_up_with_google') }}
                 </a>
                 <!-- Facebook Sign-up Button -->
                 <a href="{{ route('facebook.login') }}" class="social-login btn-facebook mt-2">
                     <img src="{{ asset('assets/icons/facebook-logo.svg') }}" alt="Facebook Logo" width="20" height="20">
-                    Sign-up with Facebook
+                    {{ __('auth.sign_up_with_facebook') }}
                 </a>
                 <a onclick="signIn()" class="white-txt mb-auto" id="link">{{ __('auth.buttons.login') }}</a>
                 <span class="close-x-btn" onclick="closePopup()">X</span>
@@ -136,7 +148,7 @@
                         @auth
                         <a class="a" href="{{ '/' . App::currentLocale() . '/pets' }}">
                             <span>{{ __('app.navigation.my_pets') }}</span>
-                            <img src="{{ asset('assets/icons/pet-leash.png') }}" alt="My Pets Icon">
+                            <img src="{{ asset('assets/icons/tame.png') }}" alt="My Pets Icon">
                         </a>
                         <a class="a" href="{{ '/' . App::currentLocale() . '/profile' }}">
                             <span class="d-flex">
@@ -193,7 +205,7 @@
                             </div>
                             @auth
                             <a href="{{ '/' . App::currentLocale() . '/pets' }}" id="nav-pets" class="d-flex align-items-center mx-2">
-                            <img class="nav-icon" src="{{ asset('assets/icons/pet-leash.png') }}" height="46" alt="My Pets Icon">
+                            <img class="nav-icon" src="{{ asset('assets/icons/tame.png') }}" height="46" alt="My Pets Icon">
                             <span>{{ __('app.navigation.my_pets') }}</span>
                             </a>
                             @endauth
@@ -257,7 +269,7 @@
                 @yield('content')
             </main>
             <footer>
-                <p>Pet Food | {{__('app.footer') }}</p>
+                <p>{{ env('APP_NAME', 'Pet Food') }} | {{__('app.footer') }}</p>
             </footer>
         </div>
         <!-- Modal Language change -->

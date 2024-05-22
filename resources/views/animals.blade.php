@@ -21,7 +21,7 @@
             <div class="arrow arrow-left">◀</div>
             <div class="arrow arrow-right">▶</div>
         </label>
-        <h1 id="p-m-title">COMMON PETS</h1>
+        <h1 id="p-m-title">{{ __('app.section.animals.common_pets') }}</h1>
         <div class="common-pets">
             @foreach($popularPets as $popularPet)
             <a href="/{{ app()->getLocale() . '/popular/' . $popularPet['slug'] }}" class="triangle {{ (isset($type) && $popularPet['slug'] == optional($type)->slug) ? 'active' : '' }}" style="--accent-color: {{ $popularPet['hex_color'] }}">

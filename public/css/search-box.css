@@ -35,7 +35,7 @@
     box-shadow: 0 0 0 0.2rem rgb(0 123 255 / 25%);
 }
 #search_result {
-    position: absolute; /* ja uzliek kÄ absolute, jaiedod ari width*/
+    position: absolute; /* ja uzliek kā absolute, jaiedod ari width*/
     width: 100%;
 }
 .list-group {
@@ -61,13 +61,27 @@ dl, ol, ul {
 }
 .list-group-item {
     position: relative;
-    display: block;
     padding: 0.75rem 1.25rem;
     margin-bottom: -1px;
     background-color: #fff;
     border: 1px solid rgba(0,0,0,.125);
-}
+    display: flex;
+    justify-content: space-between;
 
+}
+.list-group-item .category {
+    background-color: #E5B68A;
+    box-shadow: 0 0 1px 1px #E5B68A;
+    display: flex;
+    align-items: center;
+    color: white;
+    font-weight: 500;
+    padding: 0 5px;
+}
+.list-group-item .category .icon {
+	height: 17px;
+    margin-right: 3px;
+}
 .align-items-center {
     -webkit-box-align: center!important;
     -ms-flex-align: center!important;
@@ -83,7 +97,7 @@ dl, ol, ul {
     display: -ms-flexbox!important;
     display: flex!important;
 }
-.list-group-item {
+.list-group-item-history {
     position: relative;
     display: block;
     padding: 0.75rem 1.25rem;

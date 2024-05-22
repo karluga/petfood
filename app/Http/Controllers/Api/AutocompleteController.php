@@ -13,11 +13,9 @@ class AutocompleteController extends Controller
 
     public function autocomplete(Request $request)
     {
-        // Retrieve search query and locale from the request
         $searchQuery = $request->input('q');
         $locale = $request->input('locale', app()->getLocale());
     
-        // Fetch matching animals from the database based on name or slug and locale
         $results = \DB::table('animals')
             ->where('language', $locale)
             ->where(function ($query) use ($searchQuery) {
@@ -26,18 +24,21 @@ class AutocompleteController extends Controller
             })
             ->get();
     
-        // Extract relevant data for autocomplete
-        $autocompleteData = [];
+        $data = [];
         foreach ($results as $result) {
-            $autocompleteData[] = [
+            $name = explode('|', $result->name)[0];
+            $data[] = [
+                'gbif_id' => $result->gbif_id,
                 'rank' => $result->rank,
-                'canonicalName' => $result->name,
-                'category' => $result->category, // Assuming category is available in the animals table
+                'name' => $name,
+                'category' => $result->category,
             ];
         }
     
-        // Return the autocomplete data as JSON
-        return response()->json($autocompleteData);
+        return response()->json([
+            'data' => $data,
+            'locale' => $locale,
+        ]);
     }
     
 }

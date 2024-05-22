@@ -1,4 +1,4 @@
-<h1 id="p-m-title">DESCRIPTION</h1>
+<h1 id="p-m-title">{{ __('app.section.animals.description') }}</h1>
 <div class="white-box">
     <div class="d-flex justify-content-between align-items-center mb-3 position-relative">
         <img src="{{ asset('assets/icons/info.png') }}" height="40" alt="Info">
@@ -10,16 +10,16 @@
             </div>
         </div>
     </div>
-    <h4>Appearance</h4>
+    <h4>{{ __('app.section.animals.appearance') }}</h4>
     <p class="fs-4">{{ $type->appearance }}</p>
     <hr>
-    <h4>Food</h4>
+    <h4>{{ __('app.section.animals.food') }}</h4>
     <p class="fs-4">{{ $type->food }}</p>
 </div>
 <div class="white-box">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <img src="{{ asset('assets/icons/yellow-star.png') }}" class="mr-3" height="40" alt="Star icon">
-        <h3 class="text-muted">WELL-KNOWN ORDERS</h3>
+        <h3 class="text-muted">{{ __('app.section.animals.well_known_orders') }}</h3>
     </div>
     <div class="animals-container">
         {{-- foreach --}}
