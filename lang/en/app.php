@@ -1,11 +1,13 @@
 <?php
 
 return [
+    '404' => 'NOT FOUND',
     'welcome' => [
         'welcome' => 'Welcome',
         'search_placeholder' => 'Write your pets species here...',
         'search_title' => 'What to give/not to give my pet?',
         'benefits_to' => 'Benefits to',
+        'register' => 'Register',
         'benefit_1' => 'You get to input your animals on the created profile, therefore quickly find the things you want to feed them.',
         'benefit_2' => 'If we verify you as a pet owner, we will give you the rights to edit or create the websites content alongside others. You will get one or more glorified title under your profile based on which pets you own.',
         'benefit_3' => 'You get to make suggestions for any content changes or updates.',
@@ -32,6 +34,7 @@ return [
         'livestock' => [
             'slug' => 'livestock',
             'name' => 'Livestock',
+            'description' => 'Often kept on farms. Most common species: Cows, Pigs, Sheep, Goats, Ducks, Chickens.',
         ],
     ],
     'footer' => 'Source of information on what you can or cannot feed to your pets, provided by the community.',
@@ -46,6 +49,27 @@ return [
         ],
         'species' => [
             'name' => 'Species', 
+            'ranks' => [
+                'SUBSPECIES' => 'SUBSPECIES',
+                'SPECIES' => 'SPECIES',
+                'GENUS' => 'GENUS',
+                'FAMILY' => 'FAMILY',
+                'ORDER' => 'ORDER',
+                'CLASS' => 'CLASS',
+                'SUPERCLASS' => 'SUPERCLASS',
+                'INFRAPHYLUM' => 'INFRAPHYLUM',
+                'SUBPHYLUM' => 'SUBPHYLUM',
+                'PHYLUM' => 'PHYLUM',
+                'INFRAKINGDOM' => 'INFRAKINGDOM',
+                'SUBKINGDOM' => 'SUBKINGDOM',
+                'KINGDOM' => 'KINGDOM',
+            ],            
+            'food_safety' => [
+                'safe_to_feed' => 'Safe to feed',
+                'dangerous' => 'Dangerous',
+                'be_careful' => 'Be careful',
+                'unknown' => 'Unknown',
+            ],
         ],
         'profile' => [
             'name' => 'My Profile',

@@ -33,7 +33,7 @@
             </a>
             @endforeach
             {{-- HARDCODED --}}
-            <a href="{{ route('livestock', ['locale' => app()->getLocale(), 'livestock' => __('app.navigation.livestock.slug')]) }}" class="triangle" style="--accent-color: darkred">
+            <a href="{{ route('livestock', ['locale' => app()->getLocale(), 'livestock' => __('app.navigation.livestock.slug')]) }}" class="triangle" style="--accent-color: #c32070">
                 <div>
                     <div class="text">{{ __('app.navigation.livestock.name') }}</div>
                     <div class="emoji">🐷</div>
@@ -54,7 +54,7 @@
             <span>
                 {{ __('app.welcome.benefits_to') }}<!-- sign up -->
             </span>
-            <a onclick="signUp()" class="white-txt" id="link">{{ __('auth.buttons.signup') }}</a>            
+            <a onclick="signUp()" class="white-txt" id="link"> {{ __('app.welcome.register') }}</a>            
         </div>
         <ol>
             <li>

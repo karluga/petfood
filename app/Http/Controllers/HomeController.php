@@ -33,25 +33,51 @@ class HomeController extends Controller
     {
         $animals = Animals::getPopularPets($locale);
         $type = Animals::getTypeInfo($locale, $slug);
-        // TODO add function to animals that takes all the well-known subtypes of the animal, if possible (for example the chinchilla is already a species by itself)
-        // if it is a species by itself, then return the newly made view species.blade.php
-        // what counts as species: rank FAMILY
-    
+        $slugs = self::getAllSlugs($type->gbif_id, 'popular/');
+        
+        // Check if the current slug exists in animals table
         $matchingPopularPet = collect($animals)->firstWhere('slug', $slug);
         if ($matchingPopularPet) {
             $type->emoji = $matchingPopularPet['emoji'];
             $type->hex_color = $matchingPopularPet['hex_color'];
         }
     
-        return view('animals', ['popularPets' => $animals, 'type' => $type]);
+        return view('animals', [
+            'popularPets' => $animals,
+            'type' => $type,
+            'slugs' => $slugs
+        ]);
     }
-    public function livestock($locale, $slug)
+    
+    public function livestock($locale)
     {
+        $slugs = 'livestock/';
         $animals = Animals::getPopularPets($locale);
         $livestock = Animals::getLivestock($locale);
-        return view('animals', ['popularPets' => $animals, 'livestock' => $livestock]);
+        
+        return view('animals', [
+            'popularPets' => $animals,
+            'livestock' => $livestock,
+            'slugs' => $slugs
+        ]);
     }
-
+    
+    public static function getAllSlugs($gbif_id, $prefix)
+    {
+        $slugs = [];
+        foreach (config('languages') as $key => $language) {
+            // Translate the slug for each language based on the specified column
+            $translatedSlug = DB::table('animals')
+                ->select('slug')
+                ->where('language', $key)
+                ->where('gbif_id', $gbif_id)
+                ->first();
+            $slugs[$key] = $translatedSlug ? $prefix . $translatedSlug->slug : '';
+        }
+        return $slugs;
+    }
+    
+    
     // TODO
     public function species($locale, $id)
     {

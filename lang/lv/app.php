@@ -1,11 +1,13 @@
 <?php
 
 return [
+    '404' => 'NAV ATRASTS',
     'welcome' => [
         'welcome' => 'Laipni lūdzam',
         'search_placeholder' => 'Šeit ierakstiet savu mājdzīvnieku sugas...',
         'search_title' => 'Ko barot/nebarot savam mājdzīvniekam?',
-        'benefits_to' => 'Priekšrocības',
+        'benefits_to' => 'Sīki labumi ja tu',
+        'register' => 'Izveidosi profilu',
         'benefit_1' => 'Jūs varat ievadīt savus dzīvniekus izveidotajā profilā, tādējādi ātri atrast lietas, ko vēlaties viņiem barot.',
         'benefit_2' => 'Ja mēs jūs verificējam kā mājdzīvnieku īpašnieku, mēs jums dosim tiesības rediģēt vai veidot vietnes saturu kopā ar citiem. Jūs iegūsit vienu vai vairākas iecienītas titulus saskaņā ar savu profilu, atkarībā no tā, kādus dzīvniekus jūs piederat.',
         'benefit_3' => 'Jūs varat iesniegt priekšlikumus jebkuriem saturam paredzētiem labojumiem vai atjauninājumiem.',
@@ -25,6 +27,7 @@ return [
         'livestock' => [
             'slug' => 'majlopi',
             'name' => 'Mājlopi',
+            'description' => 'Bieži tiek turēti saimniecībās. Visbiežāk sastopamās sugas: govis, cūkas, aitas, kazas, pīles, vistas.',
         ],
     ],
     'autocomplete' => [
@@ -46,6 +49,27 @@ return [
         ],
         'species' => [
             'name' => 'Sugas', // 'Species'
+            'ranks' => [
+                'SUBSPECIES' => 'APAKŠSUGA',
+                'SPECIES' => 'SUGA', // ?
+                // 'GENUS' => '',
+                'FAMILY' => 'DZIMTA',
+                'ORDER' => 'KĀRTA',
+                'CLASS' => 'KLASE',
+                // 'SUPERCLASS' => '',
+                // 'INFRAPHYLUM' => '',
+                // 'SUBPHYLUM' => '',
+                // 'PHYLUM' => '',
+                // 'INFRAKINGDOM' => '',
+                // 'SUBKINGDOM' => '',
+                'KINGDOM' => 'VALSTS',
+            ],
+            'food_safety' => [
+                'safe_to_feed' => 'Droši barot',
+                'dangerous' => 'Bīstami',
+                'be_careful' => 'Esi uzmanīgs',
+                'unknown' => 'Nav zināms', // (bet eksistē citiem dzīvniekiem)
+            ],
         ],
         'profile' => [
             'name' => 'Mans profils', // 'My Profile'

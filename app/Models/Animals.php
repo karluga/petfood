@@ -65,7 +65,7 @@ class Animals extends Model
     public static function getTypeInfo($locale, $type)
     {
         $typeInfo = DB::table('animals')
-            ->select('name', 'slug', 'rank', 'appearance', 'food')
+            ->select('gbif_id', 'name', 'slug', 'rank', 'appearance', 'food')
             ->where('slug', $type)
             ->where('language', $locale)
             ->first();
@@ -73,7 +73,7 @@ class Animals extends Model
         // fallback
         if (!$typeInfo) {
             $typeInfo = DB::table('animals')
-                ->select('name', 'slug', 'rank', 'appearance', 'food')
+                ->select('gbif_id', 'name', 'slug', 'rank', 'appearance', 'food')
                 ->where('slug', $type)
                 ->where('language', 'en')
                 ->first();

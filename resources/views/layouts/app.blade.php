@@ -1,10 +1,16 @@
 @php
     $translations = [
+        // autocomplete.js
         'your_recent_searches' => __('app.autocomplete.your_recent_searches'),
         'something_went_wrong' => __('app.autocomplete.something_went_wrong'),
         'no_data_found' => __('app.autocomplete.no_data_found'),
         'too_many_requests' => __('app.autocomplete.too_many_requests'),
         'min_characters' => __('app.autocomplete.min_characters'),
+        // food_safety.js
+        'safe_to_feed' => __('app.section.species.food_safety.safe_to_feed'),
+        'dangerous' => __('app.section.species.food_safety.dangerous'),
+        'be_careful' => __('app.section.species.food_safety.be_careful'),
+        'unknown' => __('app.section.species.food_safety.unknown'),
     ];
 @endphp
 <script>
@@ -79,6 +85,7 @@
                 </a>
                 <a onclick="signUp()" class="white-txt mb-auto" id="link">{{ __('auth.buttons.signup') }}</a>
                 <span class="close-x-btn" onclick="closePopup()">X</span>
+                <span class="close-esc">ESC</span>
             </form>
             <form id="signUp" class="authenticate" action="/register" method="POST">
                 @csrf
@@ -118,6 +125,7 @@
                 </a>
                 <a onclick="signIn()" class="white-txt mb-auto" id="link">{{ __('auth.buttons.login') }}</a>
                 <span class="close-x-btn" onclick="closePopup()">X</span>
+                <span class="close-esc">ESC</span>
             </form>
                 
             <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
@@ -189,18 +197,16 @@
                                 </a>
                                 <!-- Other Languages -->
                                 @foreach(config('languages') as $key => $language)
-                                @if(App::currentLocale() != $key)
-                                @php
-                                    $currentPath = Request::path();
-                                    $currentPathSegments = explode('/', $currentPath);
-                                    array_shift($currentPathSegments);
-                                    $currentPathWithoutLocale = implode('/', $currentPathSegments);
-                                @endphp
-                                <a class="square" href="/{{ $key }}/{{ $currentPathWithoutLocale }}" title="{{ $language['name'] }}" style="display: none">
-                                <img src="{{ asset('assets/flags/'.$key) }}.svg" alt="flag-{{ $key }}">
-                                    <p><span class="language-code">{{ $language['code'] }}</span></p>
-                                </a>
-                                @endif
+                                    @if(App::currentLocale() != $key)
+                                        @if(isset($slugs) && is_array($slugs))
+                                            <a class="square" href="/{{ $key }}/{{ $slugs[$key] ?? '' }}" title="{{ $language['name'] }}" style="display: none">
+                                        @else
+                                            <a class="square" href="/{{ $key }}/{{ $slugs ?? '' }}" title="{{ $language['name'] }}" style="display: none">
+                                        @endif
+                                            <img src="{{ asset('assets/flags/'.$key) }}.svg" alt="flag-{{ $key }}">
+                                            <p><span class="language-code">{{ $language['code'] }}</span></p>
+                                        </a>
+                                    @endif
                                 @endforeach
                             </div>
                             @auth
@@ -284,15 +290,15 @@
                     </div>
                     <!-- Mobile Version -->
                     <div class="modal-body d-flex flex-wrap">
-                        @foreach(config('languages') as $key => $language)
+                    @foreach(config('languages') as $key => $language)
                         <div class="language-item">
-                            <a class="square @if($key == App::currentLocale()) active @endif" href="/{{ $key }}/{{ $currentPathWithoutLocale }}" title="{{ $language['name'] }}">
+                            <a class="square @if($key == App::currentLocale()) active @endif" href="/{{ $key }}/{{ $slugs[$key] ?? '' }}" title="{{ $language['name'] }}">
                                 <img src="{{ asset('assets/flags/'.$key) }}.svg" alt="flag-{{ $key }}">
                                 <p><span class="language-code">{{ $language['code'] }}</span></p>
                             </a>
                             <span class="language-name">{{ $language['name'] }} @if($key == App::currentLocale()) {{ __('app.navigation.current') }} @endif</span>
                         </div>
-                        @endforeach
+                    @endforeach
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('app.navigation.close') }}</button>
@@ -321,6 +327,11 @@
             function closePopup() {
                 appContainer.classList.remove('login-visible', 'register-visible');
             }
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closePopup();
+                }
+            });
             // Add event listener to the document body for clicks
             document.body.addEventListener('click', function (event) {
             // Check if at least one of the classes is present
