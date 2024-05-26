@@ -29,7 +29,7 @@
                         {{ $animal['name'] }}
                     </a>
                 </div>
-                <img src="{{ asset('assets/images/' . $animal['gbif_id'] . '/' . $animal['filename']) }}" height="100" alt="{{ $animal['name'] }}">
+                <img src="{{ asset('assets/images/' . $animal['file_path']) }}" height="100" alt="{{ $animal['name'] }}">
             </div>
             @endforeach
         </div>

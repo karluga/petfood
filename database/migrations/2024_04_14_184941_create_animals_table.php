@@ -15,9 +15,11 @@ return new class extends Migration
             // there are 2 id's because entries are in different languages
             $table->id();
             $table->string('gbif_id')->unique();
+            $table->string('parent_id')->nullable();
             $table->string('language', 2);
             $table->string('slug');
             $table->string('name');
+            $table->string('single');
             $table->enum('category', ['wild', 'domestic', 'exotic']);
             $table->enum('rank', [
                 'SUBSPECIES',
@@ -34,6 +36,7 @@ return new class extends Migration
                 'SUBKINGDOM',
                 'KINGDOM'
             ]);
+            $table->integer('cover_image_id')->nullable();
             $table->text('appearance')->nullable();
             $table->text('food')->nullable();
             $table->timestamps();

@@ -304,7 +304,6 @@ form.authenticate i#togglePassword {
     top: 0%;
 }
 .close-esc {
-    cursor: pointer;
     font-size: 16px;
     padding: 0px 4px;
     font-weight: bold;
@@ -990,4 +989,75 @@ a.species-link:hover {
     max-width: 400px;
     fill: black;
     opacity: 0.7;
+}
+
+
+#species .breadcrumbs {
+    height: 35px;
+    display: flex;
+}
+#species .breadcrumbs svg.petfood-logo-only-icon {
+    height: 30px;
+    padding: 0px 5px;
+}
+#species .breadcrumbs .rank {
+    clip-path: polygon(calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 0 100%, 15px 50%, 0 0);
+    display: flex;
+    align-items: center;
+    padding: 0 15px 0px 20px;
+    margin-left: -15px;
+}
+#species .breadcrumbs .rank.rank-1 {
+    background: #33030D;
+    color: #ffffff;
+    clip-path: polygon(calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 0 100%, 0px 50%, 0 0);
+    display: flex;
+    align-items: center;
+    padding: 0 15px 0px 0px;
+    margin-left: 0;
+}
+#species .breadcrumbs .rank.rank-2 {
+    background: #9C3B1D;
+    color: white;
+    cursor: pointer;
+}
+#species .breadcrumbs .rank.rank-3 {
+    background: #dccdbf;
+    color: inherit;
+    cursor: pointer;
+}
+#species .thumbnail-container {
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+}
+#species .thumbnail-container .canonical-name {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: white;
+    padding: 0px 5px;
+    margin: 5px 10px;
+    text-shadow: 2px 1px 2px black;
+    /* background: rgb(0 0 0 / 25%);
+    box-shadow: 0px 0px 10px 0px rgb(0 0 0 / 50%); */
+}
+#species .thumbnail-container .canonical-name span.the {
+    color: #ffffff8c;
+    text-shadow: none;
+    font-size: 12px;
+}
+#species .thumbnail-container .class-name {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    color: white;
+    background: green;
+    border-radius: 2px;
+    margin: 5px 10px;
+    padding: 0px 5px;
+    font-size: 11px;
+}
+#species .thumbnail-container img {
+    height: 150px;
 }

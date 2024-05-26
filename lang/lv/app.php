@@ -29,6 +29,12 @@ return [
             'name' => 'Mājlopi',
             'description' => 'Bieži tiek turēti saimniecībās. Visbiežāk sastopamās sugas: govis, cūkas, aitas, kazas, pīles, vistas.',
         ],
+        'popular' => [
+            'slug' => 'populāri',
+        ],
+        'species' => [
+            'slug' => 'sugas',
+        ],
     ],
     'autocomplete' => [
         'your_recent_searches' => 'Meklējumu vēsture',
@@ -52,7 +58,7 @@ return [
             'ranks' => [
                 'SUBSPECIES' => 'APAKŠSUGA',
                 'SPECIES' => 'SUGA', // ?
-                // 'GENUS' => '',
+                'GENUS' => 'ĢINTS',
                 'FAMILY' => 'DZIMTA',
                 'ORDER' => 'KĀRTA',
                 'CLASS' => 'KLASE',

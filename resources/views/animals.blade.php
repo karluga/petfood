@@ -32,7 +32,7 @@
             </a>
             @endforeach        
             {{-- HARDCODED --}}
-            <a href="/{{ app()->getLocale() . '/' . (trans('app.navigation.livestock.slug') ?? 'livestock') }}" class="triangle {{ request()->route()->getName() == 'livestock' ? 'active' : '' }}" style="--accent-color: #c32070">
+            <a href="/{{ app()->getLocale() . '/livestock' }}" class="triangle {{ request()->route()->getName() == 'livestock' ? 'active' : '' }}" style="--accent-color: #c32070">
                 <div>
                     <div class="text">{{ trans('app.navigation.livestock.name') ?? 'Livestock' }}</div>
                     <div class="emoji">🐷</div>

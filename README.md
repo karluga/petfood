@@ -3,11 +3,18 @@
 ## Local setup
 
 1. Clone this repo
+```
+git clone https://github.com/karluga/petfood
+```
 2. Install dependencies
 ```
 composer install (est. 2-5min)
 ```
-3. Add MySQL database credentials to `.env` file.
+3. Generate app key (for security)
+```
+php artisan key:generate
+```
+4. Add MySQL database credentials to `.env` file.
 Credentials from Gmail SMTP free mail service (from their server)
  - They can be created in your google account.
  - [Google Account](https://myaccount.google.com/) -> Security -> 2-Step Verification (2FA) -> App Passwords

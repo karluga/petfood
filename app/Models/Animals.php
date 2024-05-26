@@ -65,7 +65,7 @@ class Animals extends Model
     public static function getTypeInfo($locale, $type)
     {
         $typeInfo = DB::table('animals')
-            ->select('gbif_id', 'name', 'slug', 'rank', 'appearance', 'food')
+            ->select('gbif_id', 'name', 'slug', 'rank', 'cover_image_id', 'appearance', 'food')            
             ->where('slug', $type)
             ->where('language', $locale)
             ->first();
@@ -73,7 +73,7 @@ class Animals extends Model
         // fallback
         if (!$typeInfo) {
             $typeInfo = DB::table('animals')
-                ->select('gbif_id', 'name', 'slug', 'rank', 'appearance', 'food')
+                ->select('gbif_id', 'name', 'slug', 'rank', 'cover_image_id', 'appearance', 'food')
                 ->where('slug', $type)
                 ->where('language', 'en')
                 ->first();
@@ -124,18 +124,17 @@ class Animals extends Model
                 $order = 'Unknown';
             }
     
-            // Retrieve filename from 'animal_pictures' table
-            $pictureFilename = DB::table('animal_pictures')
-                ->where('gbif_id', $item->gbif_id)
-                ->value('filename');
-    
+            $filename = DB::table('animal_pictures')
+            ->where('id', $item->cover_image_id)
+            ->value('filename');
+
             // Group animals by their order and include filename
             $livestock[$order][] = [
                 'gbif_id' => $item->gbif_id,
                 'name' => $name,
                 'slug' => $item->slug,
                 'order' => $order,
-                'filename' => $pictureFilename, // Include filename
+                'file_path' => $item->gbif_id . '/' . $filename,
             ];
         }
     
@@ -144,5 +143,55 @@ class Animals extends Model
     
         return $livestock;
     }
+    protected function getParentRankData($locale, $gbif_id)
+    {
+        $speciesData = [];
+        $currentData = $this->getSpeciesData($locale, $gbif_id);
+        // do until no more data
+        while ($currentData) {
+            $speciesData[] = $currentData;
+            $parentData = $this->getSpeciesData($locale, $currentData['parent_id']);
+            if ($parentData) {
+                $currentData = $parentData;
+            } else {
+                break;
+            }
+        }
+        // sort from largest to smallest
+        $speciesData = array_reverse($speciesData);
+        return $speciesData;
+    }
+    protected function getSpeciesData($locale, $gbif_id)
+    {
+        $speciesData = DB::table('animals')
+            ->select('gbif_id', 'name', 'single', 'slug', 'rank', 'cover_image_id', 'appearance', 'food', 'parent_id')
+            ->where('gbif_id', $gbif_id)
+            ->where('language', $locale)
+            ->first();
     
+        // Fallback
+        if (!$speciesData) {
+            $speciesData = DB::table('animals')
+                ->select('gbif_id', 'name', 'single', 'slug', 'rank', 'cover_image_id', 'appearance', 'food', 'parent_id')
+                ->where('gbif_id', $gbif_id)
+                ->where('language', 'en')
+                ->first();
+        }
+    
+        // Modify name and single fields to cut off the first part
+        if ($speciesData) {
+            $speciesData->name = explode('|', $speciesData->name)[0];
+            $speciesData->single = explode('|', $speciesData->single)[0];
+
+            $filename = DB::table('animal_pictures')
+                ->where('id', $speciesData->cover_image_id)
+                ->value('filename');
+
+            $speciesData->file_path = $gbif_id . '/' . $filename;
+        }
+    
+        return $speciesData ? (array) $speciesData : null;
+    }
+    
+
 }

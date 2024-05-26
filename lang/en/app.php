@@ -36,6 +36,12 @@ return [
             'name' => 'Livestock',
             'description' => 'Often kept on farms. Most common species: Cows, Pigs, Sheep, Goats, Ducks, Chickens.',
         ],
+        'popular' => [
+            'slug' => 'popular',
+        ],
+        'species' => [
+            'slug' => 'species',
+        ],
     ],
     'footer' => 'Source of information on what you can or cannot feed to your pets, provided by the community.',
     'section' => [

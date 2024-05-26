@@ -76,13 +76,21 @@ class HomeController extends Controller
         }
         return $slugs;
     }
-    
-    
+
     // TODO
-    public function species($locale, $id)
+    public function species($locale, $gbif_id)
     {
-
-        return view('species', ['data' => []]);
-    }
-
+        $speciesData = Animals::getParentRankData($locale, $gbif_id);
+        $species = !empty($speciesData) ? end($speciesData) : [];
+    
+        $class = '';
+        foreach ($speciesData as $tier) {
+            if ($tier['rank'] === 'CLASS') {
+                $class = $tier['single'];
+                break;
+            }
+        }
+    
+        return view('species', ['locale' => $locale, 'data' => $speciesData, 'species' => $species, 'class' => $class]);
+    }    
 }

@@ -33,7 +33,7 @@
             </a>
             @endforeach
             {{-- HARDCODED --}}
-            <a href="{{ route('livestock', ['locale' => app()->getLocale(), 'livestock' => __('app.navigation.livestock.slug')]) }}" class="triangle" style="--accent-color: #c32070">
+            <a href="{{ route('livestock', ['locale' => app()->getLocale()]) }}" class="triangle" style="--accent-color: #c32070">
                 <div>
                     <div class="text">{{ __('app.navigation.livestock.name') }}</div>
                     <div class="emoji">🐷</div>
