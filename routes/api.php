@@ -20,4 +20,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::get('/autocomplete', [AutocompleteController::class, 'autocomplete']);
-Route::get('/food_safety/{gbif_id}', [AutocompleteController::class, 'getSafeFoodsForAnimal']);
+Route::get('/food_safety/{gbif_id}', [AutocompleteController::class, 'getFoodsForAnimal']);

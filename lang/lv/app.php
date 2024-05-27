@@ -70,12 +70,6 @@ return [
                 // 'SUBKINGDOM' => '',
                 'KINGDOM' => 'VALSTS',
             ],
-            'food_safety' => [
-                'safe_to_feed' => 'Droši barot',
-                'dangerous' => 'Bīstami',
-                'be_careful' => 'Esi uzmanīgs',
-                'unknown' => 'Nav zināms', // (bet eksistē citiem dzīvniekiem)
-            ],
         ],
         'profile' => [
             'name' => 'Mans profils', // 'My Profile'

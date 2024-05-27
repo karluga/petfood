@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('foods', function (Blueprint $table) {
+        Schema::create('safety_categories', function (Blueprint $table) {
             $table->id();
+            $table->string('safety_id');
+            $table->string('array_key');
+            $table->string('filename')->nullable();
             $table->string('language', 2);
-            $table->string('food');
-            $table->string('description');
+            $table->string('name');
+            $table->string('hex_color');
         });
     }
 
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('foods');
+        Schema::dropIfExists('safety_categories');
     }
 };

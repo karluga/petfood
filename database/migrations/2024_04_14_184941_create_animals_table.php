@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('animals', function (Blueprint $table) {
             // there are 2 id's because entries are in different languages
             $table->id();
-            $table->string('gbif_id')->unique();
+            $table->string('gbif_id');
             $table->string('parent_id')->nullable();
             $table->string('language', 2);
             $table->string('slug');
