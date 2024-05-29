@@ -3,6 +3,7 @@
 @section('content')
 <head>
     <title>{{ env('APP_NAME', 'Pet Food') }} | {{ $species['single'] }}</title>
+    <script src="{{ asset('js/load_foods.js') }}" defer></script>
 </head>
 <body>
     {{-- {{ dd($data);}} --}}
@@ -20,7 +21,7 @@
             @endif
         @endforeach
     </div>
-    <div class="container d-flex p-0">
+    <div class="container d-flex p-0 flex-wrap">
         <div class="white-box mr-3 d-flex flex-column">
             <h1>FOOD LIST</h1>
             {{-- Food search with javascript --}}
@@ -35,21 +36,8 @@
                 <input type="checkbox" name="safe_to_feed" id="food_safety">
                 <label for="food_safety">Safe to feed</label>
             </div>
-            <ul id="food_safety" class="mt-2">
-                <li>
-                    <div>Carrot</div>
-                    <div class="item" style="background: #4EC04E">
-                        <span class="mr-3">{{ __('app.section.species.food_safety.safe_to_feed') }}</span>
-                        <img src="{{ asset('assets/icons/checkmark.png') }}" height="40" alt="Checkmark icon">
-                    </div>
-                    <a href="#">
-                        Read more
-                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                    </a>
-                    
-                    {{-- warning.png, checkmark.png, xmark.png --}}
-                    {{-- <div>No data</div> --}}
-                </li>
+            <ul id="food_list_container" class="mt-2"> <!-- Changed ID to 'food_list' -->
+                <!-- Food items will be dynamically added here -->
             </ul>
             <div class="text-center mt-3">
                 <button id="load_more">
@@ -58,9 +46,8 @@
                     <span>▼</span>
                 </button>                
             </div>
-
         </div>
-        <div class="thumbnail-container mr-3">
+        <div class="thumbnail-container">
             <img src="{{ asset('/assets/images/' . $species['file_path']) }}" alt="" class="cover-img">
             <div class="canonical-name">
                 @if($locale == 'en')

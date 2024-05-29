@@ -1061,24 +1061,23 @@ a.species-link:hover {
 #species .thumbnail-container img {
     height: 150px;
 }
-#species #food_safety {
+#species #food_list_container {
     padding: 0;
-    margin: 0;
 }
-#species #food_safety li {
+#species #food_list_container li {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     font-size: 25px;
     align-items: center;
     background: #ededed;
 }
-#species #food_safety li .item {
+#species #food_list_container li .item {
     display: flex;
     align-items: center;
     justify-content: space-between;
     color: white;
 }
-#species #food_safety li > * {
+#species #food_list_container li > * {
     padding: 5px 10px;
 }
 #species label {

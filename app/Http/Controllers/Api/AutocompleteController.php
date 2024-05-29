@@ -56,12 +56,11 @@ class AutocompleteController extends Controller
         // Get food data for the specified locale
         $foodsData = $this->getFoodData($gbif_id, $locale, $filterSafeFoods, $searchQuery, $from, $to);
     
-        // Fallback to English (en) locale if no data is found
+        // Fallback
         if ($foodsData->isEmpty()) {
             $foodsData = $this->getFoodData($gbif_id, 'en', $filterSafeFoods, $searchQuery, $from, $to);
         }
 
-        // Check if data is empty and return a 404 error if needed
         if ($foodsData->isEmpty()) {
             return response()->json([
                 'error' => 'No food data found for the specified parameters.',
@@ -79,7 +78,6 @@ class AutocompleteController extends Controller
             'data' => $paginatedFoods,
         ]);
     }
-    
     private function getFoodData($gbif_id, $locale, $filterSafeFoods, $searchQuery, $from, $to)
     {
         $query = \DB::table('food_safety')
@@ -88,7 +86,7 @@ class AutocompleteController extends Controller
                 'food_safety.food_id',
                 'foods.food',
                 'safety_categories.language',
-                'safety_categories.filename',
+                'safety_categories.filename', // Keep the filename field as is
                 'safety_categories.hex_color',
                 'safety_categories.name as safety_label'
             )
@@ -102,7 +100,7 @@ class AutocompleteController extends Controller
     
         // Apply filter for safe foods if requested
         if ($filterSafeFoods) {
-            $query->where('food_safety.safety_id', 1); // Assuming safety_id 1 corresponds to safe foods
+            $query->where('food_safety.safety_id', 1); // 1 -> safe
         }
     
         // Apply search filter if provided
@@ -116,6 +114,15 @@ class AutocompleteController extends Controller
         // Apply pagination
         $query->skip($from)->take($to - $from);
     
-        return $query->get();
+        // Fetch the data
+        $foodsData = $query->get();
+    
+        // Add path prefix to filename
+        $foodsData = $foodsData->map(function ($food) {
+            $food->filename = asset('assets/icons/' . $food->filename);
+            return $food;
+        });
+    
+        return $foodsData;
     }
 }

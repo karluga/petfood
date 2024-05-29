@@ -1,21 +1,3 @@
-@php
-    $translations = [
-        // autocomplete.js
-        'your_recent_searches' => __('app.autocomplete.your_recent_searches'),
-        'something_went_wrong' => __('app.autocomplete.something_went_wrong'),
-        'no_data_found' => __('app.autocomplete.no_data_found'),
-        'too_many_requests' => __('app.autocomplete.too_many_requests'),
-        'min_characters' => __('app.autocomplete.min_characters'),
-        // food_safety.js
-        'safe_to_feed' => __('app.section.species.food_safety.safe_to_feed'),
-        'dangerous' => __('app.section.species.food_safety.dangerous'),
-        'be_careful' => __('app.section.species.food_safety.be_careful'),
-        'unknown' => __('app.section.species.food_safety.unknown'),
-    ];
-@endphp
-<script>
-    const t = @json($translations);
-</script>
 <!doctype html>
 <html lang="{{ str_replace('_', '-', App::currentLocale()) }}">
     <head>
@@ -34,18 +16,17 @@
         <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-    </head>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
-    <meta name="theme-color" content="#9C3B1D">
-    <link rel="icon" href="{{ asset('assets/pet_food_logo_filled.svg') }}">
-    <link rel="mask-icon" href="{{ asset('assets/pet_food_logo_filled.svg') }}" color="#9C3B1D">
-    <link rel="apple-touch-icon" href="{{ asset('assets/pet_food_logo_filled.svg') }}">
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-    {{-- from /public --}}
-    <link rel="stylesheet" href="{{ asset('css/search-box.css') }}">
-    <script src="{{ asset('js/autocomplete.js') }}" defer></script>
+
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css" />
+        <meta name="theme-color" content="#9C3B1D">
+        <link rel="icon" href="{{ asset('assets/pet_food_logo_filled.svg') }}">
+        <link rel="mask-icon" href="{{ asset('assets/pet_food_logo_filled.svg') }}" color="#9C3B1D">
+        <link rel="apple-touch-icon" href="{{ asset('assets/pet_food_logo_filled.svg') }}">
+        <!-- Stylesheets -->
+        <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+        {{-- from /public --}}
+        <link rel="stylesheet" href="{{ asset('css/search-box.css') }}">
     </head>
     <body>
         <di id="app" class="@if(session()->has('login_errors')) login-visible @elseif(session()->has('register_errors')) register-visible @endif">

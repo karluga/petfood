@@ -1,8 +1,22 @@
+@php
+    $translations = [
+        // autocomplete.js
+        'your_recent_searches' => __('app.autocomplete.your_recent_searches'),
+        'something_went_wrong' => __('app.autocomplete.something_went_wrong'),
+        'no_data_found' => __('app.autocomplete.no_data_found'),
+        'too_many_requests' => __('app.autocomplete.too_many_requests'),
+        'min_characters' => __('app.autocomplete.min_characters'),
+    ];
+@endphp
+<script>
+    const t = @json($translations);
+</script>
 @extends('layouts.app')
 
 @section('content')
 <head>
     <title>{{ env('APP_NAME', 'Pet Food') }} | {{ __('app.welcome.welcome') }}</title>
+    <script src="{{ asset('js/autocomplete.js') }}" defer></script>
 </head>
 <body id="welcome">
     <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1">
