@@ -1,4 +1,5 @@
 var debounceTimer;
+
 // Function to debounce execution
 function debounce(func, wait) {
   let timeout;
@@ -55,7 +56,7 @@ class FoodList {
     this.searchClear = document.getElementById('search_clear');
     this.loadMoreData = this.loadMoreData.bind(this);
     this.clearSearch = this.clearSearch.bind(this);
-    this.foodItems = []; // Array to store rendered food items
+    this.foodItems = [];
     this.init();
   }
 
@@ -107,15 +108,16 @@ class FoodList {
         const listItem = document.createElement('li');
         listItem.innerHTML = `<div>${food.food}</div>
                               <div class="item" style="background: ${food.hex_color}">
-                                <span class="mr-3">${food.safety_label}</span>
-                                <img src="${food.filename}" height="40" alt="Icon">
-                              </div>
+                                <span class="mr-3">${food.safety_label}</span>`
+        if (food.filename) {
+          listItem.innerHTML += `<img src="${food.filename}" height="40" alt="Icon">`;
+        }         
+        listItem.innerHTML += `</div>
                               <a href="#">Read more <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
         fragment.appendChild(listItem);
-        this.foodItems.push(listItem); // Add the new item to the array
+        this.foodItems.push(listItem);
       });
-
-      // Check if the number of items returned is less than step or if the network response was 404
+      
       if (data.data.foods.length < this.step || data.status === 404) {
         const endOfDataItem = document.createElement('li');
         endOfDataItem.innerHTML = '<div>End of data.</div>';
@@ -136,7 +138,6 @@ class FoodList {
   }
 
   async loadMoreData() {
-    // Increase 'from' and 'to' values by step
     this.from += this.step;
     this.to += this.step;
     try {
@@ -148,12 +149,13 @@ class FoodList {
   }
 
   clearSearch() {
-    this.searchInput.value = ''; // Clear search input
-    this.searchClear.style.visibility = 'hidden'; // Hide clear search button
-    this.from = 0; // Reset 'from' value
-    this.to = this.step; // Reset 'to' value
-    this.foodItems = []; // Clear the array of rendered food items
-    this.fetchData(this.from, this.to) // Fetch initial data after clearing search
+    // Reset array, from and to values
+    this.searchInput.value = '';
+    this.searchClear.style.visibility = 'hidden';
+    this.from = 0;
+    this.to = this.step;
+    this.foodItems = [];
+    this.fetchData(this.from, this.to)
       .then(data => this.renderFoodItems(data))
       .catch(error => console.error('Error fetching data:', error));
   }
@@ -163,9 +165,9 @@ class FoodList {
     this.searchInput.addEventListener('input', () => {
       if (this.searchInput.value) {
         this.searchClear.style.visibility = 'visible';
-        this.from = 0; // Reset 'from' value
-        this.to = this.step; // Reset 'to' value
-        this.foodItems = []; // Clear the array of rendered food items
+        this.from = 0;
+        this.to = this.step;
+        this.foodItems = [];
       } else {
         this.searchClear.style.visibility = 'hidden';
       }
