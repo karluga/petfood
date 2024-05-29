@@ -107,13 +107,16 @@ class FoodList {
           // Check if there was an ongoing search or safe feed selection
           const searchValue = this.searchInput.value;
           const safeChecked = document.getElementById('safe_to_feed').checked;
-          this.fetchData(this.from, this.to, searchValue, safeChecked)
-            .then(data => this.renderFoodItems(data))
-            .catch(error => console.error('Error fetching data:', error));
+          if (!this.searchInput.disabled && !safeChecked.disabled) {
+            this.fetchData(this.from, this.to, searchValue, safeChecked)
+              .then(data => this.renderFoodItems(data))
+              .catch(error => console.error('Error fetching data:', error));
+          }
         }
         errorTimerElement.textContent = (remainingTime / 1000).toFixed(2) + ' s';
       }, 10);
     } else {
+      this.foodItems = []; // Empty previous results when rendering new ones
       data.data.foods.forEach(food => {
         const listItem = document.createElement('li');
         let htmlString = `<div>${food.food}</div>
@@ -202,11 +205,22 @@ class FoodList {
     safeToFeedCheckbox.addEventListener('change', () => {
       this.from = 0;
       this.to = this.step;
-      this.foodItems = [];
-      this.fetchData(this.from, this.to, this.searchInput.value, safeToFeedCheckbox.checked)
-        .then(data => this.renderFoodItems(data))
-        .catch(error => console.error('Error fetching data:', error));
+      if (!safeToFeedCheckbox.disabled && !this.searchInput.disabled) {
+        this.foodItems = []; // Empty previous results when changing checkbox state
+        this.fetchData(this.from, this.to, this.searchInput.value, safeToFeedCheckbox.checked)
+          .then(data => this.renderFoodItems(data))
+          .catch(error => console.error('Error fetching data:', error));
+      }
     });
+
+    // Disable checkbox when timeout is active
+    setInterval(() => {
+      if (rateLimiter.timeout) {
+        safeToFeedCheckbox.disabled = true;
+      } else {
+        safeToFeedCheckbox.disabled = false;
+      }
+    }, 1000);
   }
 }
 
