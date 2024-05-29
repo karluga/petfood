@@ -106,17 +106,17 @@ class FoodList {
     } else {
       data.data.foods.forEach(food => {
         const listItem = document.createElement('li');
-        listItem.innerHTML = `<div>${food.food}</div>
-                              <div class="item" style="background: ${food.hex_color}">
-                                <span class="mr-3">${food.safety_label}</span>`
+        let htmlString = `<div>${food.food}</div>
+                          <div class="item" style="background: ${food.hex_color}">
+                            <span class="mr-3">${food.safety_label}</span>`;
         if (food.filename) {
-          listItem.innerHTML += `<img src="${food.filename}" height="40" alt="Icon">`;
-        }         
-        listItem.innerHTML += `</div>
-                              <a href="#">Read more <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
+          htmlString += `<img src="${food.filename}" height="40" alt="Icon">`;
+        }
+        htmlString += `</div><a href="#">Read more <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
+        listItem.innerHTML = htmlString;
         fragment.appendChild(listItem);
         this.foodItems.push(listItem);
-      });
+      });    
       
       if (data.data.foods.length < this.step || data.status === 404) {
         const endOfDataItem = document.createElement('li');

@@ -128,9 +128,11 @@ class AutocompleteController extends Controller
         // Fetch the data
         $foodsData = $query->get();
     
-        // Add path prefix to filename
+        // Add path prefix to filename only if filename is not empty or null
         $foodsData = $foodsData->map(function ($food) {
-            $food->filename = asset('assets/icons/' . $food->filename);
+            if (!empty($food->filename)) {
+                $food->filename = asset('assets/icons/' . $food->filename);
+            }
             return $food;
         });
     
