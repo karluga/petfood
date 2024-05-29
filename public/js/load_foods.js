@@ -1,3 +1,49 @@
+var debounceTimer;
+// Function to debounce execution
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      timeout = null;
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+// Object for rate limiting
+let rateLimiter = {
+  counter: 0,
+  timeout: null,
+  maxAttempts: 3,
+  timeWindow: 1000, // 1 second
+
+  // Reset the counter and timeout
+  reset() {
+    this.counter = 0;
+    clearTimeout(this.timeout);
+    this.timeout = null;
+  },
+
+  increment() {
+    this.counter++;
+
+    if (this.counter >= this.maxAttempts) {
+      console.log('spammer');
+      return false;
+    }
+
+    if (!this.timeout) {
+      this.timeout = setTimeout(() => {
+        this.reset();
+      }, this.timeWindow);
+    }
+
+    return true;
+  }
+};
+
 class FoodList {
   constructor(containerId) {
     this.container = document.getElementById(containerId);
@@ -35,35 +81,57 @@ class FoodList {
 
   renderFoodItems(data) {
     const fragment = document.createDocumentFragment();
-  
-    data.data.foods.forEach(food => {
-      const listItem = document.createElement('li');
-      listItem.innerHTML = `<div>${food.food}</div>
-                            <div class="item" style="background: ${food.hex_color}">
-                              <span class="mr-3">${food.safety_label}</span>
-                              <img src="${food.filename}" height="40" alt="Icon">
-                            </div>
-                            <a href="#">Read more <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
-      fragment.appendChild(listItem);
-      this.foodItems.push(listItem); // Add the new item to the array
-    });
-  
-    // Check if the number of items returned is less than step or if the network response was 404
-    if (data.data.foods.length < this.step || data.status === 404) {
-      const endOfDataItem = document.createElement('li');
-      endOfDataItem.innerHTML = '<div>End of data.</div>';
-      fragment.appendChild(endOfDataItem);
+
+    // Check if rate limiting is active and render error message
+    if (!rateLimiter.increment()) {
+      const errorListItem = document.createElement('li');
+      errorListItem.innerHTML = `
+        <div>Too many requests.</div>
+        <div class="error-timer"></div>
+      `;
+      fragment.appendChild(errorListItem);
+
+      // Update the timer every 10 milliseconds
+      const errorTimerElement = errorListItem.querySelector('.error-timer');
+      let remainingTime = 1000;
+      const updateTimer = setInterval(() => {
+        remainingTime -= 10;
+        if (remainingTime <= 0) {
+          clearInterval(updateTimer);
+          rateLimiter.reset();
+        }
+        errorTimerElement.textContent = (remainingTime / 1000).toFixed(2) + ' s';
+      }, 10);
+    } else {
+      data.data.foods.forEach(food => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `<div>${food.food}</div>
+                              <div class="item" style="background: ${food.hex_color}">
+                                <span class="mr-3">${food.safety_label}</span>
+                                <img src="${food.filename}" height="40" alt="Icon">
+                              </div>
+                              <a href="#">Read more <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
+        fragment.appendChild(listItem);
+        this.foodItems.push(listItem); // Add the new item to the array
+      });
+
+      // Check if the number of items returned is less than step or if the network response was 404
+      if (data.data.foods.length < this.step || data.status === 404) {
+        const endOfDataItem = document.createElement('li');
+        endOfDataItem.innerHTML = '<div>End of data.</div>';
+        fragment.appendChild(endOfDataItem);
+      }
     }
-  
+
     // Clear previous content
     this.container.innerHTML = '';
-  
+
     // Append the existing items from the array
     this.foodItems.forEach(item => {
       this.container.appendChild(item);
     });
-  
-    // Append the new items
+
+    // Append the new items or error message
     this.container.appendChild(fragment);
   }
 
@@ -115,6 +183,13 @@ class FoodList {
 
     // Event listener for loading more data
     document.getElementById('load_more').addEventListener('click', this.loadMoreData);
+
+    // Event listener for debounced search
+    this.searchInput.addEventListener('keydown', debounce((event) => {
+      if (event.key === 'Enter') {
+        this.loadMoreData();
+      }
+    }, 300));
   }
 }
 

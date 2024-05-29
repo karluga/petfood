@@ -64,6 +64,7 @@ class AutocompleteController extends Controller
         if ($foodsData->isEmpty()) {
             return response()->json([
                 'error' => 'No food data found for the specified parameters.',
+                'message' => 'Try a different phrase' // Added message option
             ], 404); // 404 Not Found
         }
         // Prepare the paginated result
@@ -105,10 +106,20 @@ class AutocompleteController extends Controller
     
         // Apply search filter if provided
         if ($searchQuery) {
-            $query->where(function ($q) use ($searchQuery) {
-                $q->where('foods.food', 'like', "%$searchQuery%")
-                    ->orWhere('foods.description', 'like', "%$searchQuery%");
-            });
+            // Starts with letter
+            if (strlen($searchQuery) === 1) {
+                $query->where(function ($q) use ($searchQuery) {
+                    $q->where('foods.food', '=', $searchQuery)
+                        ->orWhere('foods.food', 'like', "$searchQuery%");
+                })
+                ->orderBy('foods.food', 'asc');
+            } else {
+                $query->where(function ($q) use ($searchQuery) {
+                    $q->where('foods.food', 'like', "%$searchQuery%");
+                        // ->orWhere('foods.description', 'like', "%$searchQuery%");
+                })
+                ->orderBy('foods.food', 'asc');
+            }
         }
     
         // Apply pagination
