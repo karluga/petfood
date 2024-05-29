@@ -43,7 +43,7 @@ class AutocompleteController extends Controller
     {
         $locale = $request->input('locale', app()->getLocale());
         $searchQuery = $request->input('q');
-        $filterSafeFoods = $request->input('safe_only');
+        $filterSafeFoods = $request->input('safe_only') ?? true;
         $from = $request->input('from', 0); // Default value is 0
         $to = $request->input('to', 10); // Default value is 7
 
@@ -64,7 +64,8 @@ class AutocompleteController extends Controller
         if ($foodsData->isEmpty()) {
             return response()->json([
                 'error' => 'No food data found for the specified parameters.',
-                'message' => 'Try a different phrase' // Added message option
+                'message' => 'Try a different phrase', // Added message option
+                'status' => 404
             ], 404); // 404 Not Found
         }
         // Prepare the paginated result

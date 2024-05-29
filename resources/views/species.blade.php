@@ -33,8 +33,8 @@
                 <h2>Filter <i class="fa-solid fa-filter"></i></h2>
                 <input type="checkbox" name="by_popularity" id="by_popularity">
                 <label for="by_popularity">By popularity</label>
-                <input type="checkbox" name="safe_to_feed" id="food_safety">
-                <label for="food_safety">Safe to feed</label>
+                <input type="checkbox" name="safe_to_feed" id="safe_to_feed">
+                <label for="safe_to_feed">Safe to feed</label>
             </div>
             <ul id="food_list_container" class="mt-2"> <!-- Changed ID to 'food_list' -->
                 <!-- Food items will be dynamically added here -->

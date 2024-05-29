@@ -1096,3 +1096,6 @@ a.species-link:hover {
     color: black;
     opacity: 50%;
 }
+#species span#search_clear {
+    display: none;
+}

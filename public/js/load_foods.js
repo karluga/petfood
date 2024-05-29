@@ -1,6 +1,5 @@
 var debounceTimer;
 
-// Function to debounce execution
 function debounce(func, wait) {
   let timeout;
   return function executedFunction(...args) {
@@ -13,14 +12,12 @@ function debounce(func, wait) {
   };
 }
 
-// Object for rate limiting
 let rateLimiter = {
   counter: 0,
   timeout: null,
   maxAttempts: 3,
-  timeWindow: 1000, // 1 second
+  timeWindow: 1000,
 
-  // Reset the counter and timeout
   reset() {
     this.counter = 0;
     clearTimeout(this.timeout);
@@ -29,18 +26,23 @@ let rateLimiter = {
 
   increment() {
     this.counter++;
-
+  
     if (this.counter >= this.maxAttempts) {
       console.log('spammer');
+      this.timeWindow = 1000;
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        this.reset();
+      }, this.timeWindow);
       return false;
     }
-
+  
     if (!this.timeout) {
       this.timeout = setTimeout(() => {
         this.reset();
       }, this.timeWindow);
     }
-
+  
     return true;
   }
 };
@@ -60,9 +62,13 @@ class FoodList {
     this.init();
   }
 
-  async fetchData(from, to, searchQuery = '') {
+  async fetchData(from, to, searchQuery = '', safeOnly = false) {
     try {
-      const response = await fetch(`/api/food_safety/${this.lastSegment}?from=${from}&to=${to}&q=${searchQuery}`);
+      let queryString = `from=${from}&to=${to}&q=${searchQuery}`;
+      if (safeOnly) {
+        queryString += '&safe_only';
+      }
+      const response = await fetch(`/api/food_safety/${this.lastSegment}?${queryString}`);
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
@@ -83,7 +89,6 @@ class FoodList {
   renderFoodItems(data) {
     const fragment = document.createDocumentFragment();
 
-    // Check if rate limiting is active and render error message
     if (!rateLimiter.increment()) {
       const errorListItem = document.createElement('li');
       errorListItem.innerHTML = `
@@ -92,7 +97,6 @@ class FoodList {
       `;
       fragment.appendChild(errorListItem);
 
-      // Update the timer every 10 milliseconds
       const errorTimerElement = errorListItem.querySelector('.error-timer');
       let remainingTime = 1000;
       const updateTimer = setInterval(() => {
@@ -100,6 +104,12 @@ class FoodList {
         if (remainingTime <= 0) {
           clearInterval(updateTimer);
           rateLimiter.reset();
+          // Check if there was an ongoing search or safe feed selection
+          const searchValue = this.searchInput.value;
+          const safeChecked = document.getElementById('safe_to_feed').checked;
+          this.fetchData(this.from, this.to, searchValue, safeChecked)
+            .then(data => this.renderFoodItems(data))
+            .catch(error => console.error('Error fetching data:', error));
         }
         errorTimerElement.textContent = (remainingTime / 1000).toFixed(2) + ' s';
       }, 10);
@@ -116,24 +126,20 @@ class FoodList {
         listItem.innerHTML = htmlString;
         fragment.appendChild(listItem);
         this.foodItems.push(listItem);
-      });    
+      });
       
       if (data.data.foods.length < this.step || data.status === 404) {
         const endOfDataItem = document.createElement('li');
         endOfDataItem.innerHTML = '<div>End of data.</div>';
         fragment.appendChild(endOfDataItem);
+        document.getElementById('load_more').style.display = 'none';
       }
     }
 
-    // Clear previous content
     this.container.innerHTML = '';
-
-    // Append the existing items from the array
     this.foodItems.forEach(item => {
       this.container.appendChild(item);
     });
-
-    // Append the new items or error message
     this.container.appendChild(fragment);
   }
 
@@ -149,7 +155,6 @@ class FoodList {
   }
 
   clearSearch() {
-    // Reset array, from and to values
     this.searchInput.value = '';
     this.searchClear.style.visibility = 'hidden';
     this.from = 0;
@@ -161,39 +166,48 @@ class FoodList {
   }
 
   init() {
-    // Event listeners for search input and clear search button
     this.searchInput.addEventListener('input', () => {
       if (this.searchInput.value) {
         this.searchClear.style.visibility = 'visible';
         this.from = 0;
         this.to = this.step;
         this.foodItems = [];
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+          this.fetchData(this.from, this.to, this.searchInput.value)
+            .then(data => this.renderFoodItems(data))
+            .catch(error => console.error('Error fetching data:', error));
+        }, 1000); // Wait one second after last keystroke
       } else {
         this.searchClear.style.visibility = 'hidden';
+        clearTimeout(debounceTimer);
       }
-      this.fetchData(this.from, this.to, this.searchInput.value)
-        .then(data => this.renderFoodItems(data))
-        .catch(error => console.error('Error fetching data:', error));
     });
 
     this.searchClear.addEventListener('click', this.clearSearch);
 
-    // Initial load
     this.fetchData(this.from, this.to)
       .then(data => this.renderFoodItems(data))
       .catch(error => console.error('Error fetching data:', error));
 
-    // Event listener for loading more data
     document.getElementById('load_more').addEventListener('click', this.loadMoreData);
 
-    // Event listener for debounced search
     this.searchInput.addEventListener('keydown', debounce((event) => {
       if (event.key === 'Enter') {
         this.loadMoreData();
       }
     }, 300));
+
+    const safeToFeedCheckbox = document.getElementById('safe_to_feed');
+    safeToFeedCheckbox.addEventListener('change', () => {
+      this.from = 0;
+      this.to = this.step;
+      this.foodItems = [];
+      this.fetchData(this.from, this.to, this.searchInput.value, safeToFeedCheckbox.checked)
+        .then(data => this.renderFoodItems(data))
+        .catch(error => console.error('Error fetching data:', error));
+    });
   }
 }
 
-// Create FoodList instance
 const foodList = new FoodList('food_list_container');
