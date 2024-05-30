@@ -221,7 +221,7 @@ class FoodList {
         this.searchClear.style.visibility = 'hidden';
         document.getElementById('load_more').style.display = 'block';
       }
-    });
+    }, 1000);
   
     this.searchInput.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
