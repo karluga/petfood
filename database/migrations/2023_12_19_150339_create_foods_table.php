@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('foods', function (Blueprint $table) {
             $table->id();
+            $table->integer('food_id');
             $table->string('language', 2);
             $table->string('food');
-            $table->string('description');
+            $table->string('description')->nullable();
         });
     }
 

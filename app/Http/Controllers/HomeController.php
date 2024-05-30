@@ -77,9 +77,9 @@ class HomeController extends Controller
         return $slugs;
     }
 
-    // TODO
     public function species($locale, $gbif_id)
     {
+        $slugs = 'species/' . $gbif_id;
         $speciesData = Animals::getParentRankData($locale, $gbif_id);
         $species = !empty($speciesData) ? end($speciesData) : [];
     
@@ -90,7 +90,6 @@ class HomeController extends Controller
                 break;
             }
         }
-    
-        return view('species', ['locale' => $locale, 'data' => $speciesData, 'species' => $species, 'class' => $class]);
-    }    
+        return view('species', ['locale' => $locale, 'data' => $speciesData, 'species' => $species, 'class' => $class, 'slugs' => $slugs]);
+    }
 }

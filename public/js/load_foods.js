@@ -73,6 +73,7 @@ class FoodList {
       if (safeOnly !== false) {
         params.append('safe_only', true);
       }
+      params.append('locale', document.documentElement.lang); // Add locale parameter
       const queryString = params.toString();
       console.log(`http://localhost:8000/api/food_safety/${this.lastSegment}?${queryString}`);
       

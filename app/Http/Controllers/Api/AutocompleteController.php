@@ -88,11 +88,11 @@ class AutocompleteController extends Controller
                 'food_safety.food_id',
                 'foods.food',
                 'safety_categories.language',
-                'safety_categories.filename', // Keep the filename field as is
+                'safety_categories.filename',
                 'safety_categories.hex_color',
                 'safety_categories.name as safety_label'
             )
-            ->join('foods', 'food_safety.food_id', '=', 'foods.id')
+            ->join('foods', 'food_safety.food_id', '=', 'foods.food_id')
             ->join('safety_categories', function ($join) use ($locale) {
                 $join->on('food_safety.safety_id', '=', 'safety_categories.safety_id')
                      ->where('safety_categories.language', '=', $locale);
