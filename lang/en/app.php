@@ -69,7 +69,11 @@ return [
                 'INFRAKINGDOM' => 'INFRAKINGDOM',
                 'SUBKINGDOM' => 'SUBKINGDOM',
                 'KINGDOM' => 'KINGDOM',
-            ],            
+            ],   
+            'food_list_title' => 'FOOD LIST',
+            'filter' => 'Filter', 
+            'load_more' => 'LOAD MORE',
+            'the' => 'The',                
             'food_safety' => [
                 'safe_to_feed' => 'Safe to feed',
                 'dangerous' => 'Dangerous',
