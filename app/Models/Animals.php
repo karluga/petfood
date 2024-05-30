@@ -21,7 +21,6 @@ class Animals extends Model
         217145891, //chickens|gallus gallus
         217127894, //horse|equus ferus caballus
     ];
-
     public static function getPopularPets($locale)
     {
         // Reset popular items each day
@@ -61,7 +60,6 @@ class Animals extends Model
             return $animals;
         });
     }
-
     public static function getTypeInfo($locale, $type)
     {
         $typeInfo = DB::table('animals')
@@ -194,30 +192,20 @@ class Animals extends Model
     }
     protected function getAllDescendants($locale, $gbif_id)
     {
-        $descendantsData = [];
-        $currentData = $this->getDescendantsData($locale, $gbif_id);
-    
-        // Iterate until there are no more descendants
-        while ($currentData) {
-            $descendantsData[] = $currentData;
-    
-            // Get the gbif_id of the first object in $currentData
-            $currentGbifId = $currentData[0]->gbif_id;
-    
-            // Fetch children data using the gbif_id
-            $childrenData = $this->getChildrenData($locale, $currentGbifId);
-    
-            // If there are children, update $currentData to the children and continue
-            if (!empty($childrenData)) {
-                $currentData = $childrenData;
-            } else {
-                break; // No more descendants, exit loop
-            }
+        $descendantsData = $this->getDescendantsData($locale, $gbif_id);
+        $descendants = [];
+        
+        // Iterate through descendants data to fetch children
+        foreach ($descendantsData as $data) {
+            $children = $this->getChildrenData($locale, $data->gbif_id);
+            $descendants[] = [
+                'closestDescendant' => $data->name,
+                'descendants' => $children,
+            ];
         }
-    
-        return $descendantsData;
+        
+        return $descendants;
     }
-    
     protected function getDescendantsData($locale, $gbif_id)
     {
         // Retrieve data of the specified GBIF ID and include parent name
@@ -254,7 +242,6 @@ class Animals extends Model
     
         return $descendantsData->toArray();
     }
-    
     protected function getChildrenData($locale, $parent_gbif_id)
     {
         // Retrieve data of the children of the specified parent GBIF ID and include parent name
@@ -291,7 +278,4 @@ class Animals extends Model
     
         return $childrenData->toArray();
     }
-    
-    
-
 }

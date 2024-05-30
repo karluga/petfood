@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: May 26, 2024 at 09:29 PM
+-- Generation Time: May 30, 2024 at 04:53 PM
 -- Server version: 8.0.31
 -- PHP Version: 8.2.0
 
@@ -249,9 +249,42 @@ CREATE TABLE IF NOT EXISTS `failed_jobs` (
 DROP TABLE IF EXISTS `foods`;
 CREATE TABLE IF NOT EXISTS `foods` (
   `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `food_id` int NOT NULL,
+  `language` varchar(2) COLLATE utf8mb4_unicode_ci NOT NULL,
   `food` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `foods`
+--
+
+INSERT INTO `foods` (`id`, `food_id`, `language`, `food`, `description`) VALUES
+(2, 2, 'en', 'Flies', ''),
+(3, 3, 'en', 'Mosquitoes', ''),
+(4, 4, 'en', 'Grasshoppers', ''),
+(5, 5, 'en', 'Mealworms', ''),
+(6, 6, 'en', 'Earthworms', ''),
+(7, 7, 'en', 'Small fish', ''),
+(8, 8, 'en', 'Tadpoles', ''),
+(9, 9, 'en', 'Spiders', ''),
+(10, 10, 'en', 'Scorpions', ''),
+(11, 11, 'en', 'Snails', ''),
+(12, 12, 'en', 'Slugs', ''),
+(13, 13, 'en', 'Mice', ''),
+(14, 2, 'lv', 'Mušas', ''),
+(15, 3, 'lv', 'Sienāži', ''),
+(16, 4, 'lv', 'Kutrinieki', ''),
+(17, 5, 'lv', 'Kukaiņu kāpuri', ''),
+(18, 6, 'lv', 'Zemes tārpi', ''),
+(19, 7, 'lv', 'Mazas zivis', ''),
+(20, 8, 'lv', 'Kurkuļi', ''),
+(21, 9, 'lv', 'Zirnekļi', ''),
+(22, 10, 'lv', 'Skorpioni', ''),
+(23, 11, 'lv', 'Čūskas', ''),
+(24, 12, 'lv', 'Gliemji', ''),
+(25, 13, 'lv', 'Peles', '');
 
 -- --------------------------------------------------------
 
@@ -262,10 +295,31 @@ CREATE TABLE IF NOT EXISTS `foods` (
 DROP TABLE IF EXISTS `food_safety`;
 CREATE TABLE IF NOT EXISTS `food_safety` (
   `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `gbif_id` int NOT NULL,
+  `food_id` int NOT NULL,
+  `safety_id` int NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `food_safety`
+--
+
+INSERT INTO `food_safety` (`id`, `gbif_id`, `food_id`, `safety_id`, `created_at`, `updated_at`) VALUES
+(9, 135226796, 2, 1, NULL, NULL),
+(10, 135226796, 3, 1, NULL, NULL),
+(11, 135226796, 4, 1, NULL, NULL),
+(12, 135226796, 5, 1, NULL, NULL),
+(13, 135226796, 6, 1, NULL, NULL),
+(14, 135226796, 7, 1, NULL, NULL),
+(15, 135226796, 8, 1, NULL, NULL),
+(16, 135226796, 9, 1, NULL, NULL),
+(17, 135226796, 10, 1, NULL, NULL),
+(18, 135226796, 11, 1, NULL, NULL),
+(19, 135226796, 12, 1, NULL, NULL),
+(20, 135226796, 13, 1, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -391,6 +445,38 @@ CREATE TABLE IF NOT EXISTS `role_user` (
   PRIMARY KEY (`user_id`,`role_id`),
   KEY `role_user_role_id_foreign` (`role_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `safety_categories`
+--
+
+DROP TABLE IF EXISTS `safety_categories`;
+CREATE TABLE IF NOT EXISTS `safety_categories` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `safety_id` int NOT NULL,
+  `array_key` varchar(255) NOT NULL,
+  `filename` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `language` varchar(2) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `hex_color` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `safety_categories`
+--
+
+INSERT INTO `safety_categories` (`id`, `safety_id`, `array_key`, `filename`, `language`, `name`, `hex_color`) VALUES
+(1, 1, 'safe_to_feed', 'checkmark.png', 'en', 'Safe to feed', '#4EC04E'),
+(2, 2, 'dangerous', 'xmark.png', 'en', 'Dangerous', '#D12121'),
+(3, 3, 'be_careful', 'warning.png', 'en', 'Be careful', '#FFA500'),
+(4, 4, 'unknown', NULL, 'en', 'Unknown', '#808080'),
+(6, 1, 'safe_to_feed', 'checkmark.png', 'lv', 'Droši barot', '#4EC04E'),
+(7, 2, 'dangerous', 'xmark.png', 'lv', 'Bīstami', '#D12121'),
+(8, 3, 'be_careful', 'warning.png', 'lv', 'Esi uzmanīgs', '#FFA500'),
+(9, 4, 'unknown', NULL, 'lv', 'Nav zināms', '#808080');
 
 -- --------------------------------------------------------
 

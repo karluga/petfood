@@ -34,45 +34,39 @@ class HomeController extends Controller
         $animals = Animals::getPopularPets($locale);
         $type = Animals::getTypeInfo($locale, $slug);
         $slugs = self::getAllSlugs($type->gbif_id, 'popular/');
-    
+        
         // Check if the current slug exists in the animals table
         $matchingPopularPet = collect($animals)->firstWhere('slug', $slug);
         if ($matchingPopularPet) {
             $type->emoji = $matchingPopularPet['emoji'];
             $type->hex_color = $matchingPopularPet['hex_color'];
         }
-    
+
         // Fetch descendants of the popular pet
         $descendants = Animals::getAllDescendants($locale, $type->gbif_id);
-    
+        
         // Determine the rank of the first closest descendant
-        $closestDescendantRank = $descendants[0][0]->rank;
-    
+        $closestDescendant = $descendants[0]['closestDescendant'];
+        $closestDescendantRank = $descendants[0]['descendants'][0]->rank; // Get rank from the first descendant
+        
         // Set the title based on the rank with translations
         $title = __('app.animals.ranks.' . $closestDescendantRank);
-    
+        
         // If translation not found, default to the rank itself
         if ($title === 'app.animals.ranks.' . $closestDescendantRank) {
             $title = $closestDescendantRank;
         }
-    
-        // Return the descendants data in the correct hierarchy
-        $descendantsByCategory = [];
-        foreach ($descendants as $descendant) {
-            // Group descendants by their parent names (order or family)
-            $parentName = $descendant[0]->rank === 'ORDER' ? $descendant[0]->name : $descendant[0]->parent_name;
-            $descendantsByCategory[$parentName][] = $descendant;
-        }
-    
+        
         return view('animals', [
             'popularPets' => $animals,
             'type' => $type,
             'slugs' => $slugs,
-            'descendantsByCategory' => $descendantsByCategory, // Pass descendants grouped by category to the view
+            'descendants' => $descendants, // Pass descendants data to the view
             'closestDescendantRank' => $closestDescendantRank, // Pass the closest descendant rank to the view
             'title' => $title, // Pass the dynamically determined title to the view
         ]);
     }
+    
     
     
     public function livestock($locale)

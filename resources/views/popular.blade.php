@@ -22,11 +22,10 @@
         <h3 class="text-muted">{{ __('app.section.animals.well_known') }} {{ trans_choice('app.section.animals.ranks.' . $closestDescendantRank, 2) }}</h3>
     </div>
     <div class="animals-container">
-        @foreach($descendantsByCategory as $category => $descendants)
+        @foreach($descendants as $descendant)
         <div class="row mb-3">
-            <h4>{{ $category }}</h4>
-            @foreach($descendants as $descendant)
-            @foreach($descendant as $species)
+            <h4>{{ $descendant['closestDescendant'] }}</h4>
+            @foreach($descendant['descendants'] as $species)
             <div class="single-animal col-auto mt-2">
                 <div class="d-flex justify-content-between align-items-center">
                     <i class="fa-solid fa-link"></i>
@@ -37,8 +36,8 @@
                 <img src="{{ asset('assets/images/' . $species->gbif_id . '/' . $species->filename) }}" height="100" alt="{{ $species->name }}">
             </div>
             @endforeach
-            @endforeach
         </div>
         @endforeach
-    </div>    
+    </div>
+      
 </div>
