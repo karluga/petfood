@@ -56,39 +56,51 @@ class FoodList {
     this.lastSegment = this.getLastSegment();
     this.searchInput = document.getElementById('search_species_food');
     this.searchClear = document.getElementById('search_clear');
-    this.loadMoreData = this.loadMoreData.bind(this);
-    this.clearSearch = this.clearSearch.bind(this);
+    this.loader = document.getElementById('food-list-loader');
     this.foodItems = [];
     this.init();
   }
 
   async fetchData(from, to, searchQuery = '', safeOnly = false) {
     try {
-      let queryString = `from=${from}&to=${to}&q=${searchQuery}`;
-      if (safeOnly) {
-        queryString += '&safe_only';
+      // Show loader
+      this.loader.style.display = 'block';
+  
+      const params = new URLSearchParams();
+      params.append('from', from);
+      params.append('to', to);
+      params.append('q', searchQuery);
+      if (safeOnly !== false) {
+        params.append('safe_only', true);
       }
+      const queryString = params.toString();
+      console.log(`http://localhost:8000/api/food_safety/${this.lastSegment}?${queryString}`);
+      
       const response = await fetch(`/api/food_safety/${this.lastSegment}?${queryString}`);
       if (!response.ok) {
         throw new Error('Failed to fetch data');
       }
       const data = await response.json();
+  
+      // Hide loader after fetching data
+      this.loader.style.display = 'none';
+  
       return data;
     } catch (error) {
       console.error('Error fetching data:', error);
       throw error;
     }
   }
-
+  
   getLastSegment() {
     const pathname = window.location.pathname;
     const segments = pathname.split('/');
     return segments[segments.length - 1];
   }
 
-  renderFoodItems(data) {
+  renderFoodItems(data, append = false) {
     const fragment = document.createDocumentFragment();
-
+  
     if (!rateLimiter.increment()) {
       const errorListItem = document.createElement('li');
       errorListItem.innerHTML = `
@@ -96,7 +108,7 @@ class FoodList {
         <div class="error-timer"></div>
       `;
       fragment.appendChild(errorListItem);
-
+  
       const errorTimerElement = errorListItem.querySelector('.error-timer');
       let remainingTime = 1000;
       const updateTimer = setInterval(() => {
@@ -115,8 +127,19 @@ class FoodList {
         }
         errorTimerElement.textContent = (remainingTime / 1000).toFixed(2) + ' s';
       }, 10);
+  
+      // Clear previous results and replace with error message
+      if (!append) {
+        this.container.innerHTML = '';
+      }
+      this.container.appendChild(fragment);
     } else {
-      this.foodItems = []; // Empty previous results when rendering new ones
+      // Proceed with rendering food items as usual
+      if (!append) {
+        this.foodItems = []; // Empty previous results when rendering new ones if append is false
+        this.from = 0; // Reset pagination
+        this.to = this.step;
+      }
       data.data.foods.forEach(food => {
         const listItem = document.createElement('li');
         let htmlString = `<div>${food.food}</div>
@@ -128,100 +151,124 @@ class FoodList {
         htmlString += `</div><a href="#">Read more <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
         listItem.innerHTML = htmlString;
         fragment.appendChild(listItem);
-        this.foodItems.push(listItem);
+        if (append) {
+          this.foodItems.push(listItem); // Push new item to foodItems array only when appending
+        }
       });
       
       if (data.data.foods.length < this.step || data.status === 404) {
         const endOfDataItem = document.createElement('li');
-        endOfDataItem.innerHTML = '<div>End of data.</div>';
+        if (data.status === 404) {
+          endOfDataItem.innerHTML = '<div>No food data found for the specified parameters.</div>';
+        } else {
+          endOfDataItem.innerHTML = '<div>End of data.</div>';
+        }
         fragment.appendChild(endOfDataItem);
         document.getElementById('load_more').style.display = 'none';
       }
+  
+      // Append food items
+      this.container.appendChild(fragment);
     }
-
-    this.container.innerHTML = '';
-    this.foodItems.forEach(item => {
-      this.container.appendChild(item);
-    });
-    this.container.appendChild(fragment);
   }
-
+  
+  
   async loadMoreData() {
     this.from += this.step;
     this.to += this.step;
     try {
       const data = await this.fetchData(this.from, this.to, this.searchInput.value);
-      this.renderFoodItems(data);
+      this.renderFoodItems(data, true); // Pass true to indicate appending additional data
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   }
+  
 
   clearSearch() {
     this.searchInput.value = '';
     this.searchClear.style.visibility = 'hidden';
+    this.foodItems = [];
     this.from = 0;
     this.to = this.step;
-    this.foodItems = [];
-    this.fetchData(this.from, this.to)
-      .then(data => this.renderFoodItems(data))
-      .catch(error => console.error('Error fetching data:', error));
+    this.container.innerHTML = '';
+    this.init(); // Reinitialize the component after clearing the search
   }
 
   init() {
-    this.searchInput.addEventListener('input', () => {
-      if (this.searchInput.value) {
-        this.searchClear.style.visibility = 'visible';
-        this.from = 0;
-        this.to = this.step;
-        this.foodItems = [];
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-          this.fetchData(this.from, this.to, this.searchInput.value)
-            .then(data => this.renderFoodItems(data))
-            .catch(error => console.error('Error fetching data:', error));
-        }, 1000); // Wait one second after last keystroke
-      } else {
-        this.searchClear.style.visibility = 'hidden';
-        clearTimeout(debounceTimer);
-      }
-    });
-
-    this.searchClear.addEventListener('click', this.clearSearch);
-
-    this.fetchData(this.from, this.to)
-      .then(data => this.renderFoodItems(data))
-      .catch(error => console.error('Error fetching data:', error));
-
-    document.getElementById('load_more').addEventListener('click', this.loadMoreData);
-
-    this.searchInput.addEventListener('keydown', debounce((event) => {
-      if (event.key === 'Enter') {
-        this.loadMoreData();
-      }
-    }, 300));
-
-    const safeToFeedCheckbox = document.getElementById('safe_to_feed');
-    safeToFeedCheckbox.addEventListener('change', () => {
+    const resetValues = () => {
       this.from = 0;
       this.to = this.step;
-      if (!safeToFeedCheckbox.disabled && !this.searchInput.disabled) {
-        this.foodItems = []; // Empty previous results when changing checkbox state
-        this.fetchData(this.from, this.to, this.searchInput.value, safeToFeedCheckbox.checked)
-          .then(data => this.renderFoodItems(data))
-          .catch(error => console.error('Error fetching data:', error));
+      this.foodItems = [];
+      this.container.innerHTML = '';
+      clearTimeout(debounceTimer);
+    }
+    const fetchDataDebounced = debounce(() => {
+      resetValues();
+      this.fetchData(this.from, this.to, this.searchInput.value)
+        .then(data => this.renderFoodItems(data, false))
+        .catch(error => console.error('Error fetching data:', error))
+        .finally(() => {
+          document.getElementById('safe_to_feed').disabled = false;
+        });
+    }, 1000);
+  
+    this.searchInput.addEventListener('input', () => {
+      fetchDataDebounced();
+      if (this.searchInput.value) {
+        this.searchClear.style.visibility = 'visible';
+      } else {
+        this.searchClear.style.visibility = 'hidden';
+        document.getElementById('load_more').style.display = 'block';
       }
     });
-
-    // Disable checkbox when timeout is active
-    setInterval(() => {
-      if (rateLimiter.timeout) {
-        safeToFeedCheckbox.disabled = true;
-      } else {
-        safeToFeedCheckbox.disabled = false;
+  
+    this.searchInput.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') {
+        if (this.searchInput.value.trim() === '') {
+          return;
+        }
+        fetchDataDebounced();
       }
-    }, 1000);
+    });
+    
+  
+    this.searchClear.addEventListener('click', () => {
+      this.clearSearch();
+    });
+  
+    document.getElementById('load_more').style.display = 'block';
+  
+    this.fetchData(this.from, this.to)
+      .then(data => this.renderFoodItems(data))
+      .catch(error => {
+        if (error.response && error.response.status === 404) {
+          console.error(`No data for phrase: ${this.searchInput.value}`);
+        } else {
+          console.error('Error fetching data:', error);
+        }
+      });
+  
+    document.getElementById('load_more').addEventListener('click', () => {
+      this.loadMoreData();
+    });
+  
+    const safeToFeedCheckbox = document.getElementById('safe_to_feed');
+    safeToFeedCheckbox.addEventListener('change', () => {
+      // Disable the checkbox while new data is being fetched
+      safeToFeedCheckbox.disabled = true;
+      resetValues();
+      this.fetchData(this.from, this.to, this.searchInput.value, safeToFeedCheckbox.checked)
+        .then(data => this.renderFoodItems(data))
+        .catch(error => console.error('Error fetching data:', error))
+        .finally(() => {
+          // Re-enable the checkbox after rendering is complete
+          safeToFeedCheckbox.disabled = false;
+        });
+    });
   }
+  
+  
 }
 
 const foodList = new FoodList('food_list_container');

@@ -22,30 +22,29 @@
         @endforeach
     </div>
     <div class="container d-flex p-0 flex-wrap">
-        <div class="white-box mr-3 d-flex flex-column">
+        <div class="white-box mr-3 d-flex flex-column position-relative">
+            <div id="food-list-loader" class="horizontal-loader"></div>
             <h1>FOOD LIST</h1>
             {{-- Food search with javascript --}}
             <div>
-                <input type="text" id="search_species_food">
+                <input type="text" id="search_species_food" placeholder="Search foods...">
                 <span id="search_clear">X</span>
             </div>
             <div>
                 <h2>Filter <i class="fa-solid fa-filter"></i></h2>
-                <input type="checkbox" name="by_popularity" id="by_popularity">
-                <label for="by_popularity">By popularity</label>
+                {{-- <input type="checkbox" name="by_popularity" id="by_popularity">
+                <label for="by_popularity">By popularity</label> --}}
                 <input type="checkbox" name="safe_to_feed" id="safe_to_feed">
                 <label for="safe_to_feed">Safe to feed</label>
             </div>
             <ul id="food_list_container" class="mt-2"> <!-- Changed ID to 'food_list' -->
                 <!-- Food items will be dynamically added here -->
             </ul>
-            <div class="text-center mt-3">
-                <button id="load_more">
-                    <span>▼</span>
-                    LOAD MORE
-                    <span>▼</span>
-                </button>                
-            </div>
+            <button id="load_more" class="mx-auto">
+                <span>▼</span>
+                LOAD MORE
+                <span>▼</span>
+            </button>                
         </div>
         <div class="thumbnail-container">
             <img src="{{ asset('/assets/images/' . $species['file_path']) }}" alt="" class="cover-img">

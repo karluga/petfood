@@ -43,9 +43,9 @@ class AutocompleteController extends Controller
     {
         $locale = $request->input('locale', app()->getLocale());
         $searchQuery = $request->input('q');
-        $filterSafeFoods = $request->input('safe_only') ?? true;
-        $from = $request->input('from', 0); // Default value is 0
-        $to = $request->input('to', 10); // Default value is 7
+        $filterSafeFoods = $request->input('safe_only');
+        $from = $request->input('from', 0);
+        $to = $request->input('to', 10);
 
         if ($from > $to) {
             return response()->json([
