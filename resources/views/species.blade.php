@@ -27,7 +27,7 @@
             <h1>{{ __('app.section.species.food_list_title') }}</h1>
             {{-- Food search with javascript --}}
             <div>
-                <input type="text" id="search_species_food" placeholder="Search foods...">
+                <input type="text" id="search_species_food" placeholder="{{ __('app.section.species.search_placeholder') }}">
                 <span id="search_clear">X</span>
             </div>
             <div>

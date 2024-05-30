@@ -72,6 +72,7 @@ return [
             ],
             'food_list_title' => 'PĀRTIKAS SARAKSTS',          
             'filter' => 'Filtrēt pēc', 
+            'search_placeholder' => 'Meklēt ēdienus...', 
             'load_more' => 'RĀDĪT VĒL',
             'the' => 'Kungs',
             'food_safety' => [

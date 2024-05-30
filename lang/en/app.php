@@ -72,6 +72,7 @@ return [
             ],   
             'food_list_title' => 'FOOD LIST',
             'filter' => 'Filter', 
+            'search_placeholder' => 'Search foods...', 
             'load_more' => 'LOAD MORE',
             'the' => 'The',                
             'food_safety' => [
