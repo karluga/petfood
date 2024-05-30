@@ -30,9 +30,12 @@ class HomeController extends Controller
     }
     public function popular($locale, $slug)
     {
+        $type = Animals::getTypeInfo($locale, $slug);
+        if (empty($type)) {
+            abort(404);
+        }
         // Fetch the popular pet type information
         $animals = Animals::getPopularPets($locale);
-        $type = Animals::getTypeInfo($locale, $slug);
         $slugs = self::getAllSlugs($type->gbif_id, 'popular/');
         
         // Check if the current slug exists in the animals table
@@ -95,20 +98,22 @@ class HomeController extends Controller
         }
         return $slugs;
     }
-    // TODO
     public function species($locale, $gbif_id)
     {
         $speciesData = Animals::getParentRankData($locale, $gbif_id);
-        $species = !empty($speciesData) ? end($speciesData) : [];
-    
+        if (empty($speciesData)) {
+            abort(404);
+        }
+        $species = end($speciesData);
         $class = '';
+        
         foreach ($speciesData as $tier) {
             if ($tier['rank'] === 'CLASS') {
                 $class = $tier['single'];
                 break;
             }
         }
-    
+        
         return view('species', ['locale' => $locale, 'data' => $speciesData, 'species' => $species, 'class' => $class]);
-    }    
+    } 
 }

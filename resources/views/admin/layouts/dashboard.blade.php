@@ -29,86 +29,7 @@
         <link rel="stylesheet" href="{{ asset('css/search-box.css') }}">
     </head>
     <body>
-        <div id="app" class="@if(session()->has('login_errors')) login-visible @elseif(session()->has('register_errors')) register-visible @endif">
-            <!--SIGN-IN-->
-            <!-- Log In Form -->
-            <form id="signIn" class="authenticate" action="/login" method="POST">
-                @csrf
-                <text class="auth-title" class="mt-auto">{{ __('auth.buttons.login') }}</text>
-                <input class="input form-control @if(session('login_errors') && isset(session('login_errors')['email'])) is-invalid @endif" type="text" name="email" placeholder="{{ __('auth.inputs.text_fields.email.placeholder') }}">
-                @if(session('login_errors') && isset(session('login_errors')['email']))
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ session('login_errors')['email'] }}</strong>
-                </span>
-                @endif
-                <div class="input position-relative">
-                    <i class="bi bi-eye-slash" id="togglePasswordd"></i>
-                    <input class="input form-control @if(session('login_errors') && isset(session('login_errors')['password'])) is-invalid @endif" id="log-psw" type="password" name="password" placeholder="{{ __('auth.inputs.text_fields.password.placeholder') }}">
-                    @if(session('login_errors') && isset(session('login_errors')['password']))
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ session('login_errors')['password'] }}</strong>
-                    </span>
-                    @endif
-                </div>
-                <a class="btn btn-link" href="password/reset">
-                    {{ __('auth.links.forgot_password') }}
-                </a>
-                <button type="submit" name="submit" value="Login">{{ __('auth.buttons.login') }}</button>
-                <!-- Google Login Button -->
-                <a href="{{ route('google.login') }}" class="social-login btn-google">
-                    <img src="{{ asset('assets/icons/google-logo.svg') }}" alt="Google Logo" width="20" height="20">
-                    Login with Google
-                </a>
-                <!-- Facebook Login Button -->
-                <a href="{{ route('facebook.login') }}" class="social-login btn-facebook mt-2">
-                    <img src="{{ asset('assets/icons/facebook-logo.svg') }}" alt="Facebook Logo" width="20" height="20">
-                    Login with Facebook
-                </a>
-                <a onclick="signUp()" class="white-txt mb-auto" id="link">{{ __('auth.buttons.signup') }}</a>
-                <span class="close-x-btn" onclick="closePopup()">X</span>
-                <span class="close-esc">ESC</span>
-            </form>
-            <form id="signUp" class="authenticate" action="/register" method="POST">
-                @csrf
-                <text class="auth-title" class="mt-auto">{{ __('auth.buttons.signup') }}</text>
-                <input required class="input form-control @if(session('register_errors') && isset(session('register_errors')['name'])) is-invalid @endif" type="text" name="name" placeholder="{{ __('auth.inputs.text_fields.name.placeholder') }}">
-                @if(session('register_errors') && isset(session('register_errors')['name']))
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ session('register_errors')['name'] }}</strong>
-                </span>
-                @endif
-                <input required class="input form-control @if(session('register_errors') && isset(session('register_errors')['email'])) is-invalid @endif" type="email" name="email" placeholder="{{ __('auth.inputs.text_fields.email.placeholder') }}">
-                @if(session('register_errors') && isset(session('register_errors')['email']))
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ session('register_errors')['email'] }}</strong>
-                </span>
-                @endif
-                <div class="input position-relative">
-                    <i class="bi bi-eye-slash" id="togglePassword"></i>
-                    <input required class="input form-control @if(session('register_errors') && isset(session('register_errors')['password'])) is-invalid @endif" id="reg-psw" type="password" name="password" placeholder="{{ __('auth.inputs.text_fields.password.placeholder') }}" title="{{ __('auth.password_title') }}" autocomplete="off">
-                    @if(session('register_errors') && isset(session('register_errors')['password']))
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ session('register_errors')['password'] }}</strong>
-                    </span>
-                    @endif
-                </div>
-                <input required class="input form-control" type="password" id="psw-repeat" name="password_confirmation" placeholder="{{ __('auth.inputs.text_fields.password_repeat.placeholder') }}">
-                <button type="submit" name="save">{{ __('auth.buttons.signup') }}</button>
-                <!-- Google Sign-up Button -->
-                <a href="{{ route('google.login') }}" class="social-login btn-google">
-                    <img src="{{ asset('assets/icons/google-logo.svg') }}" alt="Google Logo" width="20" height="20">
-                    {{ __('auth.sign_up_with_google') }}
-                </a>
-                <!-- Facebook Sign-up Button -->
-                <a href="{{ route('facebook.login') }}" class="social-login btn-facebook mt-2">
-                    <img src="{{ asset('assets/icons/facebook-logo.svg') }}" alt="Facebook Logo" width="20" height="20">
-                    {{ __('auth.sign_up_with_facebook') }}
-                </a>
-                <a onclick="signIn()" class="white-txt mb-auto" id="link">{{ __('auth.buttons.login') }}</a>
-                <span class="close-x-btn" onclick="closePopup()">X</span>
-                <span class="close-esc">ESC</span>
-            </form>
-                
+        <div id="app" class="admin">
             <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
                 <div class="container">
                     <a class="navbar-brand" href="{{ url('/') }}">
@@ -190,15 +111,9 @@
                                     @endif
                                 @endforeach
                             </div>
-                            @auth
-                            <a href="{{ '/' . App::currentLocale() . '/pets' }}" id="nav-pets" class="d-flex align-items-center mx-2">
-                            <img class="nav-icon" src="{{ asset('assets/icons/tame.png') }}" height="46" alt="My Pets Icon">
-                            <span>{{ __('app.navigation.my_pets') }}</span>
-                            </a>
-                            @endauth
                             <a href="/" id="nav-search" class="{{ request()->is('/') ? 'd-none' : 'd-flex' }} align-items-center mx-2">
-                            <img class="nav-icon" src="{{ asset('assets/icons/search-icon-png-9985.png') }}" height="46" alt="Search Icon">
-                            <span>{{ __('app.navigation.search') }}</span>
+                                @svg('assets/icons/switch-arrows.png', 'nav-icon')
+                                <span>Go to app</span>
                             </a>
                         </ul>
                         <script>
@@ -222,32 +137,7 @@
                         </script>
                         <!-- Right Side Of Navbar -->
                         <ul class="navbar-nav ms-auto">
-                            <!-- Authentication Links -->
-                            @guest
-                            <a onclick="signIn()" class="cool-button">{{ __('auth.buttons.login') }}</a>
-                            @else
-                            <li class="nav-item dropdown d-flex align-items-center">
-                                <img id="profilePicture" class="object-fit-cover border rounded-circle" src="{{ Auth::user()->filename ? asset('storage/profile_pictures/' . Auth::user()->filename) : asset('assets/icons/default_userpng.png') }}" height="35" width="35" alt="Profile Picture">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                {{ Auth::user()->display_name && !empty(Auth::user()->name) ? Auth::user()->name : Auth::user()->username }}
-                                </a>
-                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item d-flex justify-content-between align-items-center" href="{{ route('logout') }}"
-                                        onclick="event.preventDefault();
-                                        document.getElementById('logout-form').submit();">
-                                    {{ __('Logout') }}
-                                    <img src="{{ asset('assets/icons/logout-icon.png') }}" height="35" alt="Logout Icon">
-                                    </a>
-                                    <a class="dropdown-item d-flex justify-content-between align-items-center" href="{{ '/' . App::currentLocale() . '/profile' }}">
-                                    {{ __('Profile') }}
-                                    <img src="{{ asset('assets/icons/user.png') }}" height="35" alt="User Icon">
-                                    </a>
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                        @csrf
-                                    </form>
-                                </div>
-                            </li>
-                            @endguest
+                            
                         </ul>
                     </div>
                 </div>
@@ -255,9 +145,6 @@
             <main class="py-4">
                 @yield('content')
             </main>
-            <footer>
-                <p>{{ env('APP_NAME', 'Pet Food') }} | {{__('app.footer') }}</p>
-            </footer>
         </div>
         <!-- Modal Language change -->
         <div class="modal fade" id="languageChangeModal" tabindex="-1" role="dialog" aria-labelledby="languageChangeModalLabel" aria-hidden="true">
@@ -288,77 +175,5 @@
                 </div>                                                           
             </div>
         </div>
-        <script>
-            var appContainer = document.getElementById('app');
-            var signUpContainer = document.getElementById('signUp');
-            var signInContainer = document.getElementById('signIn');
-            
-            function signIn() {
-                appContainer.classList.remove('register-visible');
-                appContainer.classList.add('login-visible');
-                event.stopPropagation();
-            }
-            
-            function signUp() {
-                appContainer.classList.remove('login-visible');
-                appContainer.classList.add('register-visible');
-                event.stopPropagation();
-            }
-            
-            function closePopup() {
-                appContainer.classList.remove('login-visible', 'register-visible');
-            }
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'Escape') {
-                    closePopup();
-                }
-            });
-            // Add event listener to the document body for clicks
-            document.body.addEventListener('click', function (event) {
-            // Check if at least one of the classes is present
-            if ((appContainer.classList.contains('login-visible') || appContainer.classList.contains('register-visible')) &&
-            !signInContainer.contains(event.target) && !signUpContainer.contains(event.target)) {
-            closePopup();
-            }
-            });
-            
-            function Validate() {
-                var password = document.getElementById("reg-psw").value;
-                var confirmPassword = document.getElementById("psw-repeat").value;
-                if (password != confirmPassword) {
-                    alert("Passwords do not match.");
-                    return false;
-                }
-                return true;
-            }
-            
-            const togglePassword = document.querySelector("#togglePassword");
-            const password = document.querySelector("#reg-psw");
-            const passwordrepeat = document.querySelector("#psw-repeat");
-            
-            togglePassword.addEventListener("click", function () {
-                const type = password.getAttribute("type") === "password" ? "text" : "password";
-                password.setAttribute("type", type);
-                passwordrepeat.setAttribute("type", type);
-                
-                this.classList.toggle("bi-eye");
-            });
-            
-            const togglePasswordd = document.querySelector("#togglePasswordd");
-            const passwordd = document.querySelector("#log-psw");
-            
-            togglePasswordd.addEventListener("click", function () {
-                const type = passwordd.getAttribute("type") === "password" ? "text" : "password";
-                passwordd.setAttribute("type", type);
-                
-                this.classList.toggle("bi-eye");
-            });
-            
-            // // prevent form submit
-            // const form = document.querySelector("form");
-            // form.addEventListener('submit', function (e) {
-            //     e.preventDefault();
-            // });
-        </script>
     </body>
 </html>
