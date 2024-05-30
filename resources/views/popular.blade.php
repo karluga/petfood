@@ -19,22 +19,26 @@
 <div class="white-box">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <img src="{{ asset('assets/icons/yellow-star.png') }}" class="mr-3" height="40" alt="Star icon">
-        <h3 class="text-muted">{{ __('app.section.animals.well_known_orders') }}</h3>
+        <h3 class="text-muted">{{ __('app.section.animals.well_known') }} {{ trans_choice('app.section.animals.ranks.' . $closestDescendantRank, 2) }}</h3>
     </div>
     <div class="animals-container">
-        {{-- foreach --}}
-        <div class="row">
-            <h4>Anura</h4>
-            {{-- foreach --}}
-            <div class="single-animal col-auto">
+        @foreach($descendantsByCategory as $category => $descendants)
+        <div class="row mb-3">
+            <h4>{{ $category }}</h4>
+            @foreach($descendants as $descendant)
+            @foreach($descendant as $species)
+            <div class="single-animal col-auto mt-2">
                 <div class="d-flex justify-content-between align-items-center">
-                    <i class="fa-solid fa-link"></i>                                                                        {{--  below the slug in animals table --}}
-                    <a class="species-link fs-4 text-muted" href="{{ app()->getLocale() . '/' . (trans('app.navigation.species.slug') ?? 'species') }}/frog">
-                        FROGS
+                    <i class="fa-solid fa-link"></i>
+                    <a class="species-link fs-4 text-muted" href="/{{ app()->getLocale() . '/species/' . $species->gbif_id }}">
+                        {{ $species->name }}
                     </a>
                 </div>
-                <img src="{{ asset('assets/images/frog.png') }}" height="100" alt="Animal">
+                <img src="{{ asset('assets/images/' . $species->gbif_id . '/' . $species->filename) }}" height="100" alt="{{ $species->name }}">
             </div>
+            @endforeach
+            @endforeach
         </div>
-    </div>
+        @endforeach
+    </div>    
 </div>

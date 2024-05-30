@@ -192,6 +192,106 @@ class Animals extends Model
     
         return $speciesData ? (array) $speciesData : null;
     }
+    protected function getAllDescendants($locale, $gbif_id)
+    {
+        $descendantsData = [];
+        $currentData = $this->getDescendantsData($locale, $gbif_id);
+    
+        // Iterate until there are no more descendants
+        while ($currentData) {
+            $descendantsData[] = $currentData;
+    
+            // Get the gbif_id of the first object in $currentData
+            $currentGbifId = $currentData[0]->gbif_id;
+    
+            // Fetch children data using the gbif_id
+            $childrenData = $this->getChildrenData($locale, $currentGbifId);
+    
+            // If there are children, update $currentData to the children and continue
+            if (!empty($childrenData)) {
+                $currentData = $childrenData;
+            } else {
+                break; // No more descendants, exit loop
+            }
+        }
+    
+        return $descendantsData;
+    }
+    
+    protected function getDescendantsData($locale, $gbif_id)
+    {
+        // Retrieve data of the specified GBIF ID and include parent name
+        $descendantsData = DB::table('animals')
+            ->select('gbif_id', 'name', 'single', 'slug', 'rank', 'cover_image_id', 'appearance', 'food', 'parent_id',
+                DB::raw('(SELECT name FROM animals AS parent WHERE parent.gbif_id = animals.parent_id LIMIT 1) AS parent_name'))
+            ->where('parent_id', $gbif_id)
+            ->where('language', $locale)
+            ->get();
+    
+        // Fallback to English if data not found in the specified locale
+        if ($descendantsData->isEmpty()) {
+            $descendantsData = DB::table('animals')
+                ->select('gbif_id', 'name', 'single', 'slug', 'rank', 'cover_image_id', 'appearance', 'food', 'parent_id',
+                    DB::raw('(SELECT name FROM animals AS parent WHERE parent.gbif_id = animals.parent_id LIMIT 1) AS parent_name'))
+                ->where('parent_id', $gbif_id)
+                ->where('language', 'en')
+                ->get();
+        }
+    
+        // Retrieve filenames of cover images
+        foreach ($descendantsData as $key => $data) {
+            $filename = DB::table('animal_pictures')
+                ->where('id', $data->cover_image_id)
+                ->value('filename');
+            $descendantsData[$key]->filename = $filename;
+        }
+    
+        // Modify name and single fields to cut off the first part
+        foreach ($descendantsData as $key => $data) {
+            $descendantsData[$key]->name = explode('|', $data->name)[0];
+            $descendantsData[$key]->single = explode('|', $data->single)[0];
+        }
+    
+        return $descendantsData->toArray();
+    }
+    
+    protected function getChildrenData($locale, $parent_gbif_id)
+    {
+        // Retrieve data of the children of the specified parent GBIF ID and include parent name
+        $childrenData = DB::table('animals')
+            ->select('gbif_id', 'name', 'single', 'slug', 'rank', 'cover_image_id', 'appearance', 'food', 'parent_id',
+                DB::raw('(SELECT name FROM animals AS parent WHERE parent.gbif_id = animals.parent_id) AS parent_name'))
+            ->where('parent_id', $parent_gbif_id)
+            ->where('language', $locale)
+            ->get();
+    
+        // Fallback to English if data not found in the specified locale
+        if ($childrenData->isEmpty()) {
+            $childrenData = DB::table('animals')
+                ->select('gbif_id', 'name', 'single', 'slug', 'rank', 'cover_image_id', 'appearance', 'food', 'parent_id',
+                    DB::raw('(SELECT name FROM animals AS parent WHERE parent.gbif_id = animals.parent_id) AS parent_name'))
+                ->where('parent_id', $parent_gbif_id)
+                ->where('language', 'en')
+                ->get();
+        }
+    
+        // Retrieve filenames of cover images
+        foreach ($childrenData as $key => $data) {
+            $filename = DB::table('animal_pictures')
+                ->where('id', $data->cover_image_id)
+                ->value('filename');
+            $childrenData[$key]->filename = $filename;
+        }
+    
+        // Modify name and single fields to cut off the first part
+        foreach ($childrenData as $key => $data) {
+            $childrenData[$key]->name = explode('|', $data->name)[0];
+            $childrenData[$key]->single = explode('|', $data->single)[0];
+        }
+    
+        return $childrenData->toArray();
+    }
+    
     
 
 }

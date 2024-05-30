@@ -48,28 +48,28 @@ return [
         'animals' => [
             'common_pets' => 'MĀJDZĪVNIEKI', // 'COMMON PETS'
             'description' => 'APRAKSTS', // 'DESCRIPTION'
-            'well_known_orders' => 'ZINĀMĀKĀS KĀRTAS', // 'WELL-KNOWN ORDERS'
+            'well_known' => 'ZINĀMĀKĀS', // 'WELL-KNOWN ORDERS'
             'species' => 'SUGAS', // 'SPECIES'
             'appearance' => 'IZSKATS', // 'Appearance'
-            'food' => 'ĒDIENS', // 'Food'
+            'food' => 'Ēdiens', // 'Food'
+            'ranks' => [
+                'SUBSPECIES' => '{1} APAKŠSUGA|[2,*] APAKŠSUGAS',
+                'SPECIES' => '{1} SUGA|[2,*] SUGAS',
+                'GENUS' => '{1} ĢINTS|[2,*] ĢINTIS',
+                'FAMILY' => '{1} DZIMTA|[2,*] DZIMTAS',
+                'ORDER' => '{1} KĀRTA|[2,*] KĀRTAS',
+                'CLASS' => '{1} KLASE|[2,*] KLASES',
+                'SUPERCLASS' => '{1} X|[2,*] X',
+                'INFRAPHYLUM' => '{1} X|[2,*] X',
+                'SUBPHYLUM' => '{1} X|[2,*] X',
+                'PHYLUM' => '{1} X|[2,*] X',
+                'INFRAKINGDOM' => '{1} X|[2,*] X',
+                'SUBKINGDOM' => '{1} X|[2,*] X',
+                'KINGDOM' => '{1} VALSTS|[2,*] VALSTIS',
+            ],
         ],
         'species' => [
             'name' => 'Sugas', // 'Species'
-            'ranks' => [
-                'SUBSPECIES' => 'APAKŠSUGA',
-                'SPECIES' => 'SUGA', // ?
-                'GENUS' => 'ĢINTS',
-                'FAMILY' => 'DZIMTA',
-                'ORDER' => 'KĀRTA',
-                'CLASS' => 'KLASE',
-                // 'SUPERCLASS' => '',
-                // 'INFRAPHYLUM' => '',
-                // 'SUBPHYLUM' => '',
-                // 'PHYLUM' => '',
-                // 'INFRAKINGDOM' => '',
-                // 'SUBKINGDOM' => '',
-                'KINGDOM' => 'VALSTS',
-            ],
             'food_list_title' => 'PĀRTIKAS SARAKSTS',          
             'filter' => 'Filtrēt pēc', 
             'search_placeholder' => 'Meklēt ēdienus...', 

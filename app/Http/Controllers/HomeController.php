@@ -28,26 +28,52 @@ class HomeController extends Controller
         $animals = Animals::getPopularPets($locale);
         return view('welcome', ['popularPets' => $animals]);
     }
-
     public function popular($locale, $slug)
     {
+        // Fetch the popular pet type information
         $animals = Animals::getPopularPets($locale);
         $type = Animals::getTypeInfo($locale, $slug);
         $slugs = self::getAllSlugs($type->gbif_id, 'popular/');
-        
-        // Check if the current slug exists in animals table
+    
+        // Check if the current slug exists in the animals table
         $matchingPopularPet = collect($animals)->firstWhere('slug', $slug);
         if ($matchingPopularPet) {
             $type->emoji = $matchingPopularPet['emoji'];
             $type->hex_color = $matchingPopularPet['hex_color'];
         }
     
+        // Fetch descendants of the popular pet
+        $descendants = Animals::getAllDescendants($locale, $type->gbif_id);
+    
+        // Determine the rank of the first closest descendant
+        $closestDescendantRank = $descendants[0][0]->rank;
+    
+        // Set the title based on the rank with translations
+        $title = __('app.animals.ranks.' . $closestDescendantRank);
+    
+        // If translation not found, default to the rank itself
+        if ($title === 'app.animals.ranks.' . $closestDescendantRank) {
+            $title = $closestDescendantRank;
+        }
+    
+        // Return the descendants data in the correct hierarchy
+        $descendantsByCategory = [];
+        foreach ($descendants as $descendant) {
+            // Group descendants by their parent names (order or family)
+            $parentName = $descendant[0]->rank === 'ORDER' ? $descendant[0]->name : $descendant[0]->parent_name;
+            $descendantsByCategory[$parentName][] = $descendant;
+        }
+    
         return view('animals', [
             'popularPets' => $animals,
             'type' => $type,
-            'slugs' => $slugs
+            'slugs' => $slugs,
+            'descendantsByCategory' => $descendantsByCategory, // Pass descendants grouped by category to the view
+            'closestDescendantRank' => $closestDescendantRank, // Pass the closest descendant rank to the view
+            'title' => $title, // Pass the dynamically determined title to the view
         ]);
     }
+    
     
     public function livestock($locale)
     {
@@ -61,7 +87,6 @@ class HomeController extends Controller
             'slugs' => $slugs
         ]);
     }
-    
     public static function getAllSlugs($gbif_id, $prefix)
     {
         $slugs = [];
@@ -76,10 +101,9 @@ class HomeController extends Controller
         }
         return $slugs;
     }
-
+    // TODO
     public function species($locale, $gbif_id)
     {
-        $slugs = 'species/' . $gbif_id;
         $speciesData = Animals::getParentRankData($locale, $gbif_id);
         $species = !empty($speciesData) ? end($speciesData) : [];
     
@@ -90,6 +114,7 @@ class HomeController extends Controller
                 break;
             }
         }
-        return view('species', ['locale' => $locale, 'data' => $speciesData, 'species' => $species, 'class' => $class, 'slugs' => $slugs]);
-    }
+    
+        return view('species', ['locale' => $locale, 'data' => $speciesData, 'species' => $species, 'class' => $class]);
+    }    
 }
