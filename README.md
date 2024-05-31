@@ -83,6 +83,8 @@ $defaults = [
     'idn_conversion' => false,
 ];
 ```
+### NOTE 3
+By default laravel doesnt use `MyISAM` database engine. I changed it to `config/database.php` because i had problems with `InnoDB`.
 ## Server setup
 ### Using Apache
 1. Move all the code to server folder
