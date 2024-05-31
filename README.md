@@ -13,7 +13,6 @@ PASS: 12345678
 [phpmyadmin.brakis.id.lv](https://phpmyadmin.brakis.id.lv/)
 
 ## Local setup
-
 1. Clone this repo
 ```
 git clone https://github.com/karluga/petfood .
