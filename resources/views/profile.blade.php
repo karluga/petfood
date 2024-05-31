@@ -196,7 +196,10 @@
             </div>
             <div class="modal-body d-flex flex-wrap">
                 <div class="field-group-2">
-                    <input type="{{  Auth::user()->google_id ? 'text' : 'password' }}" name="current_password" value="{{  Auth::user()->google_id ? Auth::user()->name . '@' . Auth::user()->google_id : '' }}" required>
+                    <input type="{{ (Auth::user()->google_id && Auth::user()->created_at == Auth::user()->updated_at) ? 'text' : 'password' }}" 
+                        name="current_password" 
+                        value="{{ (Auth::user()->created_at == Auth::user()->updated_at) ? (Auth::user()->google_id ? Auth::user()->name . '@' . Auth::user()->google_id : '') : '' }}" 
+                        required>
                     <span class="underline"></span>
                     <label>{{ __('app.section.profile.current_password') }}</label>
                 </div>
