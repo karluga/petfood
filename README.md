@@ -1,31 +1,44 @@
 # Kvalifikācijas darbs
 
+## Pieejams:
+[petfood.brakis.id.lv](https://petfood.brakis.id.lv/)
+### Testa lietotāji:
+#### Administrators
+USER: kaarlisbrakis@gmail.com
+PASS: 12345678
+#### Lietotājs
+USER: ip20.k.brakis@gmail.com
+PASS: 12345678
+### Datu bāze:
+[phpmyadmin.brakis.id.lv](https://phpmyadmin.brakis.id.lv/)
+
 ## Local setup
 
 1. Clone this repo
 ```
-git clone https://github.com/karluga/petfood
+git clone https://github.com/karluga/petfood .
 ```
 2. Install dependencies
 ```
 composer install (est. 2-5min)
 ```
-3. Generate app key (for security)
+3. Rename `.env.example` to `.env`
+4. Generate app key (for security)
 ```
 php artisan key:generate
 ```
-4. Add MySQL database credentials to `.env` file.
+5. Add MySQL database credentials to `.env` file.
 Credentials from Gmail SMTP free mail service (from their server)
  - They can be created in your google account.
  - [Google Account](https://myaccount.google.com/) -> Security -> 2-Step Verification (2FA) -> App Passwords
  - Delete the whitespaces from the password before pasting it in the `.env` file.
  - P.S. they let you see it <u>only once!</u>
  - [YT tutorial](https://www.youtube.com/watch?v=1YXVdyVuFGA&ab_channel=Sombex)
-5. Migrations 
+6. Migrations 
 ```
 php artisan migrate
 ```
-6. Make a storage link and add write/read/delete permissions for `storage/` folder.
+7. Make a storage link and add write/read/delete permissions for `storage/` folder.
 ```
 php artisan storage:link
 # In linux
