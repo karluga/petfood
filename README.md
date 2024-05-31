@@ -104,3 +104,17 @@ ServerName petfood.brakis.id.lv
 ```
 sudo chmod -R 777 storage
 ```
+## Useful commands
+```
+# Clear application cache
+php artisan cache:clear
+
+# Clear configuration cache
+php artisan config:clear
+
+# Clear route cache
+php artisan route:clear
+
+# Clear view cache
+php artisan view:clear
+```
