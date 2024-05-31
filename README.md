@@ -69,6 +69,7 @@ GOOGLE_REDIRECT_URI=https://2607-2a03-ec00-b19b-19d4-14d2-8d38-f5fa-4400.ngrok-f
 3. [Link to Google Cloud console](https://console.cloud.google.com/apis/credentials)
 Here you have to add the Ngrok generated URL to the "Authorized redirect URIs" section.
 4. I have to warn you that you can only access the app from your new Ngrok URL.
+*For the real web server you will need to add the current app URI.
 
 ### NOTE 2
 To fix the problem with SSL in `vendor/guzzlehttp/guzzle/src/Client.php`
@@ -85,4 +86,19 @@ $defaults = [
 ## Server setup
 ### Using Apache
 1. Move all the code to server folder
-2. Make an alias from "/" to "/public"
+2. Make an alias from "/" to "/public".
+Inside Webmin:
+Servers -> Apache Webserver -> petfood.brakis.id.lv -> Edit Directives
+```
+DocumentRoot /var/www/html/karlis/petfood.brakis.id.lv/petfood/public
+ServerName petfood.brakis.id.lv
+
+
+<Directory /var/www/html/karlis/petfood.brakis.id.lv/petfood>
+    AllowOverride All
+</Directory>
+```
+3. Give permissions to storage (this will grant access to `storage/logs/laravel.log` )
+```
+sudo chmod -R 777 storage
+```

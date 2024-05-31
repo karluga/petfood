@@ -40,6 +40,7 @@
                             </div>
                         </div>
                     </a>
+                    <h4 class="mx-2 my-0"><i class="fas fa-shield-alt mr-1"></i>ADMIN</h4>
                     <input type="checkbox" id="check">
                     <label for="check" class="m-0 p-3 d-flex align-items-center">
                         <svg id="btn" fill="rgb(171 119 74)" width="40px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -89,7 +90,7 @@
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <!-- Left Side Of Navbar -->
                         <ul class="navbar-nav me-auto">
-                            <div class="ln">
+                            {{-- <div class="ln">
                                 <!-- Current Language - Displayed First -->
                                 <a class="square dropdown-button" href="#" title="{{ config('languages')[App::currentLocale()]['name'] }}">
                                     <img src="{{ asset('assets/flags/' . (App::currentLocale())) }}.svg" alt="flag-{{ App::currentLocale() }}">
@@ -110,9 +111,9 @@
                                         </a>
                                     @endif
                                 @endforeach
-                            </div>
+                            </div> --}}
                             <a href="/" id="nav-search" class="{{ request()->is('/') ? 'd-none' : 'd-flex' }} align-items-center mx-2">
-                                @svg('assets/icons/switch-arrows.png', 'nav-icon')
+                                @svg('assets/icons/switch-arrows.svg', 'nav-icon')
                                 <span>Go to app</span>
                             </a>
                         </ul>
@@ -137,7 +138,32 @@
                         </script>
                         <!-- Right Side Of Navbar -->
                         <ul class="navbar-nav ms-auto">
-                            
+                            <!-- Authentication Links -->
+                            @guest
+                            <a onclick="signIn()" class="cool-button">{{ __('auth.buttons.login') }}</a>
+                            @else
+                            <li class="nav-item dropdown d-flex align-items-center">
+                                <img id="profilePicture" class="object-fit-cover border rounded-circle" src="{{ Auth::user()->filename ? asset('storage/profile_pictures/' . Auth::user()->filename) : asset('assets/icons/default_userpng.png') }}" height="35" width="35" alt="Profile Picture">
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                {{ Auth::user()->display_name && !empty(Auth::user()->name) ? Auth::user()->name : Auth::user()->username }}
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item d-flex justify-content-between align-items-center" href="{{ route('logout') }}"
+                                        onclick="event.preventDefault();
+                                        document.getElementById('logout-form').submit();">
+                                    {{ __('Logout') }}
+                                    <img src="{{ asset('assets/icons/logout-icon.png') }}" height="35" alt="Logout Icon">
+                                    </a>
+                                    <a class="dropdown-item d-flex justify-content-between align-items-center" href="{{ '/' . App::currentLocale() . '/profile' }}">
+                                    {{ __('Profile') }}
+                                    <img src="{{ asset('assets/icons/user.png') }}" height="35" alt="User Icon">
+                                    </a>
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+                                </div>
+                            </li>
+                            @endguest
                         </ul>
                     </div>
                 </div>

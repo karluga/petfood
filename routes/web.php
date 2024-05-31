@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 Auth::routes(['verify' => true]);
 
 Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
-    // Route::get('/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+    Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'showAnimals'])->name('admin.animals');
 });
 
 Route::get('/', function () {

@@ -22,6 +22,17 @@ class LoginController extends Controller
 
     protected function redirectTo()
     {
+        if (\Auth::check()) {
+            $user = \Auth::user();
+            $isAdmin = \DB::table('role_user')
+                        ->where('user_id', $user->id)
+                        ->where('role_id', 1)
+                        ->exists();
+    
+            if ($isAdmin) {
+                return '/admin/dashboard';
+            }
+        }
         $preferredLocale = \Auth::user()->preferred_language ?? app()->getLocale();
         return '/' . $preferredLocale . '/home';
     }

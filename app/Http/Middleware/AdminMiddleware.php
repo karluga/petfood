@@ -15,20 +15,25 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // admin role == 1
-        // user role == 0
-        if(\Auth::check()) {
-            if(\Auth::user()->role == 1) {
-                // dd('logged in as admin');
+        // Check if the user is authenticated
+        if (\Auth::check()) {
+            $user = \Auth::user();
+            
+            // Check if the user has admin role
+            $isAdmin = \DB::table('role_user')
+                        ->where('user_id', $user->id)
+                        ->where('role_id', 1)
+                        ->exists();
+
+            if ($isAdmin) {
+                // If the user is an admin, allow access to the requested route
                 return $next($request);
             } else {
-                // dd('logged in as user');
-                return redirect('/home')->with('message', 'Access Denied as you are not Admin!');
+                $preferredLocale = $user->preferred_language ?? app()->getLocale();
+                return redirect("/$preferredLocale/home")->with('message', 'Access Denied as you are not Admin!');
             }
         } else {
-            // Not logged in
             return redirect('/login')->with('message', 'Log in to access the website info.');
         }
-        return $next($request); // Don't worry about this, any other return statement will do its job
     }
 }
