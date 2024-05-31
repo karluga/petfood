@@ -16,10 +16,8 @@ return new class extends Migration
             $table->integer('gbif_id');
             $table->integer('food_id');
             $table->integer('safety_id');
-            $table->timestamps();
-            $table->created_at()->useCurrent();
             $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->useCurrent();
+            $table->timestamp('updated_at');
         });
     }
 
