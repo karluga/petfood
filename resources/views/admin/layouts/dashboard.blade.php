@@ -53,33 +53,19 @@
                         </svg>
                     </label>
                     <div id="sidebar">
-                        <a class="a active" href=""><span>{{ __('app.navigation.home') }}</span><img src="{{ asset('assets/icons/white-home-icon-png-21.jpg') }}" alt="Home Icon"></a>
-                        {{-- TODO --}}
-                        {{-- <a class="a" href=""><span>Blog</span><img src="{{ asset('assets/icons/chat-svgrepo-com.svg') }}" alt="Blog Icon"></a> --}}
-                        @auth
-                        <a class="a" href="{{ '/' . App::currentLocale() . '/pets' }}">
+                        {{-- TODO more admin actions --}}
+                        <a class="a active" href="/admin/dashboard"><span>Dashboard</span><img src="{{ asset('assets/icons/white-home-icon-png-21.jpg') }}" alt="Home Icon"></a>
+                        {{-- <a class="a" href="{{ '/' . App::currentLocale() . '/admin' }}">
                             <span>{{ __('app.navigation.my_pets') }}</span>
                             <img src="{{ asset('assets/icons/tame.png') }}" alt="My Pets Icon">
-                        </a>
-                        <a class="a" href="{{ '/' . App::currentLocale() . '/profile' }}">
-                            <span class="d-flex">
-                                {{ Auth::user()->name }}
-                                <img src="{{ asset('assets/icons/verified.png') }}" alt="Verified Icon">
-                            </span>
-                            <img src="{{ asset('assets/icons/user.png') }}" alt="User Icon"></a>
-                        <a class="a" href="{{ route('logout') }}"
-                            onclick="event.preventDefault();
-                            document.getElementById('logout-form').submit();">
-                        <span>{{ __('Logout') }}</span><img src="{{ asset('assets/icons/logout-icon.png') }}" alt="Logout Icon">
-                        </a>
-                        @else
-                        <a onclick="signIn()" class="a"><span>{{ __('auth.buttons.login') }}</span><img src="{{ asset('assets/icons/user.png') }}" alt="User Icon"></a>
-                        @endauth
-                        <div id="language-mobile" data-bs-toggle="modal" data-bs-target="#languageChangeModal">
+                        </a> --}}
+
+                        {{-- TODO add localization for admin --}}
+                        {{-- <div id="language-mobile" data-bs-toggle="modal" data-bs-target="#languageChangeModal">
                             <img class="img-1" src="{{ asset('assets/flags/' . (App::currentLocale())) }}.svg" alt="flag-{{ App::currentLocale() }}">
                             {{ config('languages')[App::currentLocale()]['name'] }}
                             <img class="img-2" src="https://www.svgrepo.com/show/453365/language.svg">
-                        </div>
+                        </div> --}}
                         <label for="check" class="close-bottom p-3">
                             <svg fill="rgb(255 255 255)" width="40px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
                                 <title>{{ __('app.navigation.close_menu') }}</title>
@@ -169,10 +155,11 @@
                 </div>
             </nav>
             <main class="py-4">
+                
                 @yield('content')
             </main>
         </div>
-        <!-- Modal Language change -->
+        {{-- <!-- Modal Language change -->
         <div class="modal fade" id="languageChangeModal" tabindex="-1" role="dialog" aria-labelledby="languageChangeModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -200,6 +187,6 @@
                     </div>
                 </div>                                                           
             </div>
-        </div>
+        </div> --}}
     </body>
 </html>

@@ -131,7 +131,9 @@
                         </svg>
                     </label>
                     <div id="sidebar">
-                        <a class="a active" href=""><span>{{ __('app.navigation.home') }}</span><img src="{{ asset('assets/icons/white-home-icon-png-21.jpg') }}" alt="Home Icon"></a>
+                        <a class="a {{ (Route::currentRouteName() == 'welcome' || Route::currentRouteName() == 'home') ? 'active' : '' }}" href="">
+                            <span>{{ __('app.navigation.home') }}</span><img src="{{ asset('assets/icons/white-home-icon-png-21.jpg') }}" alt="Home Icon">
+                        </a>
                         {{-- TODO --}}
                         {{-- <a class="a" href=""><span>Blog</span><img src="{{ asset('assets/icons/chat-svgrepo-com.svg') }}" alt="Blog Icon"></a> --}}
                         @auth
@@ -354,11 +356,12 @@
                 this.classList.toggle("bi-eye");
             });
             
-            // // prevent form submit
-            // const form = document.querySelector("form");
-            // form.addEventListener('submit', function (e) {
-            //     e.preventDefault();
-            // });
+            function isMobileDevice() {
+                return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            }
+            if (!isMobileDevice()) {
+                document.querySelector('.close-esc').style.display = 'block';
+            }
         </script>
     </body>
 </html>

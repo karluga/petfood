@@ -47,8 +47,10 @@ class HomeController extends Controller
 
         // Fetch descendants of the popular pet
         $descendants = Animals::getAllDescendants($locale, $type->gbif_id);
-        
-        // Determine the rank of the first closest descendant
+        if (empty($descendants)) {
+            abort(404);
+        }
+        // Rank of the first closest descendant
         $closestDescendant = $descendants[0]['closestDescendant'];
         $closestDescendantRank = $descendants[0]['descendants'][0]->rank; // Get rank from the first descendant
         
@@ -64,9 +66,9 @@ class HomeController extends Controller
             'popularPets' => $animals,
             'type' => $type,
             'slugs' => $slugs,
-            'descendants' => $descendants, // Pass descendants data to the view
-            'closestDescendantRank' => $closestDescendantRank, // Pass the closest descendant rank to the view
-            'title' => $title, // Pass the dynamically determined title to the view
+            'descendants' => $descendants,
+            'closestDescendantRank' => $closestDescendantRank,
+            'title' => $title,
         ]);
     }
     
@@ -100,6 +102,7 @@ class HomeController extends Controller
     }
     public function species($locale, $gbif_id)
     {
+        $slugs = 'species/' . $gbif_id;
         $speciesData = Animals::getParentRankData($locale, $gbif_id);
         if (empty($speciesData)) {
             abort(404);
@@ -114,6 +117,6 @@ class HomeController extends Controller
             }
         }
         
-        return view('species', ['locale' => $locale, 'data' => $speciesData, 'species' => $species, 'class' => $class]);
-    } 
+        return view('species', ['locale' => $locale, 'data' => $speciesData, 'species' => $species, 'class' => $class, 'slugs' => $slugs]);
+    }
 }

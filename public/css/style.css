@@ -304,6 +304,7 @@ form.authenticate i#togglePassword {
     top: 0%;
 }
 .close-esc {
+    display: none;
     font-size: 16px;
     padding: 0px 4px;
     font-weight: bold;
@@ -1077,6 +1078,14 @@ a.species-link:hover {
     font-size: 25px;
     align-items: center;
     background: #ededed;
+}
+@media screen and (max-width: 1200px) {
+    #species #food_list_container li {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    #species #food_list_container li:last-child {
+        grid-column: span 2;
+    }
 }
 #species #food_list_container li .item {
     display: flex;

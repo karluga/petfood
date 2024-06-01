@@ -174,6 +174,7 @@ document.getElementById('search_box').addEventListener('keyup', function(event) 
     }
 });
 
-document.getElementById('search_box').addEventListener('focus', function() {
-    debounce(load_search_history, 1000);
-});
+// TODO fix
+// document.getElementById('search_box').addEventListener('focus', function() {
+//     debounce(load_search_history, 1000);
+// });
