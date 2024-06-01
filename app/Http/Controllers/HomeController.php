@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\Animals;
+use App\Models\Animal;
 
 class HomeController extends Controller
 {
@@ -25,17 +25,17 @@ class HomeController extends Controller
 
     public function welcome($locale)
     {
-        $animals = Animals::getPopularPets($locale);
+        $animals = Animal::getPopularPets($locale);
         return view('welcome', ['popularPets' => $animals]);
     }
     public function popular($locale, $slug)
     {
-        $type = Animals::getTypeInfo($locale, $slug);
+        $type = Animal::getTypeInfo($locale, $slug);
         if (empty($type)) {
             abort(404);
         }
         // Fetch the popular pet type information
-        $animals = Animals::getPopularPets($locale);
+        $animals = Animal::getPopularPets($locale);
         $slugs = self::getAllSlugs($type->gbif_id, 'popular/');
         
         // Check if the current slug exists in the animals table
@@ -46,7 +46,7 @@ class HomeController extends Controller
         }
 
         // Fetch descendants of the popular pet
-        $descendants = Animals::getAllDescendants($locale, $type->gbif_id);
+        $descendants = Animal::getAllDescendants($locale, $type->gbif_id);
         if (empty($descendants)) {
             abort(404);
         }
@@ -77,8 +77,8 @@ class HomeController extends Controller
     public function livestock($locale)
     {
         $slugs = 'livestock/';
-        $animals = Animals::getPopularPets($locale);
-        $livestock = Animals::getLivestock($locale);
+        $animals = Animal::getPopularPets($locale);
+        $livestock = Animal::getLivestock($locale);
         
         return view('animals', [
             'popularPets' => $animals,
@@ -103,7 +103,7 @@ class HomeController extends Controller
     public function species($locale, $gbif_id)
     {
         $slugs = 'species/' . $gbif_id;
-        $speciesData = Animals::getParentRankData($locale, $gbif_id);
+        $speciesData = Animal::getParentRankData($locale, $gbif_id);
         if (empty($speciesData)) {
             abort(404);
         }

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 
-class Animals extends Model
+class Animal extends Model
 {
     use HasFactory;
     public const API_URL = 'https://api.gbif.org/v1/species/'; 
@@ -277,5 +277,28 @@ class Animals extends Model
         }
     
         return $childrenData->toArray();
+    }
+    public static function getEnumValues($columnName)
+    {
+        $tableName = (new static())->getTable();
+    
+        // Get enum column values
+        $columns = \Schema::getColumnListing($tableName);
+    
+        // Check if the specified column is an enum type
+        if (!in_array($columnName, $columns)) {
+            return [];
+        }
+    
+        // Fetch enum values using raw SQL query
+        $query = "SHOW COLUMNS FROM $tableName WHERE Field = '$columnName'";
+        $result = DB::select($query);
+    
+        // Extract enum values from the result
+        $enumStr = $result[0]->Type;
+        preg_match("/^enum\(\'(.*)\'\)$/", $enumStr, $matches);
+        $enumValues = explode("','", $matches[1]);
+    
+        return $enumValues;
     }
 }
