@@ -53,12 +53,10 @@
                         </svg>
                     </label>
                     <div id="sidebar">
-                        {{-- TODO more admin actions --}}
-                        <a class="a active" href="/admin/dashboard"><span>Dashboard</span><img src="{{ asset('assets/icons/white-home-icon-png-21.jpg') }}" alt="Home Icon"></a>
-                        {{-- <a class="a" href="{{ '/' . App::currentLocale() . '/admin' }}">
-                            <span>{{ __('app.navigation.my_pets') }}</span>
-                            <img src="{{ asset('assets/icons/tame.png') }}" alt="My Pets Icon">
-                        </a> --}}
+                        {{-- TODO add icons --}}
+                        <a class="a{{ request()->route()->getName() === 'admin.animal.index' ? ' active' : '' }}" href="{{ route('admin.animal.index') }}"><span>Create Animal</span></a>
+                        {{-- <a class="a{{ request()->route()->getName() === 'admin.foods.index' ? ' active' : '' }}" href="{{ route('admin.foods.index') }}"><span>Add foods</span></a> --}}
+                        <a class="a{{ request()->route()->getName() === 'admin.safeties.index' ? ' active' : '' }}" href="{{ route('admin.safeties.index') }}"><span>Add food safety</span></a>
 
                         {{-- TODO add localization for admin --}}
                         {{-- <div id="language-mobile" data-bs-toggle="modal" data-bs-target="#languageChangeModal">
@@ -155,7 +153,11 @@
                 </div>
             </nav>
             <main class="py-4">
-                
+                <div class="btn-group mb-3" role="group">
+                    <a class="btn btn-primary{{ request()->route()->getName() === 'admin.animal.index' ? ' active' : '' }}" href="{{ route('admin.animal.index') }}"><span>Create Animal</span></a>
+                    {{-- <a class="btn btn-primary{{ request()->route()->getName() === 'admin.foods.index' ? ' active' : '' }}" href="{{ route('admin.foods.index') }}"><span>Add foods</span></a> --}}
+                    <a class="btn btn-primary{{ request()->route()->getName() === 'admin.safeties.index' ? ' active' : '' }}" href="{{ route('admin.safeties.index') }}"><span>Add food safety</span></a>
+                </div>            
                 @yield('content')
             </main>
         </div>

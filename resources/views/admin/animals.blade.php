@@ -24,7 +24,7 @@
                 </a>
                 <div class="input-group">
                     <input type="text" value="{{ old('gbif_id', isset($data['key']) ? $data['key'] : '') }}" class="form-control" id="gbif_id" name="gbif_id">
-                    <button type="submit" name="autofill" class="btn btn-primary d-flex" id="autofillBtn">Autofill</button>
+                    <button type="submit" name="autofill" class="btn btn-primary d-flex z-0" id="autofillBtn">Autofill</button>
                 </div>
                 @error('gbif_id')
                     <span class="text-danger fs-5">{{ $message }}</span>
@@ -192,11 +192,11 @@ imgInp.onchange = evt => {
             filenameInput.classList.add('form-control', 'mb-2');
             filenameInput.placeholder = 'Filename';
 
-            // Create close button
+            // Create remove button
             const closeButton = document.createElement('button');
             closeButton.type = 'button';
             closeButton.classList.add('btn', 'btn-danger', 'btn-sm', 'ml-2');
-            closeButton.textContent = 'Close';
+            closeButton.textContent = 'Remove';
             closeButton.addEventListener('click', () => {
                 previewContainer.removeChild(formGroup);
                 const index = selectedFiles.indexOf(file);

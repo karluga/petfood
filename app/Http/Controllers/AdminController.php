@@ -145,7 +145,7 @@ class AdminController extends Controller
         }
         
         // Redirect back to the dashboard with success message
-        return redirect()->route('admin.animal.index')->with('success', 'Pet added successfully.'); 
+        return redirect()->route('admin.safeties')->with('success', 'Pet added successfully.'); 
     }
 
     /**
@@ -161,4 +161,59 @@ class AdminController extends Controller
             ->where('language', $language)
             ->exists();
     }
+
+
+    public function showSafeties()
+    {
+        // Fetch all safety categories where language is 'en'
+        $safeties = \DB::table('safety_categories')
+            ->where('language', 'en')
+            ->pluck('name', 'id');
+    
+        // Fetch all available food entries
+        $foods = \DB::table('foods')
+            ->where('language', 'en')
+            ->pluck('food', 'food_id');
+    
+        // Fetch all animals where language is 'en' and pluck gbif_id and name
+        $animals = \DB::table('animals')
+            ->where('language', 'en')
+            ->pluck('name', 'gbif_id');
+    
+        return view('admin.safeties', compact('safeties', 'foods', 'animals'));
+    }
+    public function createSafeties(Request $request)
+    {
+        $request->validate([
+            'gbif_id' => 'required|string',
+            'safety_category' => 'required',
+            'food_id' => 'required',
+        ]);
+    
+        try {
+            // Check if the same entry exists
+            $existingRecord = \DB::table('food_safety')
+                ->where('gbif_id', $request->gbif_id)
+                ->where('food_id', $request->food_id)
+                ->where('safety_id', $request->safety_category)
+                ->first();
+    
+            // If the same entry exists, return back with an error
+            if ($existingRecord) {
+                return back()->with('error', 'A safety record with the same entry already exists!');
+            }
+    
+            // Insert data into the food_safety table
+            \DB::table('food_safety')->insert([
+                'gbif_id' => $request->gbif_id,
+                'food_id' => $request->food_id,
+                'safety_id' => $request->safety_category,
+            ]);
+            
+            return back()->with('success', 'Safety record created successfully!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error creating safety record: ' . $e->getMessage());
+        }
+    }
+    
 }

@@ -18,6 +18,10 @@ Auth::routes(['verify' => true]);
 Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::get('/dashboard', [App\Http\Controllers\AdminController::class, 'showForm'])->name('admin.animal.index');
     Route::post('/dashboard', [App\Http\Controllers\AdminController::class, 'createSpecies'])->name('admin.animal.create');
+    Route::get('/safeties', [App\Http\Controllers\AdminController::class, 'showSafeties'])->name('admin.safeties.index');
+    Route::post('/safeties', [App\Http\Controllers\AdminController::class, 'createSafeties'])->name('admin.safeties.create');
+    // Route::get('/foods', [App\Http\Controllers\AdminController::class, 'showFoods'])->name('admin.foods.index');
+    // Route::post('/foods', [App\Http\Controllers\AdminController::class, 'createFoods'])->name('admin.foods.create');
 });
 
 Route::get('/', function () {
@@ -28,7 +32,6 @@ Route::prefix('{locale}')
 ->where(['locale' => '[a-zA-Z]{2}'])
 ->middleware('setlocale')
 ->group(function () {
-    // dd(app()->getLocale());
     Route::get('/', function ($locale) {
         return app()->call('App\Http\Controllers\HomeController@welcome', ['locale' => $locale]);
     })->name('welcome');
@@ -53,10 +56,8 @@ Route::prefix('{locale}')
     Route::prefix('/popular')->group(function () {
         Route::get('/{slug}', [App\Http\Controllers\HomeController::class, 'popular'])->name('popular');
     });
-    // Route::prefix('/{livestock}')->group(function () {
     Route::prefix('/livestock')->group(function () {
         Route::get('/', [App\Http\Controllers\HomeController::class, 'livestock'])->name('livestock');
-        // Route::get('/{slug}', [App\Http\Controllers\HomeController::class, 'livestockAnimal'])->name('livestock.animal');
     });
 });
 
@@ -71,9 +72,3 @@ Route::prefix('google')->name('google.')->group( function(){
     Route::get('login', [App\Http\Controllers\Auth\GoogleController::class, 'loginWithGoogle'])->name('login');
     Route::any('callback', [App\Http\Controllers\Auth\GoogleController::class, 'callbackFromGoogle'])->name('callback');
 });
-
-// Route::prefix('user')->middleware(['auth'])->group(function () {
-//     Route::get('/profile', function () {
-//         return 'Hello';
-//     });
-// });
