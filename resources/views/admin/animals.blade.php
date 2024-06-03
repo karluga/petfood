@@ -27,16 +27,16 @@
                     <button type="submit" name="autofill" class="btn btn-primary d-flex" id="autofillBtn">Autofill</button>
                 </div>
                 @error('gbif_id')
-                    <span class="text-danger">{{ $message }}</span>
+                    <span class="text-danger fs-5">{{ $message }}</span>
                 @enderror
             </div>
-            <div class="form-group required">
+            <div class="form-group">
                 <label for="parent_id" class="mb-1">Parent ID</label>
                 <div class="input-group">
                     <input type="text" value="{{ old('parent_id', isset($data['parentKey']) ? $data['parentKey'] : '') }}" class="form-control" id="parent_id" name="parent_id">
                 </div>
                 @error('parent_id')
-                    <span class="text-danger">{{ $message }}</span>
+                    <span class="text-danger fs-5">{{ $message }}</span>
                 @enderror
             </div>
             <div class="form-group required">
@@ -46,10 +46,10 @@
                     <input type="text" value="{{ old('plural_name') }}" class="form-control" id="plural_name" name="plural_name" placeholder="Plural">
                 </div>
                 @error('single_name')
-                <span class="text-danger">{{ $message }}</span>
+                <span class="text-danger fs-5">{{ $message }}</span>
                 @enderror
                 @error('plural_name')
-                <span class="text-danger">{{ $message }}</span>
+                <span class="text-danger fs-5">{{ $message }}</span>
                 @enderror
             </div>
             <div class="form-group required">
@@ -58,7 +58,7 @@
                     <input type="text" value="{{ old('slug', isset($data['canonicalName']) ? strtolower($data['canonicalName']) : '') }}" class="form-control" id="slug" name="slug" placeholder="Slug">
                 </div>
                 @error('slug')
-                <span class="text-danger">{{ $message }}</span>
+                <span class="text-danger fs-5">{{ $message }}</span>
                 @enderror
             </div>      
             <div class="form-group required">
@@ -69,7 +69,7 @@
                     @endforeach
                 </select>
                 @error('language')
-                <span class="text-danger">{{ $message }}</span>
+                <span class="text-danger fs-5">{{ $message }}</span>
                 @enderror
             </div>
             <div class="form-group required">
@@ -80,7 +80,7 @@
                     @endforeach
                 </select>
                 @error('category')
-                <span class="text-danger">{{ $message }}</span>
+                <span class="text-danger fs-5">{{ $message }}</span>
                 @enderror
             </div>
             <div class="form-group required">
@@ -95,24 +95,30 @@
                 <label for="appearance" class="mb-1">Appearance</label>
                 <textarea class="form-control" id="appearance" name="appearance" rows="3">{{ old('appearance') }}</textarea>
                 @error('appearance')
-                <span class="text-danger">{{ $message }}</span>
+                <span class="text-danger fs-5">{{ $message }}</span>
                 @enderror
             </div>
             <div class="form-group">
                 <label for="food" class="mb-1">Food</label>
                 <textarea class="form-control" id="food" name="food" rows="3">{{ old('food') }}</textarea>
                 @error('food')
-                <span class="text-danger">{{ $message }}</span>
+                <span class="text-danger fs-5">{{ $message }}</span>
                 @enderror
             </div>
-            <!-- Image upload -->
+            <!-- BUG: error message not displayed  -->
             <div class="form-group">
                 <label for="images" class="mb-1">Images</label>
+                <p class="fs-5 mb-2">
+                    <i class="fa-solid fa-circle-info"></i>
+                    Allowed: jpeg, png, jpg, and max 2 MB
+                </p>
                 <input type="file" class="form-control" id="images" name="images[]" multiple accept="image/*">
                 @error('images')
-                <span class="text-danger">{{ $message }}</span>
+                    @foreach($errors->get('images.*') as $error)
+                        <span class="text-danger fs-5">{{ $error }}</span>
+                    @endforeach
                 @enderror
-            </div>
+            </div>          
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>
         <!-- Image preview -->
@@ -127,12 +133,11 @@
     </form>        
 </div>
 <script>
-
 // JavaScript logic for handling image preview and removal
 const imgInp = document.getElementById('images');
-const previewContainer = document.querySelector('#preview');
+const previewContainer = document.querySelector('.image-preview');
 const lastInputGroup = document.querySelector('#preview');
-let selectedFiles = []; // Array to store selected files
+let selectedFiles = [];
 
 imgInp.onchange = evt => {
     const files = imgInp.files;
@@ -145,6 +150,11 @@ imgInp.onchange = evt => {
         if (!file.type.startsWith('image/')) {
             // Alert when a non-image file is selected
             alert('Please select only image files.');
+            return;
+        }
+        if (file.size > 2 * 1024 * 1024) {
+            // Alert when file size exceeds 2MB
+            alert('Please select an image file no bigger than 2MB.');
             return;
         }
         const reader = new FileReader();
@@ -189,10 +199,16 @@ imgInp.onchange = evt => {
             closeButton.textContent = 'Close';
             closeButton.addEventListener('click', () => {
                 previewContainer.removeChild(formGroup);
+                const index = selectedFiles.indexOf(file);
+                if (index !== -1) {
+                    selectedFiles.splice(index, 1);
+                }
+                updateFileInput();
+
                 if (previewContainer.children.length === 0) {
-                    lastInputGroup.style.display = 'none'; // Hide last input-group if no images are left
+                    lastInputGroup.style.display = 'none';
                 } else if (document.querySelector('input[name="cover_image"]:checked') === null) {
-                    document.querySelector('input[name="cover_image"]').checked = true; // Default to first image if checked image is removed
+                    document.querySelector('input[name="cover_image"]').checked = true;
                 }
             });
 
@@ -204,57 +220,56 @@ imgInp.onchange = evt => {
 
             // Append form-group container to preview container
             previewContainer.appendChild(formGroup);
-
-            // Log data from selectedFiles array and filename[] array
-            console.log('selectedFiles array data:', selectedFiles);
-            console.log('filename[] array data:', document.querySelectorAll('input[name="filename[]"]'));
         };
         reader.readAsDataURL(file);
     }
     if (selectedFiles.length > 0) {
         lastInputGroup.style.display = 'block';
     }
+    updateFileInput();
+};
 
-    // Update imgInp.files indirectly using FormData
-    const formData = new FormData();
-    for (let file of selectedFiles) {
-        formData.append('images[]', file);
-    }
-    const newFiles = formData.getAll('images[]');
-
+// Very, very round-about method
+function updateFileInput() {
     // Reset file input field
     imgInp.value = '';
 
     // Programmatically set the new files to the file input field
     const newFileList = new ClipboardEvent('').clipboardData || new DataTransfer();
-    for (const file of newFiles) {
+    for (const file of selectedFiles) {
         newFileList.items.add(file);
     }
     imgInp.files = newFileList.files;
-};
+}
 
+// document.querySelector('form').addEventListener('submit', function(event) {
+//     const filenames = Array.from(document.querySelectorAll('input[name="filename[]"]')).map(input => input.value);
+//     const uniqueFilenames = new Set(filenames);
+//     if (filenames.length !== uniqueFilenames.size) {
+//         alert('Please ensure that all filenames are unique.');
+//         event.preventDefault();
+//     }
+// });
 
 </script>
 
 <style>
-    .img-thumbnail {
-        border: 2px solid transparent;
-        height: 250px;
-        max-width: 100%;
-    }
-
-    input[type="radio"]:checked + label .img-thumbnail {
-        border-color: blue;
-    }
-
-    #preview {
-        display: none;
-        max-width: 300px;
-    }
-    .form-group.required label:after { 
-        color: red;
-        content: "*";
-    }
+.img-thumbnail {
+    border: 2px solid transparent;
+    height: 250px;
+    max-width: 100%;
+}
+input[type="radio"]:checked + label .img-thumbnail {
+    border-color: blue;
+}
+#preview {
+    display: none;
+    max-width: 300px;
+}
+.form-group.required label:after { 
+    color: red;
+    content: "*";
+}
 </style>
     
 </body>
