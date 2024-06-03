@@ -55,15 +55,14 @@ class AdminController extends Controller
             $supportedLanguages = config('languages');
     
             return view('admin.animals', [
-                'ranks' => $ranks, 
-                'categories' => $categories, 
-                'supportedLanguages' => $supportedLanguages, 
-                'data' => $data, 
+                'ranks' => $ranks,
+                'categories' => $categories,
+                'supportedLanguages' => $supportedLanguages,
+                'data' => $data,
                 'gbifId' => $gbifId
             ]);
         }
-    
-        // Validate the request and create the species
+        // Add validation rules for new inputs
         $request->validate([
             'gbif_id' => 'required|string',
             'name' => 'required|string',
@@ -72,11 +71,38 @@ class AdminController extends Controller
             'rank' => 'required|string',
             'appearance' => 'nullable|string',
             'food' => 'nullable|string',
-            'language' => 'required|string'
+            'language' => 'required|string',
+            'parent_id' => 'nullable|string',
+            'slug' => 'required|string',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
-    
-    
-        // If no existing pet, create a new one
+
+        // Handle image upload
+        $imagePaths = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $index => $image) {
+                $imageName = $request->single_name ? $request->single_name . ($index + 1) . '.' . $image->getClientOriginalExtension() : 'animal' . ($index + 1) . '.' . $image->getClientOriginalExtension();
+                $imagePath = 'assets/images/' . $request->gbif_id . '/' . $imageName;
+                $image->move(public_path($imagePath));
+                $imagePaths[] = $imagePath;
+            }
+        }
+
+        // Create animal pictures records
+        foreach ($imagePaths as $imagePath) {
+            AnimalPicture::create([
+                'gbif_id' => $request->gbif_id,
+                'filename' => $imagePath
+            ]);
+        }
+
+        // Determine cover image
+        $coverImageId = null;
+        if ($request->has('cover_image')) {
+            $coverImageId = $request->cover_image;
+        }
+
+        // Create animal record
         $pet = new Animal();
         $pet->gbif_id = $request->gbif_id;
         $pet->name = $request->name;
@@ -86,12 +112,14 @@ class AdminController extends Controller
         $pet->appearance = $request->appearance;
         $pet->food = $request->food;
         $pet->language = $request->language;
+        $pet->parent_id = $request->parent_id;
+        $pet->slug = $request->slug;
+        $pet->cover_image_id = $coverImageId;
         $pet->save();
-    
+
         // Redirect back to the dashboard with success message
         return redirect()->route('admin.animal.index')->with('success', 'Pet added successfully.');
     }
-    
 
     /**
      * Check if a pet with the given GBIF ID and language exists.

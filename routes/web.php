@@ -42,6 +42,7 @@ Route::prefix('{locale}')
     Route::prefix('/profile')->middleware('auth')->group(function () {
         Route::get('/', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');
         Route::post('/update', [App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+        Route::post('/delete', [App\Http\Controllers\ProfileController::class, 'delete'])->name('profile.delete');
         Route::post('/upload-image', [App\Http\Controllers\ProfileController::class, 'uploadImage'])->name('profile.upload-image');
         Route::post('/change-password', [App\Http\Controllers\ProfileController::class, 'changePassword'])->name('profile.change-password');
         // Customize the email verification route
@@ -49,7 +50,6 @@ Route::prefix('{locale}')
         ->middleware(['auth', 'signed', 'throttle:6,1'])
         ->name('profile.verify-email');
     });
-    Route::get('/pets', [App\Http\Controllers\HomeController::class, 'pets'])->middleware(['auth'])->name('pets');
     Route::prefix('/popular')->group(function () {
         Route::get('/{slug}', [App\Http\Controllers\HomeController::class, 'popular'])->name('popular');
     });

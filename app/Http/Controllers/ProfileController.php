@@ -133,4 +133,27 @@ public function update(Request $request)
 
         return redirect()->back()->with('success', 'Password updated successfully.');
     }
+    public function delete(Request $request)
+    {
+        // Check if the confirmation phrase is provided and matches
+        $confirmation = $request->input('confirmation');
+        if ($confirmation !== 'petfood') {
+            throw ValidationException::withMessages(['confirmation' => 'Invalid confirmation phrase.']);
+        }
+    
+        $user = Auth::user();
+    
+        // Delete user's profile picture if it exists
+        if ($user->filename && Storage::exists('public/profile_pictures/' . $user->filename)) {
+            Storage::delete('public/profile_pictures/' . $user->filename);
+        }
+    
+        // Delete the user
+        $user->delete();
+    
+        // Logout the user and redirect
+        Auth::logout();
+
+        return redirect()->route('welcome', ['locale' => app()->getLocale()])->with('success', 'Account deleted.');
+    }
 }

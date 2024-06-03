@@ -183,6 +183,41 @@
             {{ __('app.section.profile.get_verified') }}
         </button>
     </div>
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+    Delete Account
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete Account</h5>
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Are you sure you want to delete your account? Please type <strong>petfood</strong> below to confirm:
+          <input type="text" class="form-control" id="deleteConfirmationInput">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <form id="deleteForm" action="{{ route('profile.delete', ['locale' => app()->getLocale()]) }}" method="post">
+                @csrf
+                <input type="hidden" name="confirmation" value="petfood">
+                <button type="button" class="btn btn-danger" onclick="confirmDelete(event)">
+                    Delete Account
+                </button>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  
     <!-- Modal Password change -->
     <div class="modal fade" id="passwordChangeModal" tabindex="-1" role="dialog" aria-labelledby="passwordChangeModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -232,6 +267,19 @@
             profileImageContainer.classList.add('visible');
         }
     };
+    </script>
+    <script>
+        function confirmDelete(event) {
+            event.preventDefault(); // Prevent default form submission
+            var confirmationInput = document.getElementById('deleteConfirmationInput').value.trim().toLowerCase();
+            if (confirmationInput === 'petfood') {
+                // If confirmation matches, submit the form
+                document.getElementById('deleteForm').submit();
+            } else {
+                // If confirmation does not match, show error message
+                alert('Please type "petfood" to confirm deletion.');
+            }
+        }
     </script>
 </div>
 </body>
