@@ -62,38 +62,67 @@ class AdminController extends Controller
                 'gbifId' => $gbifId
             ]);
         }
+
         // Add validation rules for new inputs
-        $request->validate([
-            'gbif_id' => 'required|string',
-            'name' => 'required|string',
-            'single' => 'required|string',
-            'category' => 'required|in:wild,domestic,exotic',
-            'rank' => 'required|string',
-            'appearance' => 'nullable|string',
-            'food' => 'nullable|string',
-            'language' => 'required|string',
-            'parent_id' => 'nullable|string',
-            'slug' => 'required|string',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
-        ]);
+        // $request->validate([
+        //     'gbif_id' => 'required|string',
+        //     'name' => 'required|string',
+        //     'single' => 'required|string',
+        //     'category' => 'required|in:wild,domestic,exotic',
+        //     'rank' => 'required|string',
+        //     'appearance' => 'nullable|string',
+        //     'food' => 'nullable|string',
+        //     'language' => 'required|string',
+        //     'parent_id' => 'nullable|string',
+        //     'slug' => 'required|string',
+        //     'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048'
+        // ]);
+# neizvada error un tālāk netiek
 
         // Handle image upload
+        // Handle image upload
         $imagePaths = [];
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $index => $image) {
-                $imageName = $request->single_name ? $request->single_name . ($index + 1) . '.' . $image->getClientOriginalExtension() : 'animal' . ($index + 1) . '.' . $image->getClientOriginalExtension();
-                $imagePath = 'assets/images/' . $request->gbif_id . '/' . $imageName;
-                $image->move(public_path($imagePath));
-                $imagePaths[] = $imagePath;
+        dd($request);
+        try {
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $index => $image) {
+                    // Generate filename based on whether single name is provided or not
+                    $imageName = $request->single ? $request->single . ($index + 1) : 'animal' . ($index + 1);
+
+                    // Check if single name column has value and modify filename accordingly
+                    if (!empty($request->single_name)) {
+                        $imageName = $request->single_name . ($index + 1);
+                    }
+
+                    // Append original uploaded image extension
+                    $imageName .= '.' . $image->getClientOriginalExtension();
+
+                    // Move image to appropriate directory
+                    $imagePath = 'assets/images/' . $request->gbif_id;
+                    $image->move(public_path($imagePath), $imageName);
+
+                    // Store image path in array
+                    $imagePaths[] = $imagePath . '/' . $imageName;
+                }
             }
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error uploading image: ' . $e->getMessage()); #
         }
 
         // Create animal pictures records
-        foreach ($imagePaths as $imagePath) {
-            AnimalPicture::create([
-                'gbif_id' => $request->gbif_id,
-                'filename' => $imagePath
-            ]);
+        try {
+            foreach ($imagePaths as $imagePath) {
+                // Extract filename from image path
+                $filename = basename($imagePath);
+
+                // Insert into database using DB facade
+                \DB::table('animal_pictures')->insert([
+                    'gbif_id' => $request->gbif_id,
+                    'filename' => $filename
+                ]);
+            }
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error inserting image into database: ' . $e->getMessage()); #
         }
 
         // Determine cover image
@@ -103,19 +132,23 @@ class AdminController extends Controller
         }
 
         // Create animal record
-        $pet = new Animal();
-        $pet->gbif_id = $request->gbif_id;
-        $pet->name = $request->name;
-        $pet->single = $request->single;
-        $pet->category = $request->category;
-        $pet->rank = $request->rank;
-        $pet->appearance = $request->appearance;
-        $pet->food = $request->food;
-        $pet->language = $request->language;
-        $pet->parent_id = $request->parent_id;
-        $pet->slug = $request->slug;
-        $pet->cover_image_id = $coverImageId;
-        $pet->save();
+        try {
+            $pet = new Animal();
+            $pet->gbif_id = $request->gbif_id;
+            $pet->name = $request->plural_name;
+            $pet->single = $request->single_name;
+            $pet->category = $request->category;
+            $pet->rank = $request->rank;
+            $pet->appearance = $request->appearance;
+            $pet->food = $request->food;
+            $pet->language = $request->language;
+            $pet->parent_id = $request->parent_id;
+            $pet->slug = $request->slug;
+            $pet->cover_image_id = $coverImageId;
+            $pet->save();
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error saving pet record: ' . $e->getMessage()); #
+        }
 
         // Redirect back to the dashboard with success message
         return redirect()->route('admin.animal.index')->with('success', 'Pet added successfully.');
