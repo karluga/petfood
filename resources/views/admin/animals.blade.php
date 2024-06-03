@@ -84,96 +84,83 @@
     </div>
 <!-- Image preview script -->
 <script>
-    // JavaScript logic for handling image preview and removal
-    const imgInp = document.getElementById('images');
-    const previewContainer = document.querySelector('.image-preview');
-    const lastInputGroup = document.querySelector('#preview');
-    
-    imgInp.onchange = evt => {
-        const files = imgInp.files;
-        let count = previewContainer.children.length; // Count of previews
-    
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            if (!file.type.startsWith('image/')) {
-                continue; // Skip non-image files
+// JavaScript logic for handling image preview and removal
+const imgInp = document.getElementById('images');
+const previewContainer = document.querySelector('.image-preview');
+const lastInputGroup = document.querySelector('#preview');
+
+imgInp.onchange = evt => {
+    const files = imgInp.files;
+
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!file.type.startsWith('image/')) {
+            alert('Please select only image files.'); // Alert when a non-image file is selected
+            continue; // Skip non-image files
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+            // Create form-group container for each preview
+            const formGroup = document.createElement('div');
+            formGroup.classList.add('form-group');
+
+            const img = document.createElement('img');
+            img.src = reader.result;
+            img.classList.add('img-thumbnail', 'mr-2', 'mb-2');
+
+            // Create radio input
+            const radioInput = document.createElement('input');
+            radioInput.type = 'radio';
+            radioInput.name = 'cover_image';
+            radioInput.value = previewContainer.children.length; // Use the current count
+            radioInput.id = 'image' + previewContainer.children.length;
+            radioInput.classList.add('d-none');
+            if (previewContainer.children.length === 0) {
+                radioInput.checked = true; // Select first image as default cover image
+                img.classList.add('selected');
             }
-            const reader = new FileReader();
-            reader.onload = () => {
-                // Create form-group container for each preview
-                const formGroup = document.createElement('div');
-                formGroup.classList.add('form-group');
-    
-                const img = document.createElement('img');
-                img.src = reader.result;
-                img.classList.add('img-thumbnail', 'mr-2', 'mb-2');
-    
-                // Create radio input
-                const radioInput = document.createElement('input');
-                radioInput.type = 'radio';
-                radioInput.name = 'cover_image';
-                radioInput.value = count;
-                radioInput.id = 'image' + count;
-                radioInput.classList.add('d-none');
-                if (count === 0) {
-                    radioInput.checked = true; // Select first image as default cover image
-                    img.classList.add('selected');
+
+            // Create label for radio input
+            const label = document.createElement('label');
+            label.htmlFor = 'image' + previewContainer.children.length;
+            label.appendChild(img);
+
+            // Create filename input
+            const filenameInput = document.createElement('input');
+            filenameInput.type = 'text';
+            filenameInput.name = 'filename[]';
+            filenameInput.value = document.getElementById('single_name').value ? document.getElementById('single_name').value + (previewContainer.children.length + 1) : 'animal' + (previewContainer.children.length + 1);
+            filenameInput.classList.add('form-control', 'mb-2');
+            filenameInput.placeholder = 'Filename';
+
+            // Create close button
+            const closeButton = document.createElement('button');
+            closeButton.type = 'button';
+            closeButton.classList.add('btn', 'btn-danger', 'btn-sm', 'ml-2');
+            closeButton.textContent = 'Close';
+            closeButton.addEventListener('click', () => {
+                previewContainer.removeChild(formGroup);
+                if (previewContainer.children.length === 0) {
+                    lastInputGroup.style.display = 'none'; // Hide last input-group if no images are left
                 }
-    
-                // Create label for radio input
-                const label = document.createElement('label');
-                label.htmlFor = 'image' + count;
-                label.appendChild(img);
-    
-                // Create filename input
-                const filenameInput = document.createElement('input');
-                filenameInput.type = 'text';
-                filenameInput.name = 'filename[]';
-                filenameInput.value = document.getElementById('single_name').value ? document.getElementById('single_name').value + (count + 1) : 'animal' + (count + 1);
-                filenameInput.classList.add('form-control', 'mb-2');
-                filenameInput.placeholder = 'Filename';
-    
-                // Create close button
-                const closeButton = document.createElement('button');
-                closeButton.type = 'button';
-                closeButton.classList.add('btn', 'btn-danger', 'btn-sm', 'ml-2');
-                closeButton.textContent = 'Close';
-                closeButton.addEventListener('click', () => {
-                    previewContainer.removeChild(formGroup);
-                    count--; // Decrement count when an image is removed
-                    if (document.querySelector('input[name="cover_image"]:checked') === null) {
-                        document.querySelector('input[name="cover_image"]').checked = true; // Default to first image if checked image is removed
-                        previewContainer.firstElementChild.querySelector('input[type="radio"]').checked = true;
-                        previewContainer.firstElementChild.querySelector('.img-thumbnail').classList.add('selected');
-                    }
-                    if (count === 0) {
-                        lastInputGroup.style.display = 'none'; // Hide last input-group if no images are left
-                    }
-                });
-    
-                // Append elements to form-group container
-                formGroup.appendChild(radioInput);
-                formGroup.appendChild(label);
-                formGroup.appendChild(filenameInput);
-                formGroup.appendChild(closeButton);
-    
-                // Append form-group container to preview container
-                previewContainer.appendChild(formGroup);
-    
-                count++; // Increment count for the next preview
-            };
-            reader.readAsDataURL(file);
-        }
-        if (files.length > 0) {
-            lastInputGroup.style.display = 'block'; // Show last input-group when at least one image is added
-        }
-    };
-    
-    // Hide last input-group if no images are initially present
-    if (document.querySelector('.image-preview').children.length === 0) {
-        lastInputGroup.style.display = 'none';
+            });
+
+            // Append elements to form-group container
+            formGroup.appendChild(radioInput);
+            formGroup.appendChild(label);
+            formGroup.appendChild(filenameInput);
+            formGroup.appendChild(closeButton);
+
+            // Append form-group container to preview container
+            previewContainer.appendChild(formGroup);
+        };
+        reader.readAsDataURL(file);
     }
-    
+    if (files.length > 0) {
+        lastInputGroup.style.display = 'block'; // Show last input-group when at least one image is added
+    }
+};
+
     </script>
     
     <!-- Style for selected image -->
