@@ -182,6 +182,7 @@ imgInp.onchange = evt => {
             // Create label for radio input
             const label = document.createElement('label');
             label.htmlFor = 'image' + previewContainer.children.length;
+            label.classList.add('w-100');
             label.appendChild(img);
 
             // Create filename input
@@ -256,8 +257,8 @@ function updateFileInput() {
 <style>
 .img-thumbnail {
     border: 2px solid transparent;
-    height: 250px;
-    max-width: 100%;
+    max-height: 250px;
+    width: 100%;
 }
 input[type="radio"]:checked + label .img-thumbnail {
     border-color: blue;
