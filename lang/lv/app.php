@@ -115,7 +115,7 @@ return [
             'cannot_apply_button' => 'Jūs nevarat pieteikties šai lomai', // 'You cannot apply to this role'
             'requirements' => [
                 'pet_owner' => [
-                    'title' => 'Mājlopieturejs', // 'Pet Owner'
+                    'title' => 'Mājdzīvnieka īpašnieks', // 'Pet Owner'
                     'requirement_list' => [
                         'Viena no jūsu saglabātajām mājlopiem, kopā ar ar to saistītu attēlu.', // 'One of your saved pets, along with an image associated to it.'
                     ],
