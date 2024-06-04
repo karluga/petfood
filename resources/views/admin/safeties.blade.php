@@ -13,18 +13,18 @@
 <div class="alert alert-danger mx-4">{{ session('error') }}</div>
 @endif
 <div id="admin-dashboard" class="d-flex">
-    <form action="{{ route('admin.animal.create') }}" method="POST" enctype="multipart/form-data" class="d-flex flex-wrap justify-content-center">
+    <form action="{{ route('admin.safeties.create') }}" method="POST" class="d-flex flex-wrap justify-content-center">
         <div class="white-box mr-2">
             @csrf
             <h1>ADD SAFETIES</h1>
             <div class="form-group">
                 <label for="animal_gbif_id" class="mb-1">Animal Name</label>
-                <select class="form-control" id="animal_gbif_id" name="animal_gbif_id">
+                <select class="form-control" id="gbif_id" name="gbif_id">
                     @foreach($animals as $gbif_id => $name)
                         <option value="{{ $gbif_id }}">{{ $name }}</option>
                     @endforeach
                 </select>
-                @error('animal_gbif_id')
+                @error('gbif_id')
                 <span class="text-danger fs-5">{{ $message }}</span>
                 @enderror
             </div>
@@ -40,13 +40,13 @@
                 @enderror
             </div>
             <div class="form-group">
-                <label for="safety_category" class="mb-1">Safety Category</label>
-                <select class="form-control" id="safety_category" name="safety_category">
+                <label for="safety_id" class="mb-1">Safety Category</label>
+                <select class="form-control" id="safety_id" name="safety_id">
                     @foreach($safeties as $id => $name)
                         <option value="{{ $id }}">{{ $name }}</option>
                     @endforeach
                 </select>
-                @error('safety_category')
+                @error('safety_id')
                 <span class="text-danger fs-5">{{ $message }}</span>
                 @enderror
             </div>

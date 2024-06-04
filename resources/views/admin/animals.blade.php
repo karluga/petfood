@@ -266,10 +266,6 @@ input[type="radio"]:checked + label .img-thumbnail {
     display: none;
     max-width: 300px;
 }
-.form-group.required label:after { 
-    color: red;
-    content: "*";
-}
 </style>
     
 </body>

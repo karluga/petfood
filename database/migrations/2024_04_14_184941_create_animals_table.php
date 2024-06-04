@@ -37,8 +37,8 @@ return new class extends Migration
                 'KINGDOM'
             ]);
             $table->integer('cover_image_id')->nullable();
-            $table->text('appearance')->nullable();
-            $table->text('food')->nullable();
+            $table->longText('appearance')->nullable();
+            $table->longText('food')->nullable();
             $table->timestamps();
         });
 

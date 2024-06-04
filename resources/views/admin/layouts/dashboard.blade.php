@@ -55,9 +55,22 @@
                     <div id="sidebar">
                         {{-- TODO add icons --}}
                         <a class="a{{ request()->route()->getName() === 'admin.animal.index' ? ' active' : '' }}" href="{{ route('admin.animal.index') }}"><span>Create Animal</span></a>
-                        {{-- <a class="a{{ request()->route()->getName() === 'admin.foods.index' ? ' active' : '' }}" href="{{ route('admin.foods.index') }}"><span>Add foods</span></a> --}}
+                        <a class="a{{ request()->route()->getName() === 'admin.foods.index' ? ' active' : '' }}" href="{{ route('admin.foods.index') }}"><span>Add foods</span></a>
                         <a class="a{{ request()->route()->getName() === 'admin.safeties.index' ? ' active' : '' }}" href="{{ route('admin.safeties.index') }}"><span>Add food safety</span></a>
-
+                        <a class="a" href="{{ '/' . App::currentLocale() . '/profile' }}">
+                            <span class="d-flex">
+                                {{ Auth::user()->name }}
+                                <img src="{{ asset('assets/icons/verified.png') }}" alt="Verified Icon">
+                            </span>
+                            <img src="{{ asset('assets/icons/user.png') }}" alt="User Icon"></a>
+                        <a class="a" href="{{ route('logout') }}"
+                            onclick="event.preventDefault();
+                            document.getElementById('logout-form').submit();">
+                        <span>{{ __('Logout') }}</span><img src="{{ asset('assets/icons/logout-icon.png') }}" alt="Logout Icon">
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
                         {{-- TODO add localization for admin --}}
                         {{-- <div id="language-mobile" data-bs-toggle="modal" data-bs-target="#languageChangeModal">
                             <img class="img-1" src="{{ asset('assets/flags/' . (App::currentLocale())) }}.svg" alt="flag-{{ App::currentLocale() }}">
@@ -154,9 +167,9 @@
             </nav>
             <main class="py-4">
                 <div class="btn-group mb-3" role="group">
-                    <a class="btn btn-primary{{ request()->route()->getName() === 'admin.animal.index' ? ' active' : '' }}" href="{{ route('admin.animal.index') }}"><span>Create Animal</span></a>
-                    {{-- <a class="btn btn-primary{{ request()->route()->getName() === 'admin.foods.index' ? ' active' : '' }}" href="{{ route('admin.foods.index') }}"><span>Add foods</span></a> --}}
-                    <a class="btn btn-primary{{ request()->route()->getName() === 'admin.safeties.index' ? ' active' : '' }}" href="{{ route('admin.safeties.index') }}"><span>Add food safety</span></a>
+                    <a class="btn btn-primary m-0{{ request()->route()->getName() === 'admin.animal.index' ? ' active' : '' }}" href="{{ route('admin.animal.index') }}"><span>Create Animal</span></a>
+                    <a class="btn btn-primary m-0{{ request()->route()->getName() === 'admin.foods.index' ? ' active' : '' }}" href="{{ route('admin.foods.index') }}"><span>Add foods</span></a>
+                    <a class="btn btn-primary m-0{{ request()->route()->getName() === 'admin.safeties.index' ? ' active' : '' }}" href="{{ route('admin.safeties.index') }}"><span>Add food safety</span></a>
                 </div>            
                 @yield('content')
             </main>

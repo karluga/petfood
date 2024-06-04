@@ -753,7 +753,9 @@ footer {
         position: fixed;
         padding: 10px 110px 10px 10px;
         background: #9C3B1D;
+        /* BUG */
         /* height: 100vh; */
+        /* overflow: auto; */
         top: 0;
         left: 0;
         transform: translate(-100%);
@@ -1078,7 +1080,7 @@ a.species-link:hover {
 }
 #species #food_list_container li {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     font-size: 25px;
     align-items: center;
     background: #ededed;
@@ -1171,7 +1173,6 @@ a.species-link:hover {
 .horizontal-loader::after {
   animation: horizontal-loader 2s -1s infinite;
 }
-
 @keyframes horizontal-loader {
   0% {
     transform: translate3d(-100%, 0, 0);
@@ -1179,4 +1180,20 @@ a.species-link:hover {
   100% {
     transform: translate3d(200%, 0, 0);
   }
+}
+.form-group.required label:after { 
+    color: red;
+    content: "*";
+}
+.btn-group .btn:not(:last-child) {
+    border-right: 2px solid #040071;
+}
+.btn-group .btn {
+    border-top: 0;
+    border-bottom: 0;
+}
+a.disabled {
+    color: gray;
+    pointer-events: none;
+    background: black;
 }

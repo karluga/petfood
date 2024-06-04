@@ -20,8 +20,8 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::post('/dashboard', [App\Http\Controllers\AdminController::class, 'createSpecies'])->name('admin.animal.create');
     Route::get('/safeties', [App\Http\Controllers\AdminController::class, 'showSafeties'])->name('admin.safeties.index');
     Route::post('/safeties', [App\Http\Controllers\AdminController::class, 'createSafeties'])->name('admin.safeties.create');
-    // Route::get('/foods', [App\Http\Controllers\AdminController::class, 'showFoods'])->name('admin.foods.index');
-    // Route::post('/foods', [App\Http\Controllers\AdminController::class, 'createFoods'])->name('admin.foods.create');
+    Route::get('/foods', [App\Http\Controllers\AdminController::class, 'showFoods'])->name('admin.foods.index');
+    Route::post('/foods', [App\Http\Controllers\AdminController::class, 'createFoods'])->name('admin.foods.create');
 });
 
 Route::get('/', function () {
@@ -39,8 +39,9 @@ Route::prefix('{locale}')
     Route::prefix('/species')->group(function () {
         Route::get('/{gbif_id}', [App\Http\Controllers\HomeController::class, 'species'])->name('species');
     });
-    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home')->middleware('auth');
-    Route::get('/pets', [App\Http\Controllers\HomeController::class, 'pets'])->name('pets')->middleware('auth');
+    Route::get('/home', [App\Http\Controllers\PetsController::class, 'index'])->name('home')->middleware('auth');
+    Route::post('/home', [App\Http\Controllers\PetsController::class, 'store'])->name('pets.store')->middleware('auth');
+    Route::delete('/home/{id}', [App\Http\Controllers\PetsController::class, 'destroy'])->name('pets.destroy')->middleware('auth');
 
     Route::prefix('/profile')->middleware('auth')->group(function () {
         Route::get('/', [App\Http\Controllers\ProfileController::class, 'index'])->name('profile');

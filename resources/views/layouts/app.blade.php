@@ -60,7 +60,7 @@
                     Login with Google
                 </a>
                 <!-- Facebook Login Button -->
-                <a href="{{ route('facebook.login') }}" class="social-login btn-facebook mt-2">
+                <a href="{{ route('facebook.login') }}" class="social-login btn-facebook mt-2 disabled" >
                     <img src="{{ asset('assets/icons/facebook-logo.svg') }}" alt="Facebook Logo" width="20" height="20">
                     Login with Facebook
                 </a>
@@ -100,7 +100,7 @@
                     {{ __('auth.sign_up_with_google') }}
                 </a>
                 <!-- Facebook Sign-up Button -->
-                <a href="{{ route('facebook.login') }}" class="social-login btn-facebook mt-2">
+                <a href="{{ route('facebook.login') }}" class="social-login btn-facebook mt-2 disabled">
                     <img src="{{ asset('assets/icons/facebook-logo.svg') }}" alt="Facebook Logo" width="20" height="20">
                     {{ __('auth.sign_up_with_facebook') }}
                 </a>
@@ -137,11 +137,11 @@
                         {{-- TODO --}}
                         {{-- <a class="a" href=""><span>Blog</span><img src="{{ asset('assets/icons/chat-svgrepo-com.svg') }}" alt="Blog Icon"></a> --}}
                         @auth
-                        <a class="a" href="{{ '/' . App::currentLocale() . '/pets' }}">
+                        <a class="a" href="{{ '/' . App::currentLocale() . '/home' }}">
                             <span>{{ __('app.navigation.my_pets') }}</span>
                             <img src="{{ asset('assets/icons/tame.png') }}" alt="My Pets Icon">
                         </a>
-                        <a class="a" href="{{ '/' . App::currentLocale() . '/profile' }}">
+                        <a class="a{{ Route::currentRouteName() === 'profile' ? ' active' : '' }}" href="{{ '/' . App::currentLocale() . '/profile' }}">
                             <span class="d-flex">
                                 {{ Auth::user()->name }}
                                 <img src="{{ asset('assets/icons/verified.png') }}" alt="Verified Icon">
@@ -193,15 +193,11 @@
                                 @endforeach
                             </div>
                             @auth
-                            <a href="{{ '/' . App::currentLocale() . '/pets' }}" id="nav-pets" class="d-flex align-items-center mx-2">
+                            <a href="{{ '/' . App::currentLocale() . '/home' }}" id="nav-pets" class="d-flex align-items-center mx-2">
                             <img class="nav-icon" src="{{ asset('assets/icons/tame.png') }}" height="46" alt="My Pets Icon">
                             <span>{{ __('app.navigation.my_pets') }}</span>
                             </a>
                             @endauth
-                            <a href="/" id="nav-search" class="{{ request()->is('/') ? 'd-none' : 'd-flex' }} align-items-center mx-2">
-                            <img class="nav-icon" src="{{ asset('assets/icons/search-icon-png-9985.png') }}" height="46" alt="Search Icon">
-                            <span>{{ __('app.navigation.search') }}</span>
-                            </a>
                         </ul>
                         <script>
                             $(".dropdown-button").click(function () {

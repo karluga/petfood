@@ -53,7 +53,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(Role::class);
     }
-
+    public function pets()
+    {
+        return $this->hasMany(UserPet::class);
+    }
     /**
      * Send the email verification notification.
      *

@@ -43,22 +43,24 @@
             <div class="arrow arrow-left">◀</div>
             <div class="arrow arrow-right">▶</div>
         </label>
-        <div class="common-pets">
-            @foreach($popularPets as $popularPet)
-            <a href="/{{ app()->getLocale() . '/popular/' . $popularPet['slug'] }}" class="triangle" style="--accent-color: {{ $popularPet['hex_color'] }}">
-                <div>
-                    <div class="text">{{ $popularPet['name'] }}</div>
-                    <div class="emoji">{{ $popularPet['emoji'] }}</div>
-                </div>
-            </a>
-            @endforeach
-            {{-- HARDCODED --}}
-            <a href="{{ route('livestock', ['locale' => app()->getLocale()]) }}" class="triangle" style="--accent-color: #c32070">
-                <div>
-                    <div class="text">{{ __('app.navigation.livestock.name') }}</div>
-                    <div class="emoji">🐷</div>
-                </div>
-            </a>
+        <div class="overflow-scrollable">
+            <div class="common-pets">
+                @foreach($popularPets as $popularPet)
+                <a href="/{{ app()->getLocale() . '/popular/' . $popularPet['slug'] }}" class="triangle" style="--accent-color: {{ $popularPet['hex_color'] }}">
+                    <div>
+                        <div class="text">{{ $popularPet['name'] }}</div>
+                        <div class="emoji">{{ $popularPet['emoji'] }}</div>
+                    </div>
+                </a>
+                @endforeach
+                {{-- HARDCODED --}}
+                <a href="{{ route('livestock', ['locale' => app()->getLocale()]) }}" class="triangle" style="--accent-color: #c32070">
+                    <div>
+                        <div class="text">{{ __('app.navigation.livestock.name') }}</div>
+                        <div class="emoji">🐷</div>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
 

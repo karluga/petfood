@@ -72,7 +72,7 @@ class AdminController extends Controller
             'rank' => 'required|string',
             'appearance' => 'nullable|string',
             'food' => 'nullable|string',
-            'language' => 'required|string',
+            'language' => 'required|string|size:2',
             'parent_id' => 'nullable|string',
             'slug' => 'required|string',
             'images.*' => 'image|mimes:jpeg,png,jpg|max:2048'
@@ -186,33 +186,62 @@ class AdminController extends Controller
     {
         $request->validate([
             'gbif_id' => 'required|string',
-            'safety_category' => 'required',
+            'safety_id' => 'required',
             'food_id' => 'required',
         ]);
     
         try {
-            // Check if the same entry exists
             $existingRecord = \DB::table('food_safety')
                 ->where('gbif_id', $request->gbif_id)
                 ->where('food_id', $request->food_id)
-                ->where('safety_id', $request->safety_category)
+                ->where('safety_id', $request->safety_id)
                 ->first();
-    
-            // If the same entry exists, return back with an error
+
             if ($existingRecord) {
                 return back()->with('error', 'A safety record with the same entry already exists!');
             }
     
-            // Insert data into the food_safety table
             \DB::table('food_safety')->insert([
                 'gbif_id' => $request->gbif_id,
                 'food_id' => $request->food_id,
-                'safety_id' => $request->safety_category,
+                'safety_id' => $request->safety_id,
             ]);
             
             return back()->with('success', 'Safety record created successfully!');
         } catch (\Exception $e) {
             return back()->with('error', 'Error creating safety record: ' . $e->getMessage());
+        }
+    }
+    
+    public function showFoods()
+    {
+        $supportedLanguages = config('languages');
+        return view('admin.foods', compact('supportedLanguages'));
+    }
+
+    public function createFoods(Request $request)
+    {
+        $request->validate([
+            'language' => 'required|string|size:2',
+            'food' => 'required|string',
+            'description' => 'nullable|string',
+        ]);
+        try {
+            $maxFoodId = \DB::table('foods')
+                ->where('language', $request->language)
+                ->max('food_id');
+            $foodId = $maxFoodId + 1;
+    
+            \DB::table('foods')->insert([
+                'language' => $request->language,
+                'food_id' => $foodId,
+                'food' => $request->food,
+                'description' => $request->description,
+            ]);
+            
+            return back()->with('success', 'Food record created successfully!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error creating food record: ' . $e->getMessage());
         }
     }
     
