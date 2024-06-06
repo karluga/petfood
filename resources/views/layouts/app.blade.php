@@ -35,7 +35,8 @@
             <form id="signIn" class="authenticate" action="/login" method="POST">
                 @csrf
                 <text class="auth-title" class="mt-auto">{{ __('auth.buttons.login') }}</text>
-                <input class="input form-control @if(session('login_errors') && isset(session('login_errors')['email'])) is-invalid @endif" type="text" name="email" placeholder="{{ __('auth.inputs.text_fields.email.placeholder') }}">
+                <input class="input form-control
+                @if(session('login_errors') && isset(session('login_errors')['email'])) is-invalid @endif" type="text" name="email" placeholder="{{ __('auth.inputs.text_fields.email.placeholder') }}">
                 @if(session('login_errors') && isset(session('login_errors')['email']))
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ session('login_errors')['email'] }}</strong>
@@ -43,7 +44,8 @@
                 @endif
                 <div class="input position-relative">
                     <i class="bi bi-eye-slash" id="togglePasswordd"></i>
-                    <input class="input form-control @if(session('login_errors') && isset(session('login_errors')['password'])) is-invalid @endif" id="log-psw" type="password" name="password" placeholder="{{ __('auth.inputs.text_fields.password.placeholder') }}">
+                    <input class="input form-control
+                    @if(session('login_errors') && isset(session('login_errors')['password'])) is-invalid @endif" id="log-psw" type="password" name="password" placeholder="{{ __('auth.inputs.text_fields.password.placeholder') }}">
                     @if(session('login_errors') && isset(session('login_errors')['password']))
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ session('login_errors')['password'] }}</strong>
@@ -71,24 +73,27 @@
             <form id="signUp" class="authenticate" action="/register" method="POST">
                 @csrf
                 <text class="auth-title" class="mt-auto">{{ __('auth.buttons.signup') }}</text>
-                <input required class="input form-control @if(session('register_errors') && isset(session('register_errors')['name'])) is-invalid @endif" type="text" name="name" placeholder="{{ __('auth.inputs.text_fields.name.placeholder') }}">
-                @if(session('register_errors') && isset(session('register_errors')['name']))
+                <input required class="input form-control
+                @if(session('register_errors') && session('register_errors')->has('name')) is-invalid @endif " type="text" name="name" placeholder="{{ __('auth.inputs.text_fields.name.placeholder') }}">
+                @if(session('register_errors') && session('register_errors')->has('name'))
                 <span class="invalid-feedback" role="alert">
-                    <strong>{{ session('register_errors')['name'] }}</strong>
+                    <strong>{{ session('register_errors')->get('name')[0] }}</strong>
                 </span>
                 @endif
-                <input required class="input form-control @if(session('register_errors') && isset(session('register_errors')['email'])) is-invalid @endif" type="email" name="email" placeholder="{{ __('auth.inputs.text_fields.email.placeholder') }}">
-                @if(session('register_errors') && isset(session('register_errors')['email']))
+                <input required class="input form-control
+                @if(session('register_errors') && session('register_errors')->has('email')) is-invalid @endif" type="email" name="email" placeholder="{{ __('auth.inputs.text_fields.email.placeholder') }}">
+                @if(session('register_errors') && session('register_errors')->has('email'))
                 <span class="invalid-feedback" role="alert">
-                    <strong>{{ session('register_errors')['email'] }}</strong>
+                    <strong>{{ session('register_errors')->get('email')[0] }}</strong>
                 </span>
                 @endif
                 <div class="input position-relative">
                     <i class="bi bi-eye-slash" id="togglePassword"></i>
-                    <input required class="input form-control @if(session('register_errors') && isset(session('register_errors')['password'])) is-invalid @endif" id="reg-psw" type="password" name="password" placeholder="{{ __('auth.inputs.text_fields.password.placeholder') }}" title="{{ __('auth.password_title') }}" autocomplete="off">
-                    @if(session('register_errors') && isset(session('register_errors')['password']))
+                    <input required class="input form-control
+                    @if(session('register_errors') && session('register_errors')->has('password')) is-invalid @endif" id="reg-psw" type="password" name="password" placeholder="{{ __('auth.inputs.text_fields.password.placeholder') }}" title="{{ __('auth.password_title') }}" autocomplete="off">
+                    @if(session('register_errors') && session('register_errors')->has('password'))
                     <span class="invalid-feedback" role="alert">
-                        <strong>{{ session('register_errors')['password'] }}</strong>
+                        <strong>{{ session('register_errors')->get('password')[0] }}</strong>
                     </span>
                     @endif
                 </div>

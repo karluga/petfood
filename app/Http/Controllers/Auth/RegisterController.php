@@ -28,7 +28,7 @@ class RegisterController extends Controller
             'name' => [
                 'required',
                 'string',
-                'max:255',
+                'max:64',
                 'regex:/^[\pL\d\s]+$/u',
             ],
             'email' => [
@@ -42,6 +42,7 @@ class RegisterController extends Controller
                 'required',
                 'string',
                 'min:8',
+                'max:255',
                 'confirmed',
             ],
         ], [

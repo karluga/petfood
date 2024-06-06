@@ -26,7 +26,7 @@ let rateLimiter = {
 
   increment() {
     this.counter++;
-
+  
     if (this.counter >= this.maxAttempts) {
       console.log('spammer');
       this.timeWindow = 1000;
@@ -36,13 +36,13 @@ let rateLimiter = {
       }, this.timeWindow);
       return false;
     }
-
+  
     if (!this.timeout) {
       this.timeout = setTimeout(() => {
         this.reset();
       }, this.timeWindow);
     }
-
+  
     return true;
   }
 };
@@ -65,7 +65,7 @@ class FoodList {
     try {
       // Show loader
       this.loader.style.display = 'block';
-
+  
       const params = new URLSearchParams();
       params.append('from', from);
       params.append('to', to);
@@ -76,39 +76,23 @@ class FoodList {
       params.append('locale', document.documentElement.lang); // Add locale parameter
       const queryString = params.toString();
       console.log(`http://localhost:8000/api/food_safety/${this.lastSegment}?${queryString}`);
-
+      
       const response = await fetch(`/api/food_safety/${this.lastSegment}?${queryString}`);
       if (!response.ok) {
-        if (response.status === 404) {
-          // Hide loader
-          this.loader.style.display = 'none';
-          // Render error message
-          this.renderErrorMessage('No food data found for the specified parameters.');
-          return; // Stop further execution
-        } else {
-          throw new Error('Failed to fetch data');
-        }
+        throw new Error('Failed to fetch data');
       }
       const data = await response.json();
-
+  
       // Hide loader after fetching data
       this.loader.style.display = 'none';
-
+  
       return data;
     } catch (error) {
       console.error('Error fetching data:', error);
       throw error;
     }
   }
-
-  renderErrorMessage(message) {
-    const errorListItem = document.createElement('li');
-    errorListItem.innerHTML = `<div style="grid-column: span 2;">${message}</div>`;
-    this.container.innerHTML = ''; // Clear previous results
-    this.container.appendChild(errorListItem);
-  }
-
-
+  
   getLastSegment() {
     const pathname = window.location.pathname;
     const segments = pathname.split('/');
@@ -117,15 +101,15 @@ class FoodList {
 
   renderFoodItems(data, append = false) {
     const fragment = document.createDocumentFragment();
-
+  
     if (!rateLimiter.increment()) {
       const errorListItem = document.createElement('li');
       errorListItem.innerHTML = `
-        <div style="grid-column: span 1;>Too many requests.</div>
+        <div>Too many requests.</div>
         <div class="error-timer"></div>
       `;
       fragment.appendChild(errorListItem);
-
+  
       const errorTimerElement = errorListItem.querySelector('.error-timer');
       let remainingTime = 1000;
       const updateTimer = setInterval(() => {
@@ -144,7 +128,7 @@ class FoodList {
         }
         errorTimerElement.textContent = (remainingTime / 1000).toFixed(2) + ' s';
       }, 10);
-
+  
       // Clear previous results and replace with error message
       if (!append) {
         this.container.innerHTML = '';
@@ -165,27 +149,31 @@ class FoodList {
         if (food.filename) {
           htmlString += `<img src="${food.filename}" height="40" alt="Icon">`;
         }
-        // TODO
-        // htmlString += `</div><a href="#">Read more <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
+        htmlString += `</div><a href="#">Read more <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
         listItem.innerHTML = htmlString;
         fragment.appendChild(listItem);
         if (append) {
-          this.foodItems.push(listItem);
+          this.foodItems.push(listItem); // Push new item to foodItems array only when appending
         }
       });
-
-      if (data.data.foods.length < this.step) {
-        endOfDataItem.innerHTML = '<div style="grid-column: span 2;>End of data.</div>';
+      
+      if (data.data.foods.length < this.step || data.status === 404) {
+        const endOfDataItem = document.createElement('li');
+        if (data.status === 404) {
+          endOfDataItem.innerHTML = '<div>No food data found for the specified parameters.</div>';
+        } else {
+          endOfDataItem.innerHTML = '<div>End of data.</div>';
+        }
         fragment.appendChild(endOfDataItem);
         document.getElementById('load_more').style.display = 'none';
       }
-
+  
       // Append food items
       this.container.appendChild(fragment);
     }
   }
-
-
+  
+  
   async loadMoreData() {
     this.from += this.step;
     this.to += this.step;
@@ -196,7 +184,7 @@ class FoodList {
       console.error('Error fetching data:', error);
     }
   }
-
+  
 
   clearSearch() {
     this.searchInput.value = '';
@@ -225,7 +213,7 @@ class FoodList {
           document.getElementById('safe_to_feed').disabled = false;
         });
     }, 1000);
-
+  
     this.searchInput.addEventListener('input', () => {
       fetchDataDebounced();
       if (this.searchInput.value) {
@@ -235,7 +223,7 @@ class FoodList {
         document.getElementById('load_more').style.display = 'block';
       }
     }, 1000);
-
+  
     this.searchInput.addEventListener('keydown', (event) => {
       if (event.key === 'Enter') {
         if (this.searchInput.value.trim() === '') {
@@ -244,14 +232,14 @@ class FoodList {
         fetchDataDebounced();
       }
     });
-
-
+    
+  
     this.searchClear.addEventListener('click', () => {
       this.clearSearch();
     });
-
+  
     document.getElementById('load_more').style.display = 'block';
-
+  
     this.fetchData(this.from, this.to)
       .then(data => this.renderFoodItems(data))
       .catch(error => {
@@ -261,11 +249,11 @@ class FoodList {
           console.error('Error fetching data:', error);
         }
       });
-
+  
     document.getElementById('load_more').addEventListener('click', () => {
       this.loadMoreData();
     });
-
+  
     const safeToFeedCheckbox = document.getElementById('safe_to_feed');
     safeToFeedCheckbox.addEventListener('change', () => {
       // Disable the checkbox while new data is being fetched
@@ -280,6 +268,8 @@ class FoodList {
         });
     });
   }
+  
+  
 }
 
 const foodList = new FoodList('food_list_container');
