@@ -46,6 +46,7 @@ class AutocompleteController extends Controller
         $filterSafeFoods = $request->input('safe_only');
         $from = $request->input('from', 0);
         $to = $request->input('to', 10);
+        $step = $to - $from;
 
         if ($from > $to) {
             return response()->json([
@@ -62,20 +63,29 @@ class AutocompleteController extends Controller
         }
 
         if ($foodsData->isEmpty()) {
+            $errorMessage = __('app.autocomplete.no_data_for_phrase', ['searchQuery' => $searchQuery], $locale);
             return response()->json([
                 'error' => 'No food data found for the specified parameters.',
-                'message' => 'Try a different phrase', // Added message option
+                'message' => $errorMessage,
                 'status' => 404
             ], 404); // 404 Not Found
         }
-        // Prepare the paginated result
+
+        $tooManyRequestsMessage = __('app.autocomplete.too_many_requests', [], $locale);
         $paginatedFoods = [
             'from' => $from,
             'to' => $to,
             'gbif_id' => $gbif_id,
             'foods' => $foodsData,
+            'too_many_requests_message' => $tooManyRequestsMessage,
         ];
-    
+
+        $isEndOfData = count($foodsData) < $step;
+        if ($isEndOfData) {
+            $endOfDataMessage = __('app.autocomplete.end_of_data', [], $locale);
+            $paginatedFoods['end_of_data_message'] = $endOfDataMessage;
+        }
+
         return response()->json([
             'data' => $paginatedFoods,
         ]);

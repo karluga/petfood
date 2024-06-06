@@ -8,21 +8,6 @@ use App\Models\Animal;
 
 class HomeController extends Controller
 {
-    public function __construct()
-    {
-        
-    }
-
-    public function index()
-    {
-        return view('home');
-    }
-    
-    public function pets()
-    {
-        return view('pets');
-    }
-
     public function welcome($locale)
     {
         $animals = Animal::getPopularPets($locale);

@@ -76,9 +76,18 @@ class FoodList {
       params.append('locale', document.documentElement.lang); // Add locale parameter
       const queryString = params.toString();
       console.log(`http://localhost:8000/api/food_safety/${this.lastSegment}?${queryString}`);
-      
+  
       const response = await fetch(`/api/food_safety/${this.lastSegment}?${queryString}`);
       if (!response.ok) {
+        if (response.status === 404) {
+          const errorData = await response.json();
+          const errorMessage = errorData.message;
+          const endOfDataItem = document.createElement('li');
+          endOfDataItem.innerHTML = `<div style="grid-column: span 2;">${errorMessage}</div>`;
+          this.container.appendChild(endOfDataItem);
+          document.getElementById('load_more').style.display = 'none';
+          this.loader.style.display = 'none';
+        }
         throw new Error('Failed to fetch data');
       }
       const data = await response.json();
@@ -91,8 +100,8 @@ class FoodList {
       console.error('Error fetching data:', error);
       throw error;
     }
-  }
-  
+  }  
+
   getLastSegment() {
     const pathname = window.location.pathname;
     const segments = pathname.split('/');
@@ -105,8 +114,8 @@ class FoodList {
     if (!rateLimiter.increment()) {
       const errorListItem = document.createElement('li');
       errorListItem.innerHTML = `
-        <div>Too many requests.</div>
-        <div class="error-timer"></div>
+          <div>${data.data.too_many_requests_message}</div>
+          <div class="error-timer"></div>
       `;
       fragment.appendChild(errorListItem);
   
@@ -158,13 +167,10 @@ class FoodList {
         }
       });
       
-      if (data.data.foods.length < this.step || data.status === 404) {
+      // Check if end of data message exists and append it
+      if (data.data.end_of_data_message) {
         const endOfDataItem = document.createElement('li');
-        if (data.status === 404) {
-          endOfDataItem.innerHTML = '<div>No food data found for the specified parameters.</div>';
-        } else {
-          endOfDataItem.innerHTML = '<div>End of data.</div>';
-        }
+        endOfDataItem.innerHTML = `<div style="grid-column: span 2;">${data.data.end_of_data_message}</div>`;
         fragment.appendChild(endOfDataItem);
         document.getElementById('load_more').style.display = 'none';
       }
@@ -173,7 +179,6 @@ class FoodList {
       this.container.appendChild(fragment);
     }
   }
-  
   
   async loadMoreData() {
     this.from += this.step;
@@ -244,11 +249,7 @@ class FoodList {
     this.fetchData(this.from, this.to)
       .then(data => this.renderFoodItems(data))
       .catch(error => {
-        if (error.response && error.response.status === 404) {
-          console.error(`No data for phrase: ${this.searchInput.value}`);
-        } else {
-          console.error('Error fetching data:', error);
-        }
+        console.error('Error fetching data:', error);
       });
   
     document.getElementById('load_more').addEventListener('click', () => {
@@ -269,8 +270,6 @@ class FoodList {
         });
     });
   }
-  
-  
 }
 
 const foodList = new FoodList('food_list_container');

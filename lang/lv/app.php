@@ -40,8 +40,10 @@ return [
         'your_recent_searches' => 'Meklējumu vēsture',
         'something_went_wrong' => 'Kaut kas nogāja greizi. Lūdzu, pamēģiniet vēlāk.',
         'no_data_found' => 'Nav Atrasts',
-        'too_many_requests' => 'Too many requests. Stop spamming please!',
-        'min_characters' => 'Minimum of 3 characters',
+        'too_many_requests' => 'Pārāk daudz pieprasījumu, lūdzu lēnāk.',
+        'min_characters' => 'Minimums 3 rakstzīmju',
+        'no_data_for_phrase' => 'Pēc frāzes <b>:searchQuery</b>, nav atrasts neviens rezultāts.',
+        'end_of_data' => 'Nav vairāk datu.',
     ],
     'footer' => 'Sabiedrības uzturēts informācijas avots par to, ko drīkst vai nedrīkst barot saviem mājdzīvniekiem.',
     'section' => [

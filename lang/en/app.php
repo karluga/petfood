@@ -18,6 +18,8 @@ return [
         'no_data_found' => 'No Data Found',
         'too_many_requests' => 'Too many requests. Stop spamming please!',
         'min_characters' => 'Minimum of 3 characters',
+        'no_data_for_phrase' => 'No data for phrase: <b>:searchQuery</b>',
+        'end_of_data' => 'End of data.',
     ],
     'navigation' => [
         'home' => 'Home',
