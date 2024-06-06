@@ -149,7 +149,8 @@ class FoodList {
         if (food.filename) {
           htmlString += `<img src="${food.filename}" height="40" alt="Icon">`;
         }
-        htmlString += `</div><a href="#">Read more <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
+        // TODO
+        // htmlString += `</div><a href="#">Read more <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`;
         listItem.innerHTML = htmlString;
         fragment.appendChild(listItem);
         if (append) {
