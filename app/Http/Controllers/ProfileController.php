@@ -38,11 +38,11 @@ public function update(Request $request)
 
     $user->username = $request->input('username');
     $user->name = $request->input('full_name');
-    $user->email = $request->input('email');
 
     // Check if the email is being updated
     if ($user->email !== $request->input('email')) {
         $user->email_verified_at = null; // Reset email verification status
+        $user->email = $request->input('email');
     }
 
     $user->display_name = $request->has('display_name');
