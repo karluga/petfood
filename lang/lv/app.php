@@ -86,6 +86,7 @@ return [
             'name' => 'Mans profils', // 'My Profile'
             'old_image' => 'VECĀ BILDE', // 'OLD IMAGE'
             'new_image' => 'JAUNĀ BILDE', // 'NEW IMAGE'
+            'placeholder' => 'Vietturis',
             'choose_image' => 'Izvēlēties attēlu', // 'Choose Image'
             'upload' => 'Augšupielādēt', // 'Upload'
             'connections' => 'Savienojumi', // 'Connections'
@@ -99,11 +100,18 @@ return [
             'new_password' => 'Jauna parole', // 'New Password'
             'confirm_password' => 'Apstiprināt paroli', // 'Confirm Password'
             'change_password' => 'Mainīt paroli', // 'Change Password'
-    
+            'delete_account' => 'Dzēst kontu',
+            'confirm_delete_title' => 'Apstiprināt konta dzēšanu',
+            'confirm_Delete' => 'Vai tiešām vēlaties dzēst savu kontu? Lūdzu, zemāk ierakstiet <b>petfood</b>, lai apstiprinātu:',
+            'modal_close' => 'Aizvērt',
+
+            'verified' => 'Verificēts',
             'not_verified' => 'Nav verificēts', // 'Not verified'
             'how_why' => 'Kāpēc?', // 'How/Why?'
             'verified_badge' => 'Verificēšanas emblēma', // 'Verified Badge'
-            'verified_badge_step_1' => 'Skenējiet izvēlētā dokumenta priekšējo pusi - ID karti vai pasi.', // 'Scan the front side of the document of your choice - ID card or passport.'
+            'verified_badge_description' => 'Šī žetons ir nepieciešams tikai tāpēc, lai pārliecinātos, gadījumā, ja vēlaties pieteikties konkrētai lomai.  Process aizņems ievērojamu laiku.
+            Tas tiek darīts, izmantojot trešās puses pakalpojumu <a href="https://id.me">ID.me</a>. <br> Šis process iekļaus:',
+            'verified_badge_step_1' => 'Skenēt izvēlētā dokumenta priekšējo pusi - ID karti vai pasi.', // 'Scan the front side of the document of your choice - ID card or passport.'
             'verified_badge_step_2' => 'Pēc tam jūs tiksiet lūgts veikt skenētu savas bildes, lai pabeigtu verifikācijas procesu.', // 'Then you will be asked to scan a picture of yourself to complete the verification process.'
             'get_verified' => 'Saņemt verifikāciju', // 'Get Verified'
     
@@ -111,7 +119,7 @@ return [
             'user' => 'Lietotājs', // 'User'
             'more_details' => 'Papildus informācija', // 'More Details'
             'requirements_title' => 'Prasības', // 'Requirements'
-            'apply_button' => 'Pieteikties visiem saviem mājdzīvniekiem', // 'Apply all of my pets'
+            'apply_button' => 'Pieteikt visus savus mājdzīvniekus', // 'Apply all of my pets'
             'cannot_apply_button' => 'Jūs nevarat pieteikties šai lomai', // 'You cannot apply to this role'
             'requirements' => [
                 'pet_owner' => [
@@ -119,10 +127,10 @@ return [
                     'requirement_list' => [
                         'Viena no jūsu saglabātajām mājlopiem, kopā ar ar to saistītu attēlu.', // 'One of your saved pets, along with an image associated to it.'
                     ],
-                    'link' => 'Mans mājdzīvnieku sadaļa', // 'My Pets section'
+                    'link' => 'Manu mājdzīvnieku sadaļa', // 'My Pets section'
                 ],
                 'content_creator' => [
-                    'title' => 'Saturs veidotājs', // 'Content Creator'
+                    'title' => 'Satura veidotājs', // 'Content Creator'
                     'requirement_list' => [
                         'Saņemt verifikāciju no jebkura administratora vai auditora', // 'Get verified by any admin or auditor'
                         'Iegūt <a href="">verificēto</a> emblēmu', // 'Get the <a href="">verified</a> badge'

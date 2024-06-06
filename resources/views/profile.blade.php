@@ -20,7 +20,7 @@
             <div class="user-img">
                 <span class="label hide">{{ __('app.section.profile.old_image') }}</span>
                 <img id="oldImg" class="profile-img object-fit-cover" src="{{ Auth::user()->filename ? asset('storage/profile_pictures/' . Auth::user()->filename) : asset('assets/icons/default_userpng.png') }}" alt="{{ __('app.section.profile.old_image') }}" width="100" height="100">
-                <span class="text-box-small">{{ Auth::user()->filename ?: __('app.section.profile.choose_image') }}</span>
+                <span class="text-box-small">{{ Auth::user()->filename ?: __('app.section.profile.placeholder') }}</span>
                 <input accept="image/*" type="file" id="imgInp" name="new_image" required>
                 <label class="for-input" for="imgInp"><img src="{{ asset('assets/icons/photo-svgrepo-com.png') }}" alt="*" height="25"> {{ __('app.section.profile.choose_image') }}</label>
             </div>
@@ -113,7 +113,7 @@
     <h2 class="subheading">{{ __('app.section.profile.more_details') }}</h2>
     <div class="full-width">
         <div class="role-description section" id="pet_owner">
-            <span class="role">{{ __('app.section.profile.pet_owner') }}</span>
+            <span class="role">{{ __('app.section.profile.requirements.pet_owner.title') }}</span>
             <div class="req">{{ __('app.section.profile.requirements_title') }}</div>
             <ul>
                 @foreach(__('app.section.profile.requirements.pet_owner.requirement_list') as $requirement)
@@ -174,7 +174,7 @@
     </div>
     <h1 class="title verified">{{ __('app.section.profile.verified_badge') }} <img src="{{ asset('assets/icons/verified.png') }}" alt="{{ __('app.section.profile.verified_badge') }}" height="40"></h1>
     <div class="full-width section role-description">
-        {{ __('app.section.profile.verified_badge_description') }}
+        {!! __('app.section.profile.verified_badge_description') !!}
         <ol>
             <li>{{ __('app.section.profile.verified_badge_step_1') }}</li>
             <li>{{ __('app.section.profile.verified_badge_step_2') }}</li>
@@ -183,32 +183,35 @@
             {{ __('app.section.profile.get_verified') }}
         </button>
     </div>
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
-    Delete Account
-  </button>
+    <div class="full-width section danger-zone d-flex justify-content-end">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+            {{ __('app.section.profile.delete_account') }}
+        </button>        
+    </div>
+
   
   <!-- Modal -->
   <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="confirmDeleteModalLabel">Confirm Delete Account</h5>
+          <h5 class="modal-title" id="confirmDeleteModalLabel">{{ __('app.section.profile.confirm_delete_title') }}</h5>
           <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          Are you sure you want to delete your account? Please type <strong>petfood</strong> below to confirm:
+            {{ __('app.section.profile.confirm_delete') }}
           <input type="text" class="form-control" id="deleteConfirmationInput">
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('app.section.profile.modal_close') }}</button>
             <form id="deleteForm" action="{{ route('profile.delete', ['locale' => app()->getLocale()]) }}" method="post">
                 @csrf
                 <input type="hidden" name="confirmation" value="petfood">
                 <button type="button" class="btn btn-danger" onclick="confirmDelete(event)">
-                    Delete Account
+                    {{ __('app.section.profile.delete_account') }}
                 </button>
             </form>
         </div>

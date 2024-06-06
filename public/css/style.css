@@ -954,7 +954,7 @@ footer {
     font-size: 22px;
     border: none;
 }
-#profile .role-description {
+#profile .role-description, #profile .danger-zone {
     padding: 20px;
     margin-bottom: 20px;
 }
