@@ -958,6 +958,9 @@ footer {
     padding: 20px;
     margin-bottom: 20px;
 }
+#profile .danger-zone {
+    margin-top: 20px;
+}
 #profile .req {
     font-size: 25px;
 }

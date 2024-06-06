@@ -19,9 +19,9 @@ return [
         'verified' => 'Verified',
         'close_button' => 'Close Menu',
         'open_button' => 'Open Menu',
-        'change_language' => 'Change Language',
+        'change_language' => 'Nomainīt Valodu',
         'close' => 'Close',
-        'save_changes' => 'Save Changes',
+        'save_changes' => 'Saglabāt izmaiņas',
         'search' => 'Search',
         'current' => '(current)',
         'livestock' => [
@@ -94,7 +94,7 @@ return [
             'username' => 'Lietotājvārds', // 'Username'
             'full_name' => 'Pilns vārds', // 'Full Name'
             'email' => 'E-pasts', // 'E-mail'
-            'set_display_name' => 'Iestatīt par ekrāna vārdu', // 'Set as display name'
+            'set_display_name' => 'Iestatīt par publiski redzamu', // 'Set as display name'
             'password_change' => 'Mainīt paroli', // 'Change Password'
             'current_password' => 'Pašreizējā parole', // 'Current Password'
             'new_password' => 'Jauna parole', // 'New Password'
@@ -148,7 +148,7 @@ return [
                     'title' => 'Eksperts', // 'Expert'
                     'requirement_list' => [
                         'Jebkura derīga sertifikāta par pabeigšanu no valsts iestādes.', // 'Any valid sertificate of completion from a government entity.'
-                        'Sertifikātam jābūt saistītam ar mājdzīvniekiem saistītu jebkādu tēmu.', // 'The sertificate has to be anything related to pets.'
+                        'Sertifikātam jābūt par jebkādu mājdzīvnieku saistītu nozari.', // 'The sertificate has to be anything related to pets.'
                     ],
                     'description' => 'Jebkurš, kurš ir pieredzējis kādā no šiem laukiem, var būt noderīgs mūsu kopienai. Šeit ir daži piemēri:', // 'Anyone who has had the experience in any of these fields can be a valuable asset to our community. Here are some examples:'
                     'example_list' => [

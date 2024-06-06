@@ -5,7 +5,7 @@
     <title>{{ env('APP_NAME', 'Pet Food') }} | {{ __('app.section.profile.name') }}</title>
 </head>
 <body>
-<div id="profile">
+<div id="profile" class="w-100">
     @if (session('success'))
     <div class="alert alert-success mx-4">{{ session('success') }}</div>
     @endif
@@ -53,8 +53,8 @@
                 </div>
                 <input type="checkbox" id="displayName" class="custom-checkbox" name="display_name" {{ Auth::user()->display_name ? 'checked' : '' }}><label for="displayName">{{ __('app.section.profile.set_display_name') }}</label>
                 {{-- TODO make feature to verify real people --}}
-                <span class="text-box-small">{{ __('app.section.profile.not_verified') }}</span>
-                <span class="text-box-small green">{{ __('app.section.profile.how_why') }}</span>
+                {{-- <span class="text-box-small">{{ __('app.section.profile.not_verified') }}</span>
+                <span class="text-box-small green">{{ __('app.section.profile.how_why') }}</span> --}}
             </div>
             <div class="input-box">
                 <div class="field-group-2">
@@ -101,6 +101,7 @@
             @endif
         </div>
     </div>
+    {{--
     <h1 class="title">{{ __('app.section.profile.roles') }}</h1>
     <div class="role-container">
         <a href="#user" class="role active">{{ __('app.section.profile.user') }}</a>
@@ -115,9 +116,9 @@
         <div class="role-description section" id="pet_owner">
             <span class="role">{{ __('app.section.profile.requirements.pet_owner.title') }}</span>
             <div class="req">{{ __('app.section.profile.requirements_title') }}</div>
-            <ul>
+            <ul class="fw-bold">
                 @foreach(__('app.section.profile.requirements.pet_owner.requirement_list') as $requirement)
-                    <li>{!! $requirement !!}</li>
+                    <li>{{ $requirement }}</li>
                 @endforeach
             </ul>
             <button class="green-btn">
@@ -128,7 +129,7 @@
         <div class="role-description section" id="content_creator">
             <span class="role">{{ __('app.section.profile.requirements.content_creator.title') }}</span>
             <div class="req">{{ __('app.section.profile.requirements_title') }}</div>
-            <ul>
+            <ul class="fw-bold">
                 @foreach(__('app.section.profile.requirements.content_creator.requirement_list') as $requirement)
                     <li>{!! $requirement !!}</li>
                 @endforeach
@@ -141,7 +142,7 @@
         <div class="role-description section" id="auditor">
             <span class="role">{{ __('app.section.profile.requirements.auditor.title') }}</span>
             <div class="req">{{ __('app.section.profile.requirements_title') }}</div>
-            <ul>
+            <ul class="fw-bold">
                 @foreach(__('app.section.profile.requirements.auditor.requirement_list') as $requirement)
                     <li>{{ $requirement }}</li>
                 @endforeach
@@ -154,11 +155,16 @@
         <div class="role-description section" id="expert">
             <span class="role">{{ __('app.section.profile.requirements.expert.title') }}</span>
             <div class="req">{{ __('app.section.profile.requirements_title') }}</div>
-            <ul>
+            <ul class="fw-bold">
                 @foreach(__('app.section.profile.requirements.expert.requirement_list') as $requirement)
                     <li>{{ $requirement }}</li>
                 @endforeach
             </ul>
+            <ol>
+                @foreach(__('app.section.profile.requirements.expert.example_list') as $example)
+                    <li>{{ $example }}</li>
+                @endforeach
+            </ol>
             <p>{{ __('app.section.profile.requirements.expert.description') }}</p>
             <button class="green-btn">
                 {{ __('app.section.profile.apply_button') }}
@@ -183,6 +189,7 @@
             {{ __('app.section.profile.get_verified') }}
         </button>
     </div>
+    --}}
     <div class="full-width section danger-zone d-flex justify-content-end">
         <!-- Button trigger modal -->
         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
