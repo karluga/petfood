@@ -45,19 +45,18 @@ class PetsController extends Controller
 
         return redirect()->route('home', ['locale' => app()->getLocale()])->with('success', 'Pet added successfully!');
     }
-
-    public function destroy($id)
+    public function destroy($locale, $id)
     {
         $pet = UserPet::find($id);
         if (!$pet) {
-            return redirect()->route('home')->with('error', 'Pet not found!');
+            return redirect()->route('home', ['locale' => app()->getLocale()])->with('error', 'Pet not found!');
         }
         if ($pet->user_id !== auth()->id()) {
-            return redirect()->route('home')->with('error', 'Unauthorized action!');
+            return redirect()->route('home', ['locale' => app()->getLocale()])->with('error', 'Unauthorized action!');
         }
         $pet->delete();
-
-        return redirect()->route('home')->with('success', 'Pet deleted successfully!');
+    
+        return redirect()->route('home', ['locale' => app()->getLocale()])->with('success', 'Pet deleted successfully!');
     }
-
+    
 }

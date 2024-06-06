@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class UserPet extends Model
 {
     use HasFactory;
-
+    protected $primaryKey = 'id';
     protected $fillable = [
         'user_id',
         'gbif_id',

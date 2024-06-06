@@ -978,6 +978,16 @@ footer {
     display: grid;
     gap: 10px;
 }
+#my-pets .pet-image {
+    max-height: 250px;
+    max-width: 250px;
+}
+#my-pets .alternating-bg .list-item:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+#my-pets .alternating-bg .list-item:nth-child(even) {
+    background-color: #ffffff;
+}
 @media only screen and (max-width: 550px) {
     #profile .account-info {
         grid-template-columns: repeat(1, 1fr);
