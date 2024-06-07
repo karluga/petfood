@@ -145,6 +145,24 @@ class Animal extends Model
     {
         $speciesData = [];
         $currentData = $this->getSpeciesData($locale, $gbif_id);
+    
+        // Retrieve the filename for the current species
+        $coverImageGbifId = DB::table('animals')
+            ->where('cover_image_id', $currentData['cover_image_id'])
+            ->value('gbif_id');
+    
+        if ($coverImageGbifId) {
+            $filename = DB::table('animal_pictures')
+                ->where('id', $currentData['cover_image_id'])
+                ->value('filename');
+            $currentData['file_path'] = $coverImageGbifId . '/' . $filename;
+        } else {
+            $filename = DB::table('animal_pictures')
+                ->where('id', $currentData['cover_image_id'])
+                ->value('filename');
+            $currentData['file_path'] = $currentData['gbif_id'] . '/' . $filename;
+        }
+    
         // do until no more data
         while ($currentData) {
             $speciesData[] = $currentData;
@@ -155,10 +173,12 @@ class Animal extends Model
                 break;
             }
         }
+    
         // sort from largest to smallest
         $speciesData = array_reverse($speciesData);
         return $speciesData;
     }
+    
     protected function getSpeciesData($locale, $gbif_id)
     {
         $speciesData = DB::table('animals')
