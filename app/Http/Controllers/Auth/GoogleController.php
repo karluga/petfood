@@ -20,7 +20,7 @@ class GoogleController extends Controller
     {
         try {
             $user = Socialite::driver('google')->user();
-    
+            dd($user->getEmail());
             // Check if the user with the same email exists and is verified
             $existingUser = User::where('email', $user->getEmail())->whereNotNull('email_verified_at')->first();
     
@@ -29,6 +29,7 @@ class GoogleController extends Controller
                 $newUser = User::create([
                     'name' => $user->getName(),
                     'email' => $user->getEmail(),
+                    'email_verified_at' => now(),
                     'password' => Hash::make($user->getName() . '@' . $user->getId()),
                     'google_id' => $user->getId(),
                 ]);
