@@ -218,20 +218,43 @@ class Animal extends Model
     
         // Fallback to English if data not found in the specified locale
         if ($descendantsData->isEmpty()) {
-            $descendantsData = DB::table('animals')
+            $englishData = DB::table('animals')
                 ->select('gbif_id', 'name', 'single', 'slug', 'rank', 'cover_image_id', 'appearance', 'food', 'parent_id',
                     DB::raw('(SELECT name FROM animals AS parent WHERE parent.gbif_id = animals.parent_id LIMIT 1) AS parent_name'))
                 ->where('parent_id', $gbif_id)
                 ->where('language', 'en')
                 ->get();
+    
+            $descendantsData = $englishData;
+        } else {
+            // Merge data from the specified locale and English if needed
+            $englishData = DB::table('animals')
+                ->select('gbif_id', 'name', 'single', 'slug', 'rank', 'cover_image_id', 'appearance', 'food', 'parent_id',
+                    DB::raw('(SELECT name FROM animals AS parent WHERE parent.gbif_id = animals.parent_id LIMIT 1) AS parent_name'))
+                ->where('parent_id', $gbif_id)
+                ->where('language', 'en')
+                ->get();
+    
+            $descendantsData = $descendantsData->merge($englishData)->unique('gbif_id');
         }
     
         // Retrieve filenames of cover images
         foreach ($descendantsData as $key => $data) {
-            $filename = DB::table('animal_pictures')
-                ->where('id', $data->cover_image_id)
-                ->value('filename');
-            $descendantsData[$key]->filename = $filename;
+            $coverImageGbifId = DB::table('animals')
+                ->where('cover_image_id', $data->cover_image_id)
+                ->value('gbif_id');
+    
+            if ($coverImageGbifId) {
+                $filename = DB::table('animal_pictures')
+                    ->where('id', $data->cover_image_id)
+                    ->value('filename');
+                $descendantsData[$key]->filename = $coverImageGbifId . '/' . $filename;
+            } else {
+                $filename = DB::table('animal_pictures')
+                    ->where('id', $data->cover_image_id)
+                    ->value('filename');
+                $descendantsData[$key]->filename = $data->gbif_id . '/' . $filename;
+            }
         }
     
         // Modify name and single fields to cut off the first part
@@ -242,32 +265,92 @@ class Animal extends Model
     
         return $descendantsData->toArray();
     }
+    
     protected function getChildrenData($locale, $parent_gbif_id)
     {
         // Retrieve data of the children of the specified parent GBIF ID and include parent name
-        $childrenData = DB::table('animals')
-            ->select('gbif_id', 'name', 'single', 'slug', 'rank', 'cover_image_id', 'appearance', 'food', 'parent_id',
-                DB::raw('(SELECT name FROM animals AS parent WHERE parent.gbif_id = animals.parent_id) AS parent_name'))
-            ->where('parent_id', $parent_gbif_id)
-            ->where('language', $locale)
+        $childrenData = DB::table('animals as child')
+            ->leftJoin('animals as parent', 'child.parent_id', '=', 'parent.gbif_id')
+            ->select(
+                'child.id',
+                'child.gbif_id',
+                'child.name',
+                'child.single',
+                'child.slug',
+                'child.rank',
+                'child.cover_image_id',
+                'child.appearance',
+                'child.food',
+                'child.parent_id',
+                'parent.name as parent_name'
+            )
+            ->where('child.parent_id', $parent_gbif_id)
+            ->where('child.language', $locale)
             ->get();
     
         // Fallback to English if data not found in the specified locale
         if ($childrenData->isEmpty()) {
-            $childrenData = DB::table('animals')
-                ->select('gbif_id', 'name', 'single', 'slug', 'rank', 'cover_image_id', 'appearance', 'food', 'parent_id',
-                    DB::raw('(SELECT name FROM animals AS parent WHERE parent.gbif_id = animals.parent_id) AS parent_name'))
-                ->where('parent_id', $parent_gbif_id)
-                ->where('language', 'en')
+            $englishData = DB::table('animals as child')
+                ->leftJoin('animals as parent', 'child.parent_id', '=', 'parent.gbif_id')
+                ->select(
+                    'child.id',
+                    'child.gbif_id',
+                    'child.name',
+                    'child.single',
+                    'child.slug',
+                    'child.rank',
+                    'child.cover_image_id',
+                    'child.appearance',
+                    'child.food',
+                    'child.parent_id',
+                    'parent.name as parent_name'
+                )
+                ->where('child.parent_id', $parent_gbif_id)
+                ->where('child.language', 'en')
                 ->get();
+    
+            $childrenData = $englishData;
+        } else {
+            // Merge data from the specified locale and English if needed
+            $englishData = DB::table('animals as child')
+                ->leftJoin('animals as parent', 'child.parent_id', '=', 'parent.gbif_id')
+                ->select(
+                    'child.id',
+                    'child.gbif_id',
+                    'child.name',
+                    'child.single',
+                    'child.slug',
+                    'child.rank',
+                    'child.cover_image_id',
+                    'child.appearance',
+                    'child.food',
+                    'child.parent_id',
+                    'parent.name as parent_name'
+                )
+                ->where('child.parent_id', $parent_gbif_id)
+                ->where('child.language', 'en')
+                ->get();
+    
+            $childrenData = $childrenData->merge($englishData)->unique('gbif_id');
         }
     
         // Retrieve filenames of cover images
         foreach ($childrenData as $key => $data) {
-            $filename = DB::table('animal_pictures')
-                ->where('id', $data->cover_image_id)
-                ->value('filename');
-            $childrenData[$key]->filename = $filename;
+            $coverImageGbifId = DB::table('animals')
+                ->where('cover_image_id', $data->cover_image_id)
+                ->value('gbif_id');
+    
+            if ($coverImageGbifId) {
+                $filename = DB::table('animal_pictures')
+                    ->where('id', $data->cover_image_id)
+                    ->value('filename');
+                $childrenData[$key]->filename = $coverImageGbifId . '/' . $filename;
+            } else {
+                $filename = DB::table('animal_pictures')
+                    ->where('id', $data->cover_image_id)
+                    ->value('filename');
+                $childrenData[$key]->filename = $data->gbif_id . '/' . $filename;
+            }
         }
     
         // Modify name and single fields to cut off the first part

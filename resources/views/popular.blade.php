@@ -33,7 +33,7 @@
                         {{ $species->name }}
                     </a>
                 </div>
-                <img src="{{ asset('assets/images/' . $species->gbif_id . '/' . $species->filename) }}" height="100" alt="{{ $species->name }}">
+                <img src="{{ asset('assets/images/' . $species->filename) }}" height="100" alt="{{ $species->name }}">
             </div>
             @endforeach
         </div>
