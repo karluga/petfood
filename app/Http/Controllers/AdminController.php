@@ -145,7 +145,7 @@ class AdminController extends Controller
         }
         
         // Redirect back to the dashboard with success message
-        return redirect()->route('admin.safeties')->with('success', 'Pet added successfully.'); 
+        return redirect()->route('admin.animal.index')->with('success', 'Pet added successfully.'); 
     }
 
     /**

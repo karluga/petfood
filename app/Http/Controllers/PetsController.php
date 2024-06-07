@@ -32,19 +32,28 @@ class PetsController extends Controller
         $request->validate([
             'gbif_id' => 'required',
             'nickname' => 'nullable',
-            'filename' => 'nullable',
+            'filename' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
-
+    
         // Create a new user pet
         $userPet = new UserPet();
         $userPet->user_id = auth()->id();
         $userPet->gbif_id = $request->gbif_id;
         $userPet->nickname = $request->nickname;
-        $userPet->filename = $request->filename;
+    
+        // Handle file upload
+        if ($request->hasFile('filename')) {
+            $file = $request->file('filename');
+            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/pet_images', $filename);
+            $userPet->filename = 'pet_images/' . $filename;
+        }
+    
         $userPet->save();
-
+    
         return redirect()->route('home', ['locale' => app()->getLocale()])->with('success', 'Pet added successfully!');
     }
+    
     public function destroy($locale, $id)
     {
         $pet = UserPet::find($id);
