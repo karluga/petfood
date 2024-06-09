@@ -33,11 +33,10 @@
                         {{ $species->name }}
                     </a>
                 </div>
-                <img src="{{ asset('assets/images/' . $species->filename) }}" height="100" alt="{{ $species->name }}">
+                <img src="{{ $species->file_path ? $species->file_path : '/assets/noimg.jpg' }}" height="100" alt="{{ $species->name }}">
             </div>
             @endforeach
         </div>
         @endforeach
     </div>
-      
 </div>

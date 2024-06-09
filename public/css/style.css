@@ -1057,6 +1057,7 @@ a.species-link:hover {
     position: relative;
     width: fit-content;
     height: fit-content;
+    background: #dccdbf;
 }
 #species .thumbnail-container .canonical-name {
     position: absolute;

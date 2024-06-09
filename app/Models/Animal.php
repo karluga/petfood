@@ -21,6 +21,19 @@ class Animal extends Model
         217145891, //chickens|gallus gallus
         217127894, //horse|equus ferus caballus
     ];
+    public const SILHOUETTE_MAPPING = [
+        ['gbif_id' => 116891947, 'rank' => 'CLASS', 'name' => 'Mammals', 'image_path' => '/assets/silhouettes/cow.png'],
+        ['gbif_id' => 194431376, 'rank' => 'INFRAPHYLUM', 'name' => 'Fish', 'image_path' => '/assets/silhouettes/codfish.png'],
+        ['gbif_id' => null, 'rank' => null, 'name' => 'Crustaceans', 'image_path' => '/assets/silhouettes/crab.png'],
+        ['gbif_id' => null, 'rank' => null, 'name' => 'Insects', 'image_path' => '/assets/silhouettes/dragonfly.png'],
+        ['gbif_id' => 135226770, 'rank' => 'CLASS', 'name' => 'Amphibians', 'image_path' => '/assets/silhouettes/frog.png'],
+        ['gbif_id' => 115058156, 'rank' => 'ORDER', 'name' => 'Reptiles', 'image_path' => '/assets/silhouettes/rattlesnake.png'],
+        ['gbif_id' => null, 'rank' => null, 'name' => 'Mollusks', 'image_path' => '/assets/silhouettes/snail.png'],
+        ['gbif_id' => 167183828, 'rank' => 'CLASS', 'name' => 'Birds', 'image_path' => '/assets/silhouettes/sparrow.png'],
+        ['gbif_id' => null, 'rank' => null, 'name' => 'Arachnids', 'image_path' => '/assets/silhouettes/spider.png'],
+        ['gbif_id' => null, 'rank' => null, 'name' => 'Echinoderms', 'image_path' => '/assets/silhouettes/starfish.png']
+    ];
+    
     public static function getPopularPets($locale)
     {
         // Reset popular items each day
@@ -132,7 +145,7 @@ class Animal extends Model
                 'name' => $name,
                 'slug' => $item->slug,
                 'order' => $order,
-                'file_path' => $item->gbif_id . '/' . $filename,
+                'file_path' => asset('/assets/images/' . $item->gbif_id . '/' . $filename), // TODO check if no image
             ];
         }
     
@@ -145,22 +158,30 @@ class Animal extends Model
     {
         $speciesData = [];
         $currentData = $this->getSpeciesData($locale, $gbif_id);
-    
-        // Retrieve the filename for the current species
-        $coverImageGbifId = DB::table('animals')
-            ->where('cover_image_id', $currentData['cover_image_id'])
-            ->value('gbif_id');
-    
-        if ($coverImageGbifId) {
-            $filename = DB::table('animal_pictures')
-                ->where('id', $currentData['cover_image_id'])
-                ->value('filename');
-            $currentData['file_path'] = $coverImageGbifId . '/' . $filename;
+        if (empty($currentData)) {
+            abort(404);
+        }
+        if ($currentData['cover_image_id']) { //check if it is not null
+            $coverImageGbifId = DB::table('animals')
+                ->where('cover_image_id', $currentData['cover_image_id'])
+                ->value('gbif_id');
+            if ($coverImageGbifId) {
+                $filename = DB::table('animal_pictures')
+                    ->where('id', $currentData['cover_image_id'])
+                    ->value('filename');
+                $currentData['file_path'] = asset('/assets/images/' . $coverImageGbifId . '/' . $filename);
+            } else {
+                $currentData['file_path'] = null; // meaning data does not exist
+            }
         } else {
-            $filename = DB::table('animal_pictures')
-                ->where('id', $currentData['cover_image_id'])
-                ->value('filename');
-            $currentData['file_path'] = $currentData['gbif_id'] . '/' . $filename;
+            // set to null because it's not one of the original array keys
+            $currentData['file_path'] = null;
+        }
+    
+        // get silhouette
+        if ($currentData['file_path'] === null) {
+            $defaultImagePath = $this->fetchDefaultImageForSpecies($gbif_id);
+            $currentData['file_path'] = $defaultImagePath !== false ? $defaultImagePath : null;
         }
     
         // do until no more data
@@ -179,6 +200,25 @@ class Animal extends Model
         return $speciesData;
     }
     
+    protected function fetchDefaultImageForSpecies($gbif_id)
+    {
+        $response = \Http::get(self::API_URL . $gbif_id . '/parents');
+    
+        if ($response->successful()) {
+            $results = $response->json() ?? [];
+            foreach ($results as $result) {
+                foreach (self::SILHOUETTE_MAPPING as $mapping) {
+                    // Check if 'key' from $result matches 'gbif_id' from $mapping
+                    if ($result['key'] == $mapping['gbif_id']) {
+                        return $mapping['image_path'];
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     protected function getSpeciesData($locale, $gbif_id)
     {
         $speciesData = DB::table('animals')
@@ -204,10 +244,15 @@ class Animal extends Model
             $filename = DB::table('animal_pictures')
                 ->where('id', $speciesData->cover_image_id)
                 ->value('filename');
-
-            $speciesData->file_path = $gbif_id . '/' . $filename;
+            if ($filename) {
+                $speciesData->file_path = asset('/assets/images/' . $gbif_id . '/' . $filename);
+            } else {
+                // set manually
+                $defaultImagePath = $this->fetchDefaultImageForSpecies($gbif_id);
+                $speciesData->file_path = $defaultImagePath !== false ? $defaultImagePath : null;
+            }
         }
-    
+
         return $speciesData ? (array) $speciesData : null;
     }
     protected function getAllDescendants($locale, $gbif_id)
@@ -254,26 +299,28 @@ class Animal extends Model
                 ->where('parent_id', $gbif_id)
                 ->where('language', 'en')
                 ->get();
-    
+
             $descendantsData = $descendantsData->merge($englishData)->unique('gbif_id');
         }
     
         // Retrieve filenames of cover images
         foreach ($descendantsData as $key => $data) {
-            $coverImageGbifId = DB::table('animals')
-                ->where('cover_image_id', $data->cover_image_id)
-                ->value('gbif_id');
     
-            if ($coverImageGbifId) {
-                $filename = DB::table('animal_pictures')
-                    ->where('id', $data->cover_image_id)
-                    ->value('filename');
-                $descendantsData[$key]->filename = $coverImageGbifId . '/' . $filename;
+            if ($data->cover_image_id) { //check if it is not null
+                $coverImageGbifId = DB::table('animals')
+                    ->where('cover_image_id', $data->cover_image_id)
+                    ->value('gbif_id');
+                if ($coverImageGbifId) {
+                    $filename = DB::table('animal_pictures')
+                        ->where('id', $data->cover_image_id)
+                        ->value('filename');
+                    $descendantsData[$key]->file_path = asset('/assets/images/' . $coverImageGbifId . '/' . $filename);
+                } else {
+                    $descendantsData[$key]->file_path = null;
+                }
             } else {
-                $filename = DB::table('animal_pictures')
-                    ->where('id', $data->cover_image_id)
-                    ->value('filename');
-                $descendantsData[$key]->filename = $data->gbif_id . '/' . $filename;
+                // set to null because it's not one of the original array keys
+                $descendantsData[$key]->file_path = null;
             }
         }
     
@@ -356,20 +403,21 @@ class Animal extends Model
     
         // Retrieve filenames of cover images
         foreach ($childrenData as $key => $data) {
-            $coverImageGbifId = DB::table('animals')
-                ->where('cover_image_id', $data->cover_image_id)
-                ->value('gbif_id');
-    
-            if ($coverImageGbifId) {
-                $filename = DB::table('animal_pictures')
-                    ->where('id', $data->cover_image_id)
-                    ->value('filename');
-                $childrenData[$key]->filename = $coverImageGbifId . '/' . $filename;
+            if ($data->cover_image_id) { //check if it is not null
+                $coverImageGbifId = DB::table('animals')
+                    ->where('cover_image_id', $data->cover_image_id)
+                    ->value('gbif_id');
+                if ($coverImageGbifId) {
+                    $filename = DB::table('animal_pictures')
+                        ->where('id', $data->cover_image_id)
+                        ->value('filename');
+                    $childrenData[$key]->file_path = asset('/assets/images/' . $coverImageGbifId . '/' . $filename);
+                } else {
+                    $childrenData[$key]->file_path = null;
+                }
             } else {
-                $filename = DB::table('animal_pictures')
-                    ->where('id', $data->cover_image_id)
-                    ->value('filename');
-                $childrenData[$key]->filename = $data->gbif_id . '/' . $filename;
+                // set to null because it's not one of the original array keys
+                $childrenData[$key]->file_path = null;
             }
         }
     

@@ -6,7 +6,6 @@
     <script src="{{ asset('js/load_foods.js') }}" defer></script>
 </head>
 <body>
-    {{-- {{ dd($data);}} --}}
 <div id="species">
     <div class="breadcrumbs mb-3">
         @foreach($data as $key => $species)
@@ -47,7 +46,7 @@
             </button>
         </div>
         <div class="thumbnail-container">
-            <img src="{{ asset('/assets/images/' . $species['file_path']) }}" alt="" class="cover-img">
+            <img src="{{ $species['file_path'] ? $species['file_path'] : '/assets/noimg.jpg' }}" alt="" class="cover-img">
             <div class="canonical-name">
                 @if($locale == 'lv' || $locale == 'en')
                     <span class="the">{{ __('app.section.species.the') }}</span>
