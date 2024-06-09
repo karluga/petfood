@@ -8,15 +8,21 @@
 <body>
 <div id="species">
     <div class="breadcrumbs mb-3">
+        @php
+            $alternateRank = 2;
+        @endphp
         @foreach($data as $key => $species)
             @if($key == 0)
                 <div class="rank rank-{{ $key + 1 }}">
                     @svg('assets/pet_food_logo_only_icon.svg', 'petfood-logo-only-icon')
-                    <span>{{ strtoupper($species['name']) }}</span>
+                    <a href="/{{ app()->getLocale() . '/species/' . $species['gbif_id'] }}" class="rank rank-{{ $key + 1 }}">{{ strtoupper($species['name']) }}</a>
                 </div>
             @else
-                {{-- UNFINISHED --}}
-                <a href="#{{ $species['slug'] }}" class="rank rank-{{ $key + 1 }}">{{ strtoupper($species['single']) }}</a>
+                @php
+                    $currentRank = $alternateRank;
+                    $alternateRank = ($currentRank == 2) ? 3 : 2;
+                @endphp
+                <a href="/{{ app()->getLocale() . '/species/' . $species['gbif_id'] }}" class="rank rank-{{ $currentRank }}">{{ strtoupper($species['single']) }}</a>
             @endif
         @endforeach
     </div>
