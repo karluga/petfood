@@ -271,6 +271,7 @@ class Animal extends Model
         
         return $descendants;
     }
+
     protected function getDescendantsData($locale, $gbif_id)
     {
         // Retrieve data of the specified GBIF ID and include parent name
@@ -280,17 +281,15 @@ class Animal extends Model
             ->where('parent_id', $gbif_id)
             ->where('language', $locale)
             ->get();
-    
+        
         // Fallback to English if data not found in the specified locale
         if ($descendantsData->isEmpty()) {
-            $englishData = DB::table('animals')
+            $descendantsData = DB::table('animals')
                 ->select('gbif_id', 'name', 'single', 'slug', 'rank', 'cover_image_id', 'appearance', 'food', 'parent_id',
                     DB::raw('(SELECT name FROM animals AS parent WHERE parent.gbif_id = animals.parent_id LIMIT 1) AS parent_name'))
                 ->where('parent_id', $gbif_id)
                 ->where('language', 'en')
                 ->get();
-    
-            $descendantsData = $englishData;
         } else {
             // Merge data from the specified locale and English if needed
             $englishData = DB::table('animals')
@@ -299,14 +298,13 @@ class Animal extends Model
                 ->where('parent_id', $gbif_id)
                 ->where('language', 'en')
                 ->get();
-
+    
             $descendantsData = $descendantsData->merge($englishData)->unique('gbif_id');
         }
-    
+        
         // Retrieve filenames of cover images
         foreach ($descendantsData as $key => $data) {
-    
-            if ($data->cover_image_id) { //check if it is not null
+            if ($data->cover_image_id) { // Check if it is not null
                 $coverImageGbifId = DB::table('animals')
                     ->where('cover_image_id', $data->cover_image_id)
                     ->value('gbif_id');
@@ -319,18 +317,17 @@ class Animal extends Model
                     $descendantsData[$key]->file_path = null;
                 }
             } else {
-                // set to null because it's not one of the original array keys
                 $descendantsData[$key]->file_path = null;
             }
         }
-    
+        
         // Modify name and single fields to cut off the first part
         foreach ($descendantsData as $key => $data) {
             $descendantsData[$key]->name = explode('|', $data->name)[0];
             $descendantsData[$key]->single = explode('|', $data->single)[0];
         }
-    
-        return $descendantsData->toArray();
+        
+        return $descendantsData->unique('gbif_id')->toArray();
     }
     
     protected function getChildrenData($locale, $parent_gbif_id)
@@ -354,10 +351,10 @@ class Animal extends Model
             ->where('child.parent_id', $parent_gbif_id)
             ->where('child.language', $locale)
             ->get();
-    
+        
         // Fallback to English if data not found in the specified locale
         if ($childrenData->isEmpty()) {
-            $englishData = DB::table('animals as child')
+            $childrenData = DB::table('animals as child')
                 ->leftJoin('animals as parent', 'child.parent_id', '=', 'parent.gbif_id')
                 ->select(
                     'child.id',
@@ -375,8 +372,6 @@ class Animal extends Model
                 ->where('child.parent_id', $parent_gbif_id)
                 ->where('child.language', 'en')
                 ->get();
-    
-            $childrenData = $englishData;
         } else {
             // Merge data from the specified locale and English if needed
             $englishData = DB::table('animals as child')
@@ -400,10 +395,10 @@ class Animal extends Model
     
             $childrenData = $childrenData->merge($englishData)->unique('gbif_id');
         }
-    
+        
         // Retrieve filenames of cover images
         foreach ($childrenData as $key => $data) {
-            if ($data->cover_image_id) { //check if it is not null
+            if ($data->cover_image_id) { // Check if it is not null
                 $coverImageGbifId = DB::table('animals')
                     ->where('cover_image_id', $data->cover_image_id)
                     ->value('gbif_id');
@@ -416,19 +411,19 @@ class Animal extends Model
                     $childrenData[$key]->file_path = null;
                 }
             } else {
-                // set to null because it's not one of the original array keys
                 $childrenData[$key]->file_path = null;
             }
         }
-    
+        
         // Modify name and single fields to cut off the first part
         foreach ($childrenData as $key => $data) {
             $childrenData[$key]->name = explode('|', $data->name)[0];
             $childrenData[$key]->single = explode('|', $data->single)[0];
         }
-    
-        return $childrenData->toArray();
+        
+        return $childrenData->unique('gbif_id')->toArray();
     }
+    
     public static function getEnumValues($columnName)
     {
         $tableName = (new static())->getTable();
