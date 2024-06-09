@@ -60,6 +60,7 @@ return [
                 'GENUS' => '{1} ĢINTS|[2,*] ĢINTIS',
                 'FAMILY' => '{1} DZIMTA|[2,*] DZIMTAS',
                 'ORDER' => '{1} KĀRTA|[2,*] KĀRTAS',
+                'SUBORDER' => '{1} APAKŠKĀRTA|[2,*] APAKŠKĀRTAS',
                 'CLASS' => '{1} KLASE|[2,*] KLASES',
                 'SUPERCLASS' => '{1} VIRSKLASE|[2,*] VIRSKLASES',
                 'INFRAPHYLUM' => '{1} INFRATIPS|[2,*] INFRATIPI',

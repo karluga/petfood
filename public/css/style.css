@@ -471,6 +471,11 @@ label #cancel {
         display: none;
     }
 }
+@media only screen and (max-width: 767.5px) {
+    .thumbnail-container {
+        order: -1;
+    }
+}
 
 #language-mobile {
 display: flex;

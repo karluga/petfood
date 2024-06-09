@@ -60,6 +60,7 @@ return [
                 'GENUS' => 'GENUS|GENUS',
                 'FAMILY' => 'FAMILY|FAMILIES',
                 'ORDER' => 'ORDER|ORDERS',
+                'SUBORDER' => 'SUBORDER|SUBORDERS',
                 'CLASS' => 'CLASS|CLASSES',
                 'SUPERCLASS' => 'SUPERCLASS|SUPERCLASSES',
                 'INFRAPHYLUM' => 'INFRAPHYLUM|INFRAPHYLA',

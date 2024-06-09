@@ -209,7 +209,7 @@
           </button>
         </div>
         <div class="modal-body">
-            {{ __('app.section.profile.confirm_delete') }}
+            {!! __('app.section.profile.confirm_delete') !!}
           <input type="text" class="form-control" id="deleteConfirmationInput">
         </div>
         <div class="modal-footer">

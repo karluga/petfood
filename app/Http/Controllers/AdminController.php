@@ -42,7 +42,7 @@ class AdminController extends Controller
                 return back()->withErrors(['gbif_id' => 'Invalid response from GBIF API.']);
             }
     
-            if (isset($data['kingdom']) && $data['kingdom'] !== 'Animalia') {
+            if (isset($data['kingdom']) && $data['kingdom'] !== 'Animalia' && $data['kingdom'] !== 'Metazoa') {
                 return back()->withErrors(['gbif_id' => 'The species has to be an animal']);
             }
     
@@ -75,7 +75,7 @@ class AdminController extends Controller
             'language' => 'required|string|size:2',
             'parent_id' => 'nullable|string',
             'slug' => 'required|string',
-            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048'
+            'images.*' => 'image|mimes:jpeg,png,jpg|max:10240' // 10MB
         ]);
 
         // Handle image upload

@@ -152,9 +152,9 @@ imgInp.onchange = evt => {
             alert('Please select only image files.');
             return;
         }
-        if (file.size > 2 * 1024 * 1024) {
+        if (file.size > 10 * 1024 * 1024) {
             // Alert when file size exceeds 2MB
-            alert('Please select an image file no bigger than 2MB.');
+            alert('Please select an image file no bigger than 10MB.');
             return;
         }
         const reader = new FileReader();

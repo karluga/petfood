@@ -27,6 +27,7 @@ return new class extends Migration
                 'GENUS',
                 'FAMILY',
                 'ORDER',
+                'SUBORDER',
                 'CLASS',
                 'SUPERCLASS',
                 'INFRAPHYLUM',
