@@ -59,9 +59,23 @@ class AutocompleteController extends Controller
     
         // Fallback
         if ($foodsData->isEmpty()) {
-            $foodsData = $this->getFoodData($gbif_id, 'en', $filterSafeFoods, $searchQuery, $from, $to);
+            if ($from == 0 && $to == 10) {
+                $errorMessage = __('app.autocomplete.no_data_found', [], $locale);
+                return response()->json([
+                    'error' => 'No data found for species GBIF ID: ' . $gbif_id,
+                    'message' => $errorMessage,
+                    'status' => 404
+                ], 404); // 404 Not Found
+            } else {
+                $errorMessage = __('app.autocomplete.no_data_for_phrase', ['searchQuery' => $searchQuery], $locale);
+                return response()->json([
+                    'error' => 'No food data found for the specified parameters.',
+                    'message' => $errorMessage,
+                    'status' => 404
+                ], 404); // 404 Not Found
+            }
         }
-
+    
         if ($foodsData->isEmpty()) {
             $errorMessage = __('app.autocomplete.no_data_for_phrase', ['searchQuery' => $searchQuery], $locale);
             return response()->json([
