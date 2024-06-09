@@ -286,7 +286,6 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('app.navigation.close') }}</button>
-                        <button onclick="document.getElementById('languageChangeForm').submit();" class="btn btn-primary">{{ __('app.navigation.save_changes') }}</button>
                     </div>
                 </div>                                                           
             </div>
