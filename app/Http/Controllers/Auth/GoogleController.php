@@ -20,7 +20,7 @@ class GoogleController extends Controller
     {
         try {
             $user = Socialite::driver('google')->user();
-            dd($user->getEmail());
+
             // Check if the user with the same email exists and is verified
             $existingUser = User::where('email', $user->getEmail())->whereNotNull('email_verified_at')->first();
     

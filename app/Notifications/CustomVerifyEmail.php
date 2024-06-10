@@ -34,7 +34,7 @@ class CustomVerifyEmail extends VerifyEmailBase
      */
     protected function verificationUrl($notifiable)
     {
-        dd('profile.verify-email is signed');
+        // dd('profile.verify-email is signed');
         return URL::temporarySignedRoute(
             'profile.verify-email',
             now()->addMinutes(config('auth.verification.expire', 60)),
