@@ -15,14 +15,14 @@
             @if($key == 0)
                 <div class="rank rank-{{ $key + 1 }}">
                     @svg('assets/pet_food_logo_only_icon.svg', 'petfood-logo-only-icon')
-                    <a href="/{{ app()->getLocale() . '/species/' . $species['gbif_id'] }}" class="rank rank-{{ $key + 1 }}">{{ strtoupper($species['name']) }}</a>
+                    <a href="/{{ app()->getLocale() . '/species/' . $species['gbif_id'] }}" class="rank rank-{{ $key + 1 }} text-uppercase">{{ $species['name'] }}</a>
                 </div>
             @else
                 @php
                     $currentRank = $alternateRank;
                     $alternateRank = ($currentRank == 2) ? 3 : 2;
                 @endphp
-                <a href="/{{ app()->getLocale() . '/species/' . $species['gbif_id'] }}" class="rank rank-{{ $currentRank }}">{{ strtoupper($species['single']) }}</a>
+                <a href="/{{ app()->getLocale() . '/species/' . $species['gbif_id'] }}" class="rank rank-{{ $currentRank }} text-uppercase">{{ $species['single'] }}</a>
             @endif
         @endforeach
     </div>

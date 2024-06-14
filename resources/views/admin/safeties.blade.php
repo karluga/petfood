@@ -50,9 +50,16 @@
                 <span class="text-danger fs-5">{{ $message }}</span>
                 @enderror
             </div>
+            <div class="form-group">
+                <label for="description" class="mb-1">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3">{{ old('description') }}</textarea>
+                @error('description')
+                    <span class="text-danger fs-5">{{ $message }}</span>
+                @enderror
+            </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </div>
-    </form>    
+    </form>
 </div>
 </body>
 @endsection

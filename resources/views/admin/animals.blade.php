@@ -133,115 +133,139 @@
     </form>        
 </div>
 <script>
-// JavaScript logic for handling image preview and removal
-const imgInp = document.getElementById('images');
-const previewContainer = document.querySelector('.image-preview');
-const lastInputGroup = document.querySelector('#preview');
-let selectedFiles = [];
+const illegalChars = ['|', '<', '>', ':', '"', '/', '\\', '?', '*'];
 
-imgInp.onchange = evt => {
-    const files = imgInp.files;
+document.addEventListener('DOMContentLoaded', () => {
+    const imgInp = document.getElementById('images');
+    const previewContainer = document.querySelector('.image-preview');
+    const lastInputGroup = document.querySelector('#preview');
+    let selectedFiles = [];
 
-    // Append newly selected files to the existing selectedFiles array
-    selectedFiles = selectedFiles.concat(Array.from(files));
+    imgInp.onchange = evt => {
+        const files = imgInp.files;
+        selectedFiles = selectedFiles.concat(Array.from(files));
+        previewFiles(files);
+        updateFileInput();
+    };
 
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (!file.type.startsWith('image/')) {
-            // Alert when a non-image file is selected
-            alert('Please select only image files.');
-            return;
-        }
-        if (file.size > 10 * 1024 * 1024) {
-            // Alert when file size exceeds 2MB
-            alert('Please select an image file no bigger than 10MB.');
-            return;
-        }
-        const reader = new FileReader();
-        reader.onload = () => {
-            // Create form-group container for each preview
-            const formGroup = document.createElement('div');
-            formGroup.classList.add('form-group');
-
-            const img = document.createElement('img');
-            img.src = reader.result;
-            img.classList.add('img-thumbnail', 'mr-2', 'mb-2');
-
-            // Create radio input
-            const radioInput = document.createElement('input');
-            radioInput.type = 'radio';
-            radioInput.name = 'cover_image';
-            radioInput.value = previewContainer.children.length; // Use the current count
-            radioInput.id = 'image' + previewContainer.children.length;
-            radioInput.classList.add('d-none');
-            if (previewContainer.children.length === 0) {
-                radioInput.checked = true; // Select first image as default cover image
-                img.classList.add('selected');
+    function previewFiles(files) {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            if (!file.type.startsWith('image/')) {
+                alert('Please select only image files.');
+                return;
             }
+            if (file.size > 2 * 1024 * 1024) {
+                alert('Please select an image file no bigger than 2MB.');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => {
+                const formGroup = document.createElement('div');
+                formGroup.classList.add('form-group');
 
-            // Create label for radio input
-            const label = document.createElement('label');
-            label.htmlFor = 'image' + previewContainer.children.length;
-            label.classList.add('w-100');
-            label.appendChild(img);
+                const img = document.createElement('img');
+                img.src = reader.result;
+                img.classList.add('img-thumbnail', 'mr-2', 'mb-2');
 
-            // Create filename input
-            const filenameInput = document.createElement('input');
-            filenameInput.type = 'text';
-            filenameInput.name = 'filename[]';
-            filenameInput.value = document.getElementById('single_name').value ? document.getElementById('single_name').value + (previewContainer.children.length + 1) : 'animal' + (previewContainer.children.length + 1);
-            filenameInput.classList.add('form-control', 'mb-2');
-            filenameInput.placeholder = 'Filename';
-
-            // Create remove button
-            const closeButton = document.createElement('button');
-            closeButton.type = 'button';
-            closeButton.classList.add('btn', 'btn-danger', 'btn-sm', 'ml-2');
-            closeButton.textContent = 'Remove';
-            closeButton.addEventListener('click', () => {
-                previewContainer.removeChild(formGroup);
-                const index = selectedFiles.indexOf(file);
-                if (index !== -1) {
-                    selectedFiles.splice(index, 1);
-                }
-                updateFileInput();
-
+                const radioInput = document.createElement('input');
+                radioInput.type = 'radio';
+                radioInput.name = 'cover_image';
+                radioInput.value = previewContainer.children.length;
+                radioInput.id = 'image' + previewContainer.children.length;
+                radioInput.classList.add('d-none');
                 if (previewContainer.children.length === 0) {
-                    lastInputGroup.style.display = 'none';
-                } else if (document.querySelector('input[name="cover_image"]:checked') === null) {
-                    document.querySelector('input[name="cover_image"]').checked = true;
+                    radioInput.checked = true;
+                    img.classList.add('selected');
                 }
-            });
 
-            // Append elements to form-group container
-            formGroup.appendChild(radioInput);
-            formGroup.appendChild(label);
-            formGroup.appendChild(filenameInput);
-            formGroup.appendChild(closeButton);
+                const label = document.createElement('label');
+                label.htmlFor = 'image' + previewContainer.children.length;
+                label.classList.add('w-100');
+                label.appendChild(img);
 
-            // Append form-group container to preview container
-            previewContainer.appendChild(formGroup);
-        };
-        reader.readAsDataURL(file);
+                const filenameInput = document.createElement('input');
+                filenameInput.type = 'text';
+                filenameInput.name = 'filename[]';
+                filenameInput.value = sanitizeFilename(document.getElementById('single_name').value ? document.getElementById('single_name').value + (previewContainer.children.length + 1) : 'animal' + (previewContainer.children.length + 1));
+                filenameInput.classList.add('form-control', 'mb-2');
+                filenameInput.placeholder = 'Filename';
+                filenameInput.addEventListener('input', handleFilenameInput);
+
+                const closeButton = document.createElement('button');
+                closeButton.type = 'button';
+                closeButton.classList.add('btn', 'btn-danger', 'btn-sm', 'ml-2');
+                closeButton.textContent = 'Remove';
+                closeButton.addEventListener('click', () => {
+                    previewContainer.removeChild(formGroup);
+                    const index = selectedFiles.indexOf(file);
+                    if (index !== -1) {
+                        selectedFiles.splice(index, 1);
+                    }
+                    updateFileInput();
+                    if (previewContainer.children.length === 0) {
+                        lastInputGroup.style.display = 'none';
+                    } else if (document.querySelector('input[name="cover_image"]:checked') === null) {
+                        document.querySelector('input[name="cover_image"]').checked = true;
+                    }
+                });
+
+                formGroup.appendChild(radioInput);
+                formGroup.appendChild(label);
+                formGroup.appendChild(filenameInput);
+                formGroup.appendChild(closeButton);
+                previewContainer.appendChild(formGroup);
+            };
+            reader.readAsDataURL(file);
+        }
+        if (selectedFiles.length > 0) {
+            lastInputGroup.style.display = 'block';
+        }
     }
-    if (selectedFiles.length > 0) {
-        lastInputGroup.style.display = 'block';
-    }
-    updateFileInput();
-};
 
-// Very, very round-about method
-function updateFileInput() {
-    // Reset file input field
-    imgInp.value = '';
+    function sanitizeFilename(filename) {
+        // Split by illegal separator and keep only the first part
+        let nameParts = filename.split('|');
+        let baseName = nameParts[0];
 
-    // Programmatically set the new files to the file input field
-    const newFileList = new ClipboardEvent('').clipboardData || new DataTransfer();
-    for (const file of selectedFiles) {
-        newFileList.items.add(file);
+        let sanitized = '';
+        for (let char of baseName) {
+            if (!illegalChars.includes(char)) {
+                sanitized += char;
+            }
+        }
+        return sanitized;
     }
-    imgInp.files = newFileList.files;
-}
+
+    function handleFilenameInput(event) {
+        const input = event.target;
+        const value = input.value;
+        let newValue = '';
+        let illegalCharsFound = '';
+
+        for (let char of value) {
+            if (illegalChars.includes(char)) {
+                illegalCharsFound += char;
+            } else {
+                newValue += char;
+            }
+        }
+
+        if (illegalCharsFound) {
+            alert(`${illegalCharsFound} are not allowed. Rest of characters: ${newValue}`);
+            input.value = newValue;
+        }
+    }
+
+    function updateFileInput() {
+        imgInp.value = '';
+        const newFileList = new ClipboardEvent('').clipboardData || new DataTransfer();
+        for (const file of selectedFiles) {
+            newFileList.items.add(file);
+        }
+        imgInp.files = newFileList.files;
+    }
+}); 
 
 // document.querySelector('form').addEventListener('submit', function(event) {
 //     const filenames = Array.from(document.querySelectorAll('input[name="filename[]"]')).map(input => input.value);

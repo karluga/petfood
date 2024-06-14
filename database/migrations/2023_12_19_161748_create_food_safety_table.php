@@ -16,6 +16,7 @@ return new class extends Migration
             $table->integer('gbif_id');
             $table->integer('food_id');
             $table->integer('safety_id');
+            $table->longText('description')->nullable();
         });
     }
 

@@ -81,51 +81,46 @@ class AdminController extends Controller
         // Handle image upload
         $imagePaths = [];
         $coverImageId = null;
-        
+
+        $illegalChars = ['|', '<', '>', ':', '"', '/', '\\', '?', '*'];
+
         try {
             if ($request->hasFile('images')) {
                 foreach ($request->file('images') as $index => $image) {
-                    // Generate filename based on whether single name is provided or not
                     $imageName = $request->single ? $request->single . ($index + 1) : 'animal' . ($index + 1);
-        
-                    // Check if single name column has value and modify filename accordingly
+                    
                     if (!empty($request->single_name)) {
                         $imageName = $request->single_name . ($index + 1);
                     }
-        
-                    // Append original uploaded image extension
+
+                    // Remove illegal characters from filename
+                    $imageName = str_replace($illegalChars, '', $imageName);
+                    
                     $imageName .= '.' . $image->getClientOriginalExtension();
-        
-                    // Move image to appropriate directory
                     $imagePath = 'assets/images/' . $request->gbif_id;
                     $image->move(public_path($imagePath), $imageName);
-        
-                    // Store image path in array
                     $imagePaths[] = $imagePath . '/' . $imageName;
                 }
             }
         } catch (\Exception $e) {
             return back()->with('error', 'Error uploading image: ' . $e->getMessage());
         }
-        
-        // Create animal pictures records
+
         try {
             foreach ($imagePaths as $imagePath) {
-                // Extract filename from image path
                 $filename = basename($imagePath);
                 $insertedId = \DB::table('animal_pictures')->insertGetId([
                     'gbif_id' => $request->gbif_id,
                     'filename' => $filename
                 ]);
                 if ($request->has('cover_image') && $request->cover_image == $index) {
-                    $coverImageId = $insertedId; // Store the cover image ID
+                    $coverImageId = $insertedId;
                 }
             }
         } catch (\Exception $e) {
             return back()->with('error', 'Error inserting image into database: ' . $e->getMessage());
         }
-        
-        // Create animal record
+
         try {
             $pet = new Animal();
             $pet->gbif_id = $request->gbif_id;
@@ -138,14 +133,13 @@ class AdminController extends Controller
             $pet->language = $request->language;
             $pet->parent_id = $request->parent_id;
             $pet->slug = $request->slug;
-            $pet->cover_image_id = $coverImageId; // Assign cover image ID
+            $pet->cover_image_id = $coverImageId;
             $pet->save();
         } catch (\Exception $e) {
             return back()->with('error', 'Error saving pet record: ' . $e->getMessage());
         }
-        
-        // Redirect back to the dashboard with success message
-        return redirect()->route('admin.animal.index')->with('success', 'Pet added successfully.'); 
+
+        return redirect()->route('admin.animal.index')->with('success', 'Pet added successfully.');
     }
 
     /**
@@ -188,6 +182,7 @@ class AdminController extends Controller
             'gbif_id' => 'required|string',
             'safety_id' => 'required',
             'food_id' => 'required',
+            'description' => 'nullable|max:1000',
         ]);
     
         try {

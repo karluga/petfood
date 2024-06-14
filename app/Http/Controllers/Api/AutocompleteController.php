@@ -47,7 +47,7 @@ class AutocompleteController extends Controller
         $from = $request->input('from', 0);
         $to = $request->input('to', 10);
         $step = $to - $from;
-
+    
         if ($from > $to) {
             return response()->json([
                 'error' => 'Invalid range: "from" cannot be greater than "to".',
@@ -59,32 +59,28 @@ class AutocompleteController extends Controller
     
         // Fallback
         if ($foodsData->isEmpty()) {
-            if ($from == 0 && $to == 10) {
-                $errorMessage = __('app.autocomplete.no_data_found', [], $locale);
-                return response()->json([
-                    'error' => 'No data found for species GBIF ID: ' . $gbif_id,
-                    'message' => $errorMessage,
-                    'status' => 404
-                ], 404); // 404 Not Found
-            } else {
-                $errorMessage = __('app.autocomplete.no_data_for_phrase', ['searchQuery' => $searchQuery], $locale);
-                return response()->json([
-                    'error' => 'No food data found for the specified parameters.',
-                    'message' => $errorMessage,
-                    'status' => 404
-                ], 404); // 404 Not Found
+            // Try to get foods for parent animals
+            $foodsData = $this->getParentFoodsRecursive($gbif_id, $locale, $filterSafeFoods, $searchQuery, $from, $to);
+    
+            if ($foodsData->isEmpty()) {
+                if ($from == 0 && $to == 10) {
+                    $errorMessage = __('app.autocomplete.no_data_found', [], $locale);
+                    return response()->json([
+                        'error' => 'No data found for species GBIF ID: ' . $gbif_id,
+                        'message' => $errorMessage,
+                        'status' => 404
+                    ], 404); // 404 Not Found
+                } else {
+                    $errorMessage = __('app.autocomplete.no_data_for_phrase', ['searchQuery' => $searchQuery], $locale);
+                    return response()->json([
+                        'error' => 'No food data found for the specified parameters.',
+                        'message' => $errorMessage,
+                        'status' => 404
+                    ], 404); // 404 Not Found
+                }
             }
         }
     
-        if ($foodsData->isEmpty()) {
-            $errorMessage = __('app.autocomplete.no_data_for_phrase', ['searchQuery' => $searchQuery], $locale);
-            return response()->json([
-                'error' => 'No food data found for the specified parameters.',
-                'message' => $errorMessage,
-                'status' => 404
-            ], 404); // 404 Not Found
-        }
-
         $tooManyRequestsMessage = __('app.autocomplete.too_many_requests', [], $locale);
         $paginatedFoods = [
             'from' => $from,
@@ -93,17 +89,18 @@ class AutocompleteController extends Controller
             'foods' => $foodsData,
             'too_many_requests_message' => $tooManyRequestsMessage,
         ];
-
+    
         $isEndOfData = count($foodsData) < $step;
         if ($isEndOfData) {
             $endOfDataMessage = __('app.autocomplete.end_of_data', [], $locale);
             $paginatedFoods['end_of_data_message'] = $endOfDataMessage;
         }
-
+    
         return response()->json([
             'data' => $paginatedFoods,
         ]);
     }
+    
     private function getFoodData($gbif_id, $locale, $filterSafeFoods, $searchQuery, $from, $to)
     {
         $query = \DB::table('food_safety')
@@ -163,4 +160,23 @@ class AutocompleteController extends Controller
     
         return $foodsData;
     }
+    
+    private function getParentFoodsRecursive($gbif_id, $locale, $filterSafeFoods, $searchQuery, $from, $to)
+    {
+        $parentFoodsData = collect();
+        $currentGbifId = $gbif_id;
+    
+        while ($currentGbifId) {
+            $foodsData = $this->getFoodData($currentGbifId, $locale, $filterSafeFoods, $searchQuery, $from, $to);
+            if ($foodsData->isNotEmpty()) {
+                $parentFoodsData = $parentFoodsData->merge($foodsData);
+            }
+    
+            $parent = \DB::table('animals')->where('gbif_id', $currentGbifId)->value('parent_id');
+            $currentGbifId = $parent ?: null;
+        }
+    
+        return $parentFoodsData;
+    }
+    
 }
