@@ -268,7 +268,7 @@ function renderImage(dataUrl, filename, key, index) {
     radioInput.type = 'radio';
     radioInput.name = 'cover_image';
     radioInput.value = index;
-    radioInput.id = 'image' + index;
+    radioInput.id = 'image' + key;
     radioInput.classList.add('d-none');
 
     radioInput.addEventListener('change', function() {
@@ -276,7 +276,7 @@ function renderImage(dataUrl, filename, key, index) {
     });
 
     const label = document.createElement('label');
-    label.htmlFor = 'image' + index;
+    label.htmlFor = 'image' + key;
     label.classList.add('w-100');
     label.appendChild(img);
 
