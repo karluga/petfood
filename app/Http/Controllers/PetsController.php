@@ -35,6 +35,16 @@ class PetsController extends Controller
             'filename' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
     
+        // Check if the pet already exists for the user
+        $existingPet = UserPet::where('user_id', auth()->id())
+                        ->where('gbif_id', $request->gbif_id)
+                        ->where('nickname', $request->nickname)
+                        ->first();
+    
+        if ($existingPet) {
+            return redirect()->back()->withInput()->withErrors(['gbif_id' => 'You already added this animal with the same name.']);
+        }
+    
         // Create a new user pet
         $userPet = new UserPet();
         $userPet->user_id = auth()->id();
@@ -52,7 +62,7 @@ class PetsController extends Controller
         $userPet->save();
     
         return redirect()->route('home', ['locale' => app()->getLocale()])->with('success', 'Pet added successfully!');
-    }
+    }    
     
     public function destroy($locale, $id)
     {

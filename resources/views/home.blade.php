@@ -13,7 +13,7 @@
 @endif
 <div id="my-pets" class="container">
     <h1>MY PETS</h1>
-    <form class="pets-section white-box fs-4" action="{{ route('pets.store', ['locale' => app()->getLocale()]) }}" method="POST">
+    <form class="pets-section white-box fs-4" action="{{ route('pets.store', ['locale' => app()->getLocale()]) }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col-md-3">
@@ -28,7 +28,7 @@
                 @enderror
             </div>
             <div class="col-md-3">
-                <label for="nickname">Name</label>
+                <label for="nickname">Pet's Name</label>
                 <input type="text" name="nickname" class="form-control">
                 @error('nickname')
                     <span class="text-danger fs-5">{{ $message }}</span>
@@ -36,19 +36,18 @@
             </div>
             <div class="col-md-3">
                 <label for="filename">Image</label>
-                <div class="d-flex flex-wrap align-items-center">
-                    <div class="d-flex flex-column">
-                        <input id="imgInp" type="file" name="filename" class="form-control-file">
-                        @error('filename')
-                            <span class="text-danger fs-5">{{ $message }}</span>
-                        @enderror
-                        <img id="imgPreview" class="d-none pet-image" src="" alt="Pet image">
-                    </div>
+                <div class="input-group">
+                    <input id="imgInp" type="file" name="filename" class="form-control @error('filename') is-invalid @enderror">
                 </div>
+                @error('filename')
+                    <div class="text-danger fs-5">
+                        {{ $message }}
+                    </div>
+                @enderror
+                <img id="imgPreview" class="d-none pet-image mt-2" src="" alt="Pet image">
             </div>
-            <div class="col-md-3">
-                <label></label>
-                <button type="submit" class="btn btn-primary">Add Pet</button>
+            <div class="col-md-3 d-flex">
+                <button type="submit" class="btn btn-primary mt-auto">Add Pet</button>
             </div>
         </div>
     </form>
@@ -57,7 +56,7 @@
         <h2 class="py-2">Pets List</h2>
             @foreach ($pets as $pet)
                 <div class="list-item row p-2">
-                    <div class="col-md-3">{{ $pet->species_name }}</div>
+                    <div class="col-md-3"><a href="/{{ app()->getLocale() . '/species/' . $pet->gbif_id }}">{{ $pet->species_name }}</a></div>
                     <div class="col-md-3">{{ $pet->nickname }}</div>
                     <div class="col-md-3">
                         @if ($pet->filename)
