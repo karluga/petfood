@@ -5,6 +5,9 @@
     <title>{{ env('APP_NAME', 'Pet Food') }} | Admin Dashboard</title>
 </head>
 <body>
+{{-- @foreach ($errors->all() as $error)
+    <li>{{ $error }}</li>
+@endforeach --}}
 @if (session('success'))
 <div class="alert alert-success mx-4">{{ session('success') }}</div>
 @endif
@@ -105,184 +108,299 @@
                 <span class="text-danger fs-5">{{ $message }}</span>
                 @enderror
             </div>
-            <!-- BUG: error message not displayed  -->
             <div class="form-group">
-                <label for="images" class="mb-1">Images</label>
+                <label for="imgInp" class="mb-1">Images</label>
                 <p class="fs-5 mb-2">
                     <i class="fa-solid fa-circle-info"></i>
                     Allowed: jpeg, png, jpg, and max 2 MB
                 </p>
-                <input type="file" class="form-control" id="images" name="images[]" multiple accept="image/*">
-                @error('images')
-                    @foreach($errors->get('images.*') as $error)
-                        <span class="text-danger fs-5">{{ $error }}</span>
-                    @endforeach
-                @enderror
-            </div>          
-            <button type="submit" class="btn btn-primary">Submit</button>
+                <input type="file" class="form-control" id="imgInp" name="images[]" multiple accept="image/*">
+                @if($errors->has('images.*'))
+                <p class="text-danger fs-5">Please check images before submitting again!</p>
+                @endif
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
         </div>
         <!-- Image preview -->
+        {{-- @if($errors->has('images.*')) style="display: block;" @endif --}}
         <div class="white-box" id="preview">
             <span class="mb-1">Preview</span>
             <p class="fs-5">
                 <i class="fa-solid fa-circle-info"></i>
                 Click on any image to set it as the cover image.
             </p>
-            <div class="image-preview" class="d-flex flex-wrap"></div>
+            <div class="image-preview">
+                <!-- Generated -->
+            </div>
         </div>
-    </form>        
+    </form> 
 </div>
+{{-- {{dd($errors->get('images.*'))}} --}}
 <script>
-const illegalChars = ['|', '<', '>', ':', '"', '/', '\\', '?', '*'];
-
-document.addEventListener('DOMContentLoaded', () => {
-    const imgInp = document.getElementById('images');
     const previewContainer = document.querySelector('.image-preview');
     const lastInputGroup = document.querySelector('#preview');
     let selectedFiles = [];
+    let db; // IndexedDB database instance
 
-    imgInp.onchange = evt => {
-        const files = imgInp.files;
-        selectedFiles = selectedFiles.concat(Array.from(files));
-        previewFiles(files);
-        updateFileInput();
-    };
+    // Function to open IndexedDB database
+    function openDB() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open('selectedImagesDB', 1);
 
-    function previewFiles(files) {
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            if (!file.type.startsWith('image/')) {
-                alert('Please select only image files.');
-                return;
-            }
-            if (file.size > 2 * 1024 * 1024) {
-                alert('Please select an image file no bigger than 2MB.');
-                return;
-            }
-            const reader = new FileReader();
-            reader.onload = () => {
-                const formGroup = document.createElement('div');
-                formGroup.classList.add('form-group');
-
-                const img = document.createElement('img');
-                img.src = reader.result;
-                img.classList.add('img-thumbnail', 'mr-2', 'mb-2');
-
-                const radioInput = document.createElement('input');
-                radioInput.type = 'radio';
-                radioInput.name = 'cover_image';
-                radioInput.value = previewContainer.children.length;
-                radioInput.id = 'image' + previewContainer.children.length;
-                radioInput.classList.add('d-none');
-                if (previewContainer.children.length === 0) {
-                    radioInput.checked = true;
-                    img.classList.add('selected');
-                }
-
-                const label = document.createElement('label');
-                label.htmlFor = 'image' + previewContainer.children.length;
-                label.classList.add('w-100');
-                label.appendChild(img);
-
-                const filenameInput = document.createElement('input');
-                filenameInput.type = 'text';
-                filenameInput.name = 'filename[]';
-                filenameInput.value = sanitizeFilename(document.getElementById('single_name').value ? document.getElementById('single_name').value + (previewContainer.children.length + 1) : 'animal' + (previewContainer.children.length + 1));
-                filenameInput.classList.add('form-control', 'mb-2');
-                filenameInput.placeholder = 'Filename';
-                filenameInput.addEventListener('input', handleFilenameInput);
-
-                const closeButton = document.createElement('button');
-                closeButton.type = 'button';
-                closeButton.classList.add('btn', 'btn-danger', 'btn-sm', 'ml-2');
-                closeButton.textContent = 'Remove';
-                closeButton.addEventListener('click', () => {
-                    previewContainer.removeChild(formGroup);
-                    const index = selectedFiles.indexOf(file);
-                    if (index !== -1) {
-                        selectedFiles.splice(index, 1);
-                    }
-                    updateFileInput();
-                    if (previewContainer.children.length === 0) {
-                        lastInputGroup.style.display = 'none';
-                    } else if (document.querySelector('input[name="cover_image"]:checked') === null) {
-                        document.querySelector('input[name="cover_image"]').checked = true;
-                    }
-                });
-
-                formGroup.appendChild(radioInput);
-                formGroup.appendChild(label);
-                formGroup.appendChild(filenameInput);
-                formGroup.appendChild(closeButton);
-                previewContainer.appendChild(formGroup);
+            request.onerror = function(event) {
+                console.error('IndexedDB error:', event.target.errorCode);
+                reject(event.target.error);
             };
-            reader.readAsDataURL(file);
+
+            request.onsuccess = function(event) {
+                db = event.target.result;
+                resolve();
+            };
+
+            request.onupgradeneeded = function(event) {
+                db = event.target.result;
+                const objectStore = db.createObjectStore('images', { keyPath: 'id', autoIncrement: true });
+                objectStore.createIndex('filename', 'filename', { unique: false });
+            };
+        });
+    }
+
+    // Function to add an image to IndexedDB
+    function addImageToDB(dataUrl, filename) {
+        const transaction = db.transaction(['images'], 'readwrite');
+        const objectStore = transaction.objectStore('images');
+        const newItem = { dataUrl: dataUrl, filename: filename };
+
+        objectStore.add(newItem);
+    }
+
+    // Function to load images from IndexedDB on page load
+    function loadImagesFromDB() {
+        const transaction = db.transaction(['images'], 'readonly');
+        const objectStore = transaction.objectStore('images');
+        const cursorRequest = objectStore.openCursor();
+
+        let index = 0; // Initialize index counter
+
+        cursorRequest.onsuccess = function(event) {
+            const cursor = event.target.result;
+            if (cursor) {
+                renderImage(cursor.value.dataUrl, cursor.value.filename, cursor.key, index); // Pass key and index
+                selectedFiles.push({ dataUrl: cursor.value.dataUrl, filename: cursor.value.filename });
+
+                cursor.continue();
+                index++; // Increment index after each successful cursor continuation
+            } else {
+                updateFileInput(); // Update file input after loading images
+                setInitialSelectedCover();
+            }
+        };
+
+    }
+
+
+    // Function to update selected cover index in localStorage
+    function updateSelectedCoverIndex(index) {
+        localStorage.setItem('selectedCoverIndex', index);
+        console.log('Selected cover index updated in localStorage:', index);
+    }
+
+    // Function to get the selected cover index from localStorage
+    function getSelectedCoverIndex() {
+        return localStorage.getItem('selectedCoverIndex');
+    }
+
+    // Function to set the initial selected cover index
+    function setInitialSelectedCover() {
+        const selectedIndex = getSelectedCoverIndex();
+        if (selectedIndex !== null) {
+            document.getElementById('image' + selectedIndex).checked = true;
+        } else if (selectedFiles.length > 0) {
+            document.getElementById('image0').checked = true;
+            updateSelectedCoverIndex(0);
         }
+    }
+
+    // Function to remove an image from IndexedDB
+    function removeImageFromDB(index) {
+        const transaction = db.transaction(['images'], 'readwrite');
+        const objectStore = transaction.objectStore('images');
+        const request = objectStore.delete(index);
+
+        request.onsuccess = function(event) {
+            console.log('Image with index', index, 'deleted from IndexedDB');
+        };
+
+        request.onerror = function(event) {
+            console.error('Error deleting image:', event.target.errorCode);
+        };
+    }
+
+    // Update file input value programmatically
+    function updateFileInput() {
+        imgInp.value = '';
+        const newFileList = new ClipboardEvent('').clipboardData || new DataTransfer();
+        selectedFiles.forEach(file => {
+            const blob = dataURItoBlob(file.dataUrl);
+            const newFile = new File([blob], file.filename);
+            newFileList.items.add(newFile);
+        });
+        imgInp.files = newFileList.files;
+        console.log('Updated filenames:', selectedFiles.map(file => file.filename));
+
+        // Show the lastInputGroup if there are files
         if (selectedFiles.length > 0) {
             lastInputGroup.style.display = 'block';
         }
     }
 
-    function sanitizeFilename(filename) {
-        // Split by illegal separator and keep only the first part
-        let nameParts = filename.split('|');
-        let baseName = nameParts[0];
+   // Function to render image into preview container
+// Function to render image into preview container
+function renderImage(dataUrl, filename, key, index) {
+    const formGroup = document.createElement('div');
+    formGroup.classList.add('form-group');
 
-        let sanitized = '';
-        for (let char of baseName) {
-            if (!illegalChars.includes(char)) {
-                sanitized += char;
+    const img = document.createElement('img');
+    img.src = dataUrl;
+    img.classList.add('img-thumbnail', 'mr-2', 'mb-2');
+
+    const radioInput = document.createElement('input');
+    radioInput.type = 'radio';
+    radioInput.name = 'cover_image';
+    radioInput.value = index;
+    radioInput.id = 'image' + index;
+    radioInput.classList.add('d-none');
+
+    radioInput.addEventListener('change', function() {
+        updateSelectedCoverIndex(index);
+    });
+
+    const label = document.createElement('label');
+    label.htmlFor = 'image' + index;
+    label.classList.add('w-100');
+    label.appendChild(img);
+
+    const filenameInput = document.createElement('input');
+    filenameInput.type = 'text';
+    filenameInput.name = 'filename[]';
+    filenameInput.value = filename;
+    filenameInput.classList.add('form-control', 'mb-2');
+    filenameInput.placeholder = 'Filename';
+
+    const closeButton = document.createElement('button');
+    closeButton.type = 'button';
+    closeButton.classList.add('btn', 'btn-danger', 'btn-sm', 'ml-2');
+    closeButton.textContent = 'Remove';
+    closeButton.addEventListener('click', () => {
+        previewContainer.removeChild(formGroup);
+        selectedFiles.splice(index, 1); // Remove from selectedFiles array
+        removeImageFromDB(key); // Remove from IndexedDB using the key
+        updateFileInput();
+        // After removing, re-index all images if necessary
+        previewContainer.childNodes.forEach((node, idx) => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+                const radioInput = node.querySelector('input[type="radio"]');
+                if (radioInput) {
+                    radioInput.value = idx;
+                    radioInput.id = 'image' + idx;
+                    node.querySelector('label').htmlFor = 'image' + idx;
+                }
             }
+        });
+    });
+
+    formGroup.appendChild(radioInput);
+    formGroup.appendChild(label);
+    formGroup.appendChild(filenameInput);
+    formGroup.appendChild(closeButton);
+    previewContainer.appendChild(formGroup);
+
+    // Check for Laravel validation errors related to images
+    @php
+        $imageErrors = $errors->get('images.*');
+    @endphp
+
+    const errorsJson = JSON.parse('{!! addslashes(json_encode($imageErrors)) !!}');
+    console.log('Errors JSON:', errorsJson);
+    console.log('Index:', index);
+    console.log('Key:', key);
+
+    // PROBLEM: in IndexedDB the index id or index is always being incremented
+    const errorKey = `images.${index}`;
+    if (errorsJson && errorsJson[errorKey]) {
+        const errorMessages = errorsJson[errorKey];
+        console.log('Error messages found:', errorMessages);
+
+        errorMessages.forEach(errorMessage => {
+            const errorParagraph = document.createElement('p');
+            errorParagraph.classList.add('text-danger');
+            errorParagraph.innerHTML = errorMessage;
+            formGroup.appendChild(errorParagraph);
+        });
+    } else {
+        console.log('No error messages found for index:', index);
+    }
+}
+
+
+    // Helper function to convert data URI to blob
+    function dataURItoBlob(dataURI) {
+        const splitDataURI = dataURI.split(',');
+        const byteString = atob(splitDataURI[1]);
+        const mimeString = splitDataURI[0].split(':')[1].split(';')[0];
+        const arrayBuffer = new ArrayBuffer(byteString.length);
+        const uintArray = new Uint8Array(arrayBuffer);
+
+        for (let i = 0; i < byteString.length; i++) {
+            uintArray[i] = byteString.charCodeAt(i);
         }
-        return sanitized;
+
+        return new Blob([arrayBuffer], { type: mimeString });
     }
 
-    function handleFilenameInput(event) {
-        const input = event.target;
-        const value = input.value;
-        let newValue = '';
-        let illegalCharsFound = '';
-
-        for (let char of value) {
-            if (illegalChars.includes(char)) {
-                illegalCharsFound += char;
-            } else {
-                newValue += char;
+    // Event listener for file input change
+    imgInp.onchange = evt => {
+        const files = Array.from(imgInp.files);
+        files.forEach((file, index) => {
+            if (!file.type.startsWith('image/')) {
+                alert('Please select only image files.');
+                return;
             }
+            if (file.size > 100 * 1024 * 1024) { // Adjusted the size limit to 10MB
+                alert('Please select an image file no bigger than 10MB.');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => {
+                const key = Date.now() + index;
+                selectedFiles.push({ dataUrl: reader.result, filename: file.name, key });
+                addImageToDB(reader.result, file.name, key); // Add to IndexedDB
+                renderImage(reader.result, file.name, key, index);
+                updateFileInput();
+                if (selectedFiles.length === 1) {
+                    document.getElementById('image0').checked = true;
+                    updateSelectedCoverIndex(0);
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+        if (selectedFiles.length > 0) {
+            lastInputGroup.style.display = 'block';
         }
+    };
 
-        if (illegalCharsFound) {
-            alert(`${illegalCharsFound} are not allowed. Rest of characters: ${newValue}`);
-            input.value = newValue;
-        }
-    }
+    // Initialize IndexedDB and load images from it on page load
+    openDB().then(loadImagesFromDB).catch(console.error);
 
-    function updateFileInput() {
-        imgInp.value = '';
-        const newFileList = new ClipboardEvent('').clipboardData || new DataTransfer();
-        for (const file of selectedFiles) {
-            newFileList.items.add(file);
-        }
-        imgInp.files = newFileList.files;
-    }
-}); 
-
-// document.querySelector('form').addEventListener('submit', function(event) {
-//     const filenames = Array.from(document.querySelectorAll('input[name="filename[]"]')).map(input => input.value);
-//     const uniqueFilenames = new Set(filenames);
-//     if (filenames.length !== uniqueFilenames.size) {
-//         alert('Please ensure that all filenames are unique.');
-//         event.preventDefault();
-//     }
-// });
 
 </script>
 
+
+    
 <style>
 .img-thumbnail {
     border: 2px solid transparent;
-    max-height: 250px;
-    width: 100%;
+    max-width: 100%;
 }
 input[type="radio"]:checked + label .img-thumbnail {
     border-color: blue;
@@ -295,3 +413,4 @@ input[type="radio"]:checked + label .img-thumbnail {
     
 </body>
 @endsection
+

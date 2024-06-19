@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Models\Animal;
 
 class AdminController extends Controller
@@ -42,7 +43,7 @@ class AdminController extends Controller
                 return back()->withErrors(['gbif_id' => 'Invalid response from GBIF API.']);
             }
     
-            if (isset($data['kingdom']) && $data['kingdom'] !== 'Animalia') {
+            if (isset($data['kingdom']) && $data['kingdom'] !== 'Animalia' && $data['kingdom'] !== 'Metazoa') {
                 return back()->withErrors(['gbif_id' => 'The species has to be an animal']);
             }
     
@@ -64,7 +65,7 @@ class AdminController extends Controller
         }
 
         // Add validation rules for new inputs
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'gbif_id' => 'required|string',
             'single_name' => 'required|string',
             'plural_name' => 'required|string',
@@ -74,10 +75,46 @@ class AdminController extends Controller
             'food' => 'nullable|string',
             'language' => 'required|string|size:2',
             'parent_id' => 'nullable|string',
-            'slug' => 'required|string',
-            'images.*' => 'image|mimes:jpeg,png,jpg|max:2048'
+            'slug' => [
+                'required',
+                'string',
+                'regex:/^[a-z0-9_-]+$/',
+                'unique:animals,slug,' . $request->input('language') . ',language'
+            ],
+            'images.*' => [
+                'image',
+                // 'max:10240',
+                // MAX 10MB (custom)
+                function ($attribute, $value, $fail) use ($request) {
+                    $fileSize = $request->file($attribute)->getSize() / 1024 / 1024; // Get file size in MB
+                    if ($fileSize > 10) {
+                        $fail('The file size <strong title="' . $fileSize*1024*1024 . 'KB">' . number_format($fileSize, 2) . 'MB</strong> exceeds the maximum allowed size of 10MB.');
+                    }
+                },
+                // 'mimes:jpeg,png,jpg',
+                // Allowed file types (custom)
+                function ($attribute, $value, $fail) use ($request) {
+                    $allowedMimes = ['jpeg', 'png', 'jpg'];
+                    $uploadedMimeType = $request->file($attribute)->getClientOriginalExtension();
+                    
+                    if (!in_array($uploadedMimeType, $allowedMimes)) {
+                        $fail("The filetype $uploadedMimeType is not allowed. Choose from: " . implode(', ', $allowedMimes) . '.');
+                    }
+                }
+            ]
+        ], [
+            'slug.regex' => 'The slug may only contain lowercase letters, numbers, dashes, and underscores.',
+            'slug.unique' => 'The slug must be unique for the given language.'
         ]);
 
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withInput($request->all())
+                ->withErrors($validator);
+        }
+        
+        // dd('Uploaded images:', $request->file('images'));
         // Handle image upload
         $imagePaths = [];
         $coverImageId = null;
