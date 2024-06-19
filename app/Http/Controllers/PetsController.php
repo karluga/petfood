@@ -36,13 +36,24 @@ class PetsController extends Controller
         ]);
     
         // Check if the pet already exists for the user
-        $existingPet = UserPet::where('user_id', auth()->id())
-                        ->where('gbif_id', $request->gbif_id)
-                        ->where('nickname', $request->nickname)
-                        ->first();
+        $query = UserPet::where('user_id', auth()->id())
+                        ->where('gbif_id', $request->gbif_id);
+    
+        if ($request->filled('nickname')) {
+            $query->where('nickname', $request->nickname);
+        } else {
+            $query->whereNull('nickname');
+        }
+    
+        $existingPet = $query->first();
     
         if ($existingPet) {
-            return redirect()->back()->withInput()->withErrors(['gbif_id' => 'You already added this animal with the same name.']);
+            if ($request->filled('nickname')) {
+                $errorMessage = 'You already added this animal with the same name.';
+            } else {
+                $errorMessage = 'You already added this species.';
+            }
+            return redirect()->back()->withInput()->withErrors(['gbif_id' => $errorMessage]);
         }
     
         // Create a new user pet
@@ -62,8 +73,8 @@ class PetsController extends Controller
         $userPet->save();
     
         return redirect()->route('home', ['locale' => app()->getLocale()])->with('success', 'Pet added successfully!');
-    }    
-    
+    }
+
     public function destroy($locale, $id)
     {
         $pet = UserPet::find($id);
