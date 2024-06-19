@@ -58,12 +58,12 @@
             <div class="form-group required">
                 <label for="name" class="mb-1">Slug</label>
                 <div class="input-group">
-                    <input type="text" value="{{ old('slug', isset($data['canonicalName']) ? strtolower($data['canonicalName']) : '') }}" class="form-control" id="slug" name="slug" placeholder="Slug">
+                    <input type="text" value="{{ old('slug', isset($data['canonicalName']) ? strtolower($data['canonicalName']) : '') }}" class="form-control" id="slug" name="slug" placeholder="The name that shows up in the link">
                 </div>
                 @error('slug')
                 <span class="text-danger fs-5">{{ $message }}</span>
                 @enderror
-            </div>      
+            </div>
             <div class="form-group required">
                 <label for="language" class="mb-1">Localization</label>
                 <select class="form-control" id="language" name="language">
@@ -370,12 +370,25 @@ function renderImage(dataUrl, filename, key, index) {
                 alert('Please select an image file no bigger than 10MB.');
                 return;
             }
+
+            // Logic to get name from single_name input field and sanitize
+            let singleName = document.querySelector('#single_name').value.trim();
+            singleName = sanitizeFilename(singleName);
+
+            // Determine filename based on singleName or default pattern
+            let filename;
+            if (singleName) {
+                filename = `${singleName}${selectedFiles.length + 1}`;
+            } else {
+                filename = `Animal${selectedFiles.length + 1}`;
+            }
+
             const reader = new FileReader();
             reader.onload = () => {
                 const key = Date.now() + index;
                 selectedFiles.push({ dataUrl: reader.result, filename: file.name, key });
-                addImageToDB(reader.result, file.name, key); // Add to IndexedDB
-                renderImage(reader.result, file.name, key, index);
+                addImageToDB(reader.result, filename, key); // Add to IndexedDB
+                renderImage(reader.result, filename, key, index);
                 updateFileInput();
                 if (selectedFiles.length === 1) {
                     document.getElementById('image0').checked = true;
@@ -388,9 +401,33 @@ function renderImage(dataUrl, filename, key, index) {
             lastInputGroup.style.display = 'block';
         }
     };
-
+ 
+    // Function to sanitize filename based on provided illegal characters
+    function sanitizeFilename(name) {
+        const illegalChars = ['|', '<', '>', ':', '"', '/', '\\', '?', '*'];
+        illegalChars.forEach(char => {
+            name = name.replace(new RegExp('\\' + char, 'g'), ''); // Remove illegal characters
+        });
+        return name.trim(); // Trim any leading or trailing whitespace
+    }
+    
     // Initialize IndexedDB and load images from it on page load
     openDB().then(loadImagesFromDB).catch(console.error);
+
+    // Function to clear all data from IndexedDB
+    function clearIndexedDB() {
+    const transaction = db.transaction(['images'], 'readwrite');
+    const objectStore = transaction.objectStore('images');
+    const request = objectStore.clear();
+
+    request.onsuccess = function(event) {
+        console.log('IndexedDB cleared successfully');
+    };
+
+    request.onerror = function(event) {
+        console.error('Error clearing IndexedDB:', event.target.errorCode);
+    };
+}
 
 
 </script>
