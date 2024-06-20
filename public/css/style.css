@@ -1117,9 +1117,11 @@ a.species-link:hover {
     align-items: center;
     justify-content: space-between;
     color: white;
+    height: 100%;
 }
 #species #food_list_container li > * {
     padding: 5px 10px;
+    max-width: 300px;
 }
 #species label {
     font-size: 25px;

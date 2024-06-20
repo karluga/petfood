@@ -112,7 +112,7 @@
                 <label for="imgInp" class="mb-1">Images</label>
                 <p class="fs-5 mb-2">
                     <i class="fa-solid fa-circle-info"></i>
-                    Allowed: jpeg, png, jpg, and max 2 MB
+                    Allowed: jpeg, png, jpg, and max 10 MB
                 </p>
                 <input type="file" class="form-control" id="imgInp" name="images[]" multiple accept="image/*">
                 @if($errors->has('images.*'))
