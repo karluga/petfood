@@ -136,7 +136,13 @@ class AdminController extends Controller
                     // Move image to appropriate directory
                     $imagePath = 'assets/images/' . $request->gbif_id;
                     $image->move(public_path($imagePath), $imageName);
-        
+
+                    // Get the full path to the uploaded image
+                    $fullImagePath = public_path($imagePath . '/' . $imageName);
+
+                    // Set permissions explicitly after moving the file
+                    chmod($fullImagePath, 0755);
+
                     // Store image path in array
                     $imagePaths[] = $imagePath . '/' . $imageName;
                 }
@@ -156,12 +162,15 @@ class AdminController extends Controller
                 ]);
                 if ($request->has('cover_image') && $request->cover_image == $index) {
                     $coverImageId = $insertedId; // Store the cover image ID
+                    // dd($coverImageId, $insertedId);
+                    // dd($coverImageId);
                 }
             }
         } catch (\Exception $e) {
             return back()->with('error', 'Error inserting image into database: ' . $e->getMessage());
         }
-        
+        // dd($coverImageId);
+
         // Create animal record
         try {
             $pet = new Animal();
@@ -175,7 +184,7 @@ class AdminController extends Controller
             $pet->language = $request->language;
             $pet->parent_id = $request->parent_id;
             $pet->slug = $request->slug;
-            $pet->cover_image_id = $coverImageId; // Assign cover image ID
+            $pet->cover_image_id = 80; // Assign cover image ID
             $pet->save();
         } catch (\Exception $e) {
             return back()->with('error', 'Error saving pet record: ' . $e->getMessage());
