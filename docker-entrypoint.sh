@@ -20,6 +20,12 @@ if [ ! -f "$FLAG_FILE" ]; then
     echo ".env file created from .env.example"
   fi
 
+  # Generate the application key if vendor is not present
+  if [ ! -d "/var/www/html/vendor" ]; then
+    echo "Running composer install..."
+    composer install --no-dev --optimize-autoloader
+  fi
+
   # Generate the application key
   php artisan key:generate --force
 

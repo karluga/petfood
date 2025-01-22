@@ -8,6 +8,8 @@ services:
     volumes:
       - .:/var/www/html
       - ./docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
+      - vendor:/var/www/html/vendor
+
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
@@ -47,3 +49,4 @@ services:
 
 volumes:
   db_data:
+  vendor:
