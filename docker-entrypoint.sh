@@ -12,18 +12,24 @@ echo "MySQL is available."
 FLAG_FILE="/var/www/html/storage/.initialized"
 
 if [ ! -f "$FLAG_FILE" ]; then
-  echo "Running migrations and generating app key..."
+  echo "Setting up environment and running migrations..."
 
-  # Run Laravel migrations
-  php artisan migrate --force
+  # Copy .env.example to .env if .env doesn't exist
+  if [ ! -f "/var/www/html/.env" ]; then
+    cp /var/www/html/.env.example /var/www/html/.env
+    echo ".env file created from .env.example"
+  fi
 
   # Generate the application key
   php artisan key:generate --force
 
+  # Run Laravel migrations
+  php artisan migrate --force
+
   # Create the flag file to indicate initialization is complete
   touch "$FLAG_FILE"
 else
-  echo "Migrations and app key generation already completed."
+  echo "Environment setup, migrations, and app key generation already completed."
 fi
 
 # Run the original command (Apache)
