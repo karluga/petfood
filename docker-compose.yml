@@ -6,14 +6,13 @@ services:
     ports:
       - "8000:80"
     volumes:
-      - ./storage:/var/www/html/storage
-      - ./public:/var/www/html/public
-      - ./vendor:/var/www/html/vendor
+      - .:/var/www/html
+      - ./docker-entrypoint.sh:/usr/local/bin/docker-entrypoint.sh
     environment:
       - APP_ENV=local
       - APP_DEBUG=true
       - DB_CONNECTION=mysql
-      - DB_HOST=db
+      - DB_HOST=mysql
       - DB_PORT=3306
       - DB_DATABASE=laravel
       - DB_USERNAME=laravel_user
@@ -33,7 +32,6 @@ services:
       MYSQL_PASSWORD: laravel_password
     volumes:
       - db_data:/var/lib/mysql
-    network_mode: "host"
 
   phpmyadmin:
     image: phpmyadmin:latest

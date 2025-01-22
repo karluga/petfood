@@ -19,9 +19,9 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 # Cache Laravel configuration, routes, and views
-RUN php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+# RUN php artisan config:cache \
+#     && php artisan route:cache \
+#     && php artisan view:cache
 # Set up Apache configuration
 RUN echo '<VirtualHost *:80>\n\
     ServerName localhost\n\
