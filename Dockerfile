@@ -1,5 +1,5 @@
 # Use the official PHP 8.1 image with Apache
-FROM php:8.1-apache
+FROM php:8.4.3-apache
 
 # Install system dependencies, PHP extensions, and MySQL client
 RUN apt-get update && apt-get install -y \
