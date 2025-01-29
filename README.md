@@ -1,5 +1,5 @@
 # Kvalifikācijas darbs
-
+![Logo Screenshot](public/research_material/localhost_8000_en.png){: height="50px"}
 ## Pieejams:
 [petfood.brakis.id.lv](https://petfood.brakis.id.lv/)
 ### Testa lietotāji:
@@ -7,7 +7,7 @@
 USER: kaarlisbrakis@gmail.com
 PASS: 12345678
 #### Lietotājs
-USER: ip20.k.brakis@gmail.com
+USER: ip20.k.brakis@vtdt.edu.lv
 PASS: 12345678
 ### Datu bāze:
 [phpmyadmin.brakis.id.lv](https://phpmyadmin.brakis.id.lv/)

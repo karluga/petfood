@@ -88,7 +88,9 @@ INSERT INTO `animals` (`id`, `gbif_id`, `parent_id`, `language`, `slug`, `name`,
 (37, 217145891, NULL, 'lv', 'vistas', 'Vistas|Gallus gallus', 'Vista|Gallus gallus', 'domestic', 'SPECIES', 13, NULL, NULL),
 (38, 177669418, NULL, 'lv', 'aitas', 'Aitas|Ovis aries', 'Aita|Ovis aries', 'domestic', 'SPECIES', 8, NULL, NULL),
 (39, 209386215, NULL, 'lv', 'cūkas', 'Cūkas', 'Cūka', 'domestic', 'FAMILY', 11, NULL, NULL),
-(41, 135226783, 135226770, 'en', 'anura', 'Anura', 'Anura', NULL, 'ORDER', NULL, NULL, NULL);
+(40, 135226783, 135226770, 'en', 'anura', 'Anura', 'Anura', NULL, 'ORDER', NULL, NULL, NULL);
+(41, 180179734, NULL, 'lv', 'vēršie', 'Vēršie', 'Vērsis', NULL, 'FAMILY', NULL, NULL, NULL), -- Bovidae in Latvian
+(42, 135226783, 135226770, 'lv', 'bezastes abinieki', 'Bezastes abinieki|Anura', 'Bezastes abinieks|Anura', NULL, 'ORDER', NULL, NULL, NULL); -- Anura in Latvian
 
 -- --------------------------------------------------------
 
@@ -408,33 +410,6 @@ CREATE TABLE IF NOT EXISTS `personal_access_tokens` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `roles`
---
-
-DROP TABLE IF EXISTS `roles`;
-CREATE TABLE IF NOT EXISTS `roles` (
-  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `roles_name_unique` (`name`)
-) ENGINE=MyISAM AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `roles`
---
-
-INSERT INTO `roles` (`id`, `name`, `created_at`, `updated_at`) VALUES
-(1, 'Admin', NULL, NULL),
-(2, 'Expert', NULL, NULL),
-(3, 'Pet Owner', NULL, NULL),
-(4, 'Auditor', NULL, NULL),
-(5, 'Content Creator', NULL, NULL);
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `role_user`
 --
 
@@ -493,41 +468,6 @@ CREATE TABLE IF NOT EXISTS `searches` (
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `users`
---
-
-DROP TABLE IF EXISTS `users`;
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
-  `name` varchar(191) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `email` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email_verified_at` timestamp NULL DEFAULT NULL,
-  `password` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `remember_token` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `google_id` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `facebook_id` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  `filename` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `display_name` tinyint(1) DEFAULT NULL,
-  `username` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `preferred_language` varchar(5) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `users_email_unique` (`email`)
-) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `name`, `email`, `email_verified_at`, `password`, `remember_token`, `google_id`, `facebook_id`, `created_at`, `updated_at`, `filename`, `display_name`, `username`, `preferred_language`) VALUES
-(3, 'Kārlis Ivars Braķis', 'arlisbrais@gmail.com', NULL, '$2y$12$ULkBZF/SE5DB..EnZlUAZ.UK8.8k7p4fAxNeo/ERH0wfbx2.7rtVS', NULL, NULL, NULL, '2024-03-03 13:36:32', '2024-05-18 10:13:07', NULL, NULL, NULL, 'en'),
-(13, 'aaa', 'aaa@gmail.com', NULL, '$2y$12$k.NXEfhZGgYnMUa5hZGpcuBaoDGfDwAn9sAsKVgowIEp2zmtWT8mK', NULL, NULL, NULL, '2024-03-04 13:55:10', '2024-03-04 13:55:10', NULL, NULL, NULL, NULL),
-(14, 'fff', 'fff@gmail.com', NULL, '$2y$12$wm33QLBO5d..NhbOhCKRsukLBNSjj9jMPsE7xl8Ceiuy9Ep1kPTRK', NULL, NULL, NULL, '2024-03-04 15:24:35', '2024-03-04 15:24:35', NULL, NULL, NULL, NULL);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

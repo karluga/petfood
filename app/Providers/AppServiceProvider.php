@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        # This forced solution for using HTTPS is for testing the app on NGROK.
+        # Mixed protocol content is not allowed in production. It is blocked by modern browsers.
+
+        // if ($this->app->environment('local')) {
+        //     URL::forceScheme('https');
+        // }
+
         // MySQL limitation
         \Schema::defaultStringLength(191);
                 
